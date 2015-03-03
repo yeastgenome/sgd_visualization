@@ -7,8 +7,8 @@ module.exports = function(grunt) {
 
         browserify: {
             dev: {
-                dest: "examples/locus_diagram.js"
-                src: SRC_PATH,
+                dest: "examples/locus_diagram/js/bundled_locus_diagram.js",
+                src: "src/bundled.jsx",
                 options: {
                     bundleOptions: {
                         debug: true
@@ -37,6 +37,9 @@ module.exports = function(grunt) {
         },
 
     });
+
+    grunt.loadNpmTasks("grunt-contrib-watch");
+    grunt.loadNpmTasks("grunt-browserify");
     
     grunt.registerTask("build", ["browserify:build"]);
     grunt.registerTask("default", ["browserify:dev", "watch"]);

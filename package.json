@@ -1,6 +1,7 @@
 {
   "name": "SGDVisualization",
   "version": "0.0.0",
+  "main": "src/sgd_visualization.jsx",
   "homepage": "http://www.yeastgenome.org",
   "browserify": {
     "transform": [["reactify", { "es6": true }], "browserify-shim"]
