@@ -1,13 +1,15 @@
-module.exports = function(grunt) {
-    var BUILD_PATH = "dist/";
-    var SRC_PATH = "src/sgd_visualization.jsx";
-    
+"use strict";
+var BUILD_PATH = "dist/";
+var EXAMPLE_PATH = "examples/";
+var SRC_PATH = "src/sgd_visualization.jsx";
+
+module.exports = function(grunt) {    
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
 
         browserify: {
             dev: {
-                dest: "examples/locus_diagram/js/bundled_locus_diagram.js",
+                dest: EXAMPLE_PATH + "assets/bundled_sgd_visualization.js",
                 src: "src/bundled.jsx",
                 options: {
                     bundleOptions: {
@@ -26,21 +28,33 @@ module.exports = function(grunt) {
             }
         },
 
+        connect: {
+            server: {
+                options: {
+                    port: 3000,
+                    base: EXAMPLE_PATH
+                }
+            }
+        },
+
         watch: {
             options: {
                 livereload: true
             },
             jsx: {
-                files: ["src/**/*.jsx"],
+                files: ["src/**/*.jsx", (EXAMPLE_PATH + "**/*.html")],
                 tasks: ["browserify:dev"]
             }
         },
 
     });
 
-    grunt.loadNpmTasks("grunt-contrib-watch");
+    // load vendor tasks
     grunt.loadNpmTasks("grunt-browserify");
+    grunt.loadNpmTasks("grunt-contrib-connect");
+    grunt.loadNpmTasks("grunt-contrib-watch");
     
+    // define custom tasks
     grunt.registerTask("build", ["browserify:build"]);
-    grunt.registerTask("default", ["browserify:dev", "watch"]);
+    grunt.registerTask("default", ["browserify:dev", "connect","watch"]);
 };
