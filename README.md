@@ -1,5 +1,7 @@
 # SGD Visualization
 
+[![Build Status](https://travis-ci.org/yeastgenome/sgd_visualization.svg)](https://travis-ci.org/yeastgenome/sgd_visualization)
+
 This project is in a VERY early stage.  Please check back later.
 
 ## See Examples
