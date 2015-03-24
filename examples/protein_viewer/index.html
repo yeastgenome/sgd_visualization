@@ -4,31 +4,16 @@
 		<title>Protein Viewer | SGD Visualization Example</title>
 		<meta charset="utf-8">
 		<style>
-			.axis-label {
-			text-align: center;
-			margin-bottom: 0;
-			font-size: 14px;
-			height: 1em;
-		}
-
-		.axis {
-			font-size: 12px;
-
-			line {
-				stroke: black;
+			.tick line {
+			  stroke: #ddd;
 			}
-
-			path.domain {
+			.domain {
 				fill: none;
-				stroke: black;
-				shape-rendering: crispEdges;
 			}
-		}
 
 		</style>
 	</head>
 	<body>
-		<h1>Foo</h1>
 		<div id="target"></div>
 		<script src="../assets/bundled_sgd_visualization.js"></script>
 		<script type="text/javascript">
@@ -65,7 +50,7 @@
 			var options = {
 
 			};
-			lib.draw(options, document.body);
+			lib.draw(options, document.getElementById("target"));
 		</script>
 	</body>
 </html>
