@@ -17,4 +17,4 @@ var CalcWidthOnRisize = {
 	}
 };
 
-modulex.exports = CalcWidthOnRisize;
+module.exports = CalcWidthOnRisize;
