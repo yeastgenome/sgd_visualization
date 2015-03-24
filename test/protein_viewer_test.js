@@ -1,7 +1,7 @@
 var assert = require("assert");
 var React = require("react");
 // jsx
-require("node-jsx").install();
+require("node-jsx").install({ harmony: true });
 
 var ProteinViewer = require("../src/sgd_visualization.jsx").proteinViewer;
 
