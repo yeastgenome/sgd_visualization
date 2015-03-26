@@ -12,7 +12,7 @@ module.exports = function(grunt) {
                 dest: EXAMPLE_PATH + "assets/bundled_sgd_visualization.js",
                 src: "src/bundled.jsx",
                 options: {
-                    bundleOptions: {
+                    browserifyOptions: {
                         debug: true
                     }
                 }
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
                 dest: BUILD_PATH + "sgd_visualization.js",
                 src: SRC_PATH,
                 options: {
-                    bundleOptions: {
+                    browserifyOptions: {
                         debug: false
                     }
                 }

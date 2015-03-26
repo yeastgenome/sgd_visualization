@@ -2,7 +2,7 @@
 "use strict";
 var React = require("react");
 
-var StandaloneAxis = React.createFactory(require("./standalone_axis.jsx"));
+var StandaloneAxis = require("./standalone_axis.jsx");
 
 var ProteinViewer = React.createClass({
 	
