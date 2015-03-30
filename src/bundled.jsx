@@ -11,9 +11,8 @@ var componentTypes = {
 
 class BundledSGDVisualization {
 	draw (options, targetNode) {
-		// TEMP force to be protein viewer
-		var VizComponent = componentTypes.proteinViewer;
-		React.render(<VizComponent foo="bar"/>, targetNode);
+		var VizComponent = componentTypes[options.type];
+		React.render(<VizComponent data={options.data} locusData={options.locusData} />, targetNode);
 	}
 }
 

@@ -47,8 +47,15 @@
 				}
 			];
 
-			var options = {
+			var locusData = {
+				start: 0,
+				end: 650
+			};
 
+			var options = {
+				data: exampleData,
+				locusData: locusData,
+				type: "proteinViewer"
 			};
 			lib.draw(options, document.getElementById("target"));
 		</script>
