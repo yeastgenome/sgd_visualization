@@ -5,10 +5,13 @@ var _ = require("underscore");
 
 var CalcWidthOnResize = require("../mixins/calc_width_on_resize.jsx");
 var StandaloneAxis = require("./standalone_axis.jsx");
+var GenerateTrapezoidPath = require("./generate_trapezoid_path.jsx");
 
-var PX_PER_DOMAIN = 27;
 var DOMAIN_NODE_HEIGHT = 15;
 var DOMAIN_TEXT_FONT_SIZE = 14;
+var LOCUS_HEIGHT = 40;
+var PX_PER_DOMAIN = 27;
+var LOCUS_FILL = "#696599";
 
 var ProteinViewer = React.createClass({
 	mixins: [CalcWidthOnResize],
@@ -45,7 +48,7 @@ var ProteinViewer = React.createClass({
 	_renderLabels: function () {
 		var sources = this._getSources();
 
-		var y = 0;
+		var y = this.props.locusData ? 50 : 0;
 		var node;
 		var labelNodes = sources.map( (d, i) => {
 			node = (
@@ -84,31 +87,49 @@ var ProteinViewer = React.createClass({
 	_renderSVG: function () {
 		var xScale = this._getXScale();
 		var yScale = this._getYScale();
+		var colorScale = this._getColorScale();
 		var domainNodeY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT;
 		var domainNodeLineY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT + DOMAIN_NODE_HEIGHT / 2;
 
 		var transform, length, strokeColor;
-		// TEMP hardcoded stroke color
-		strokeColor = "black";
 		var domainNodes = this.props.data.map( (d, i) => {
 			transform = `translate(${xScale(d.start)}, ${yScale(i)})`;
 			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
+			strokeColor = colorScale(d.source.name);
 			var _onMouseOver = (e) => { this._onDomainMouseOver(e, d); };
 			return (
-				<g key={"proteinDomain" + i} transform={transform}>
+				<g 	onMouseOver={_onMouseOver} key={"proteinDomain" + i} transform={transform}>
 					<text x="5" y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE}>{d.domain.name}</text>
 					<line strokeWidth="2" stroke={strokeColor} x1="0" x2={length} y1={domainNodeLineY} y2={domainNodeLineY}/>
 					<line strokeWidth="2" stroke={strokeColor} x1="0" x2="0" y1={domainNodeY} y2={PX_PER_DOMAIN}/>
 					<line strokeWidth="2" stroke={strokeColor} x1={length} x2={length} y1={domainNodeY} y2={PX_PER_DOMAIN}/>
-					<rect onMouseOver={_onMouseOver} x="0" y="0" width={length} height={PX_PER_DOMAIN} fill="none"/>
+					<rect x="0" y="0" width={length} height={PX_PER_DOMAIN} fill="none"/>
 				</g>
 			);
 		});
 
 		return (
 			<svg width={this.state.DOMWidth} height={400}>
+				{this._getLocusNode()}
 				{domainNodes}
 			</svg>
+		);
+	},
+
+	_getLocusNode: function () {
+		if (!this.props.locusData) return null;
+		var width = 300; //TEMP
+		var pathString = GenerateTrapezoidPath(width);
+		var lineY = LOCUS_HEIGHT - 13;
+		var endX = this._getXScale().range()[1] - 2;
+		return (
+			<g transform="translate(0, 7)">
+				<line x1="0" x2={endX} y1={lineY} y2={lineY} stroke="black" strokeDasharray="5 3" />
+				<path d={pathString} fill={LOCUS_FILL}/>
+				<text x={width/2} y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE} fill="white" anchor="middle">
+					{this.props.locusData.name}
+				</text>
+			</g>
 		);
 	},
 
@@ -139,9 +160,17 @@ var ProteinViewer = React.createClass({
 
 	_getYScale: function () {
 		var _length = this.props.data.length;
+		var _startY = this.props.locusData ? LOCUS_HEIGHT : 0;
 		return d3.scale.linear()
 			.domain([0, _length])
-			.range([0, _length * PX_PER_DOMAIN]);
+			.range([_startY,  _length * PX_PER_DOMAIN + _startY]);
+	},
+
+	_getColorScale: function () {
+		var sources = this._getSources()
+			.map( d => { return d.name; });
+		return d3.scale.category10()
+			.domain(sources);
 	}
 });
 
