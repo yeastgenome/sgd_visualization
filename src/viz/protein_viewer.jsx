@@ -4,9 +4,10 @@ var d3 = require("d3");
 var React = require("react");
 var _ = require("underscore");
 
+var AssignTracksToDomains = require("./assign_tracks_to_domains");
 var CalcWidthOnResize = require("../mixins/calc_width_on_resize.jsx");
 var FlexibleTooltip = require("./flexible_tooltip.jsx");
-var GenerateTrapezoidPath = require("./generate_trapezoid_path.jsx");
+var GenerateTrapezoidPath = require("./generate_trapezoid_path");
 var StandaloneAxis = require("./standalone_axis.jsx");
 
 var DOMAIN_NODE_HEIGHT = 10;
@@ -97,7 +98,8 @@ var ProteinViewer = React.createClass({
 		var domainNodeLineY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT + DOMAIN_NODE_HEIGHT / 2;
 
 		var transform, length, strokeColor;
-		var domainNodes = this.props.data.map( (d, i) => {
+		var trackedDomains = AssignTracksToDomains(this.props.data);
+		var domainNodes = trackedDomains.map( (d, i) => {
 			transform = `translate(${xScale(d.start)}, ${yScale(i)})`;
 			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
 			strokeColor = colorScale(d.source.name);
@@ -178,7 +180,7 @@ var ProteinViewer = React.createClass({
 		var locusData = this.props.locusData;
 		return d3.scale.linear()
 			.domain([locusData.start, locusData.end])
-			.range([0, this.state.DOMWidth]);
+			.range([-2, this.state.DOMWidth - 2]);
 	},
 
 	_getYScale: function () {

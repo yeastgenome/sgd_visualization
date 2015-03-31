@@ -42,7 +42,7 @@ module.exports = function(grunt) {
                 livereload: true
             },
             jsx: {
-                files: ["src/**/*.jsx", (EXAMPLE_PATH + "**/*.html")],
+                files: ["src/**/*.jsx", "src/**/*.js", (EXAMPLE_PATH + "**/*.html")],
                 tasks: ["browserify:dev"]
             }
         },
