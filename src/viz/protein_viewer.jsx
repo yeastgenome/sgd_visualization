@@ -6,7 +6,9 @@ var _ = require("underscore");
 var CalcWidthOnResize = require("../mixins/calc_width_on_resize.jsx");
 var StandaloneAxis = require("./standalone_axis.jsx");
 
-var PX_PER_DOMAIN = 10;
+var PX_PER_DOMAIN = 27;
+var DOMAIN_NODE_HEIGHT = 15;
+var DOMAIN_TEXT_FONT_SIZE = 14;
 
 var ProteinViewer = React.createClass({
 	mixins: [CalcWidthOnResize],
@@ -66,15 +68,15 @@ var ProteinViewer = React.createClass({
 
 		return (
 			<div className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: 122 }}>
-				<div ref="vizNode" style={{ width: "80%", height: 122, left: "20%", position: "absolute", top: 0, border: "1px solid #ddd"}}>
-					{this._renderSVG()}
-				</div>
 				<StandaloneAxis
 					domain={domain}
 					leftRatio={0.20}
 					gridTicks={true}
 					orientation="bottom"
 				/>
+				<div ref="vizNode" style={{ width: "80%", height: 122, left: "20%", position: "absolute", top: 0, border: "1px solid #ddd"}}>
+					{this._renderSVG()}
+				</div>
 			</div>
 		);
 	},
@@ -82,18 +84,23 @@ var ProteinViewer = React.createClass({
 	_renderSVG: function () {
 		var xScale = this._getXScale();
 		var yScale = this._getYScale();
+		var domainNodeY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT;
+		var domainNodeLineY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT + DOMAIN_NODE_HEIGHT / 2;
 
 		var transform, length, strokeColor;
-		// TEMP
+		// TEMP hardcoded stroke color
 		strokeColor = "black";
 		var domainNodes = this.props.data.map( (d, i) => {
 			transform = `translate(${xScale(d.start)}, ${yScale(i)})`;
-			var length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
+			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
+			var _onMouseOver = (e) => { this._onDomainMouseOver(e, d); };
 			return (
 				<g key={"proteinDomain" + i} transform={transform}>
-					<line stroke={strokeColor} x1="0" x2={length} y1={PX_PER_DOMAIN / 2} y2={PX_PER_DOMAIN / 2}/>
-					<line stroke={strokeColor} x1="0" x2="0" y1="0" y2={PX_PER_DOMAIN}/>
-					<line stroke={strokeColor} x1={length} x2={length} y1="0" y2={PX_PER_DOMAIN}/>
+					<text x="5" y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE}>{d.domain.name}</text>
+					<line strokeWidth="2" stroke={strokeColor} x1="0" x2={length} y1={domainNodeLineY} y2={domainNodeLineY}/>
+					<line strokeWidth="2" stroke={strokeColor} x1="0" x2="0" y1={domainNodeY} y2={PX_PER_DOMAIN}/>
+					<line strokeWidth="2" stroke={strokeColor} x1={length} x2={length} y1={domainNodeY} y2={PX_PER_DOMAIN}/>
+					<rect onMouseOver={_onMouseOver} x="0" y="0" width={length} height={PX_PER_DOMAIN} fill="none"/>
 				</g>
 			);
 		});
@@ -103,6 +110,10 @@ var ProteinViewer = React.createClass({
 				{domainNodes}
 			</svg>
 		);
+	},
+
+	_onDomainMouseOver: function (e, d) {
+		console.log(d)
 	},
 
 	_getSources: function () {
