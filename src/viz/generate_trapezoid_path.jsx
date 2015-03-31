@@ -30,11 +30,11 @@ var generateTrapezoidPath = function (width, orientation) {
 		];
 	}
 
-		var areaFn = d3.svg.line()
-			.x( d => { return d.x; })
-			.y( d => { return d.y; });
+	var areaFn = d3.svg.line()
+		.x(function (d) { return d.x; })
+		.y(function (d) { return d.y; });
 
-		return areaFn(points) + "Z";
+	return areaFn(points) + "Z";
 };
 
 module.exports = generateTrapezoidPath;
