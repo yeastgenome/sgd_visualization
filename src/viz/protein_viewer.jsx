@@ -132,7 +132,7 @@ var ProteinViewer = React.createClass({
 		var endX = this._getXScale().range()[1] - 2;
 		return (
 			<g transform="translate(0, 7)">
-				<line x1="0" x2={endX} y1={lineY} y2={lineY} stroke="black" strokeDasharray="5 3" />
+				<line x1="0" x2={endX} y1={lineY} y2={lineY} stroke="#ddd" strokeDasharray="5 3" />
 				<path d={pathString} fill={LOCUS_FILL}/>
 				<text x={width/2} y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE} fill="white" anchor="middle">
 					{this.props.locusData.name}
