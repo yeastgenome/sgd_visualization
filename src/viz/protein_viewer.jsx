@@ -73,7 +73,6 @@ var ProteinViewer = React.createClass({
 	_renderViz: function () {
 		var domain = this._getXScale().domain();
 		var height = this._getHeight();
-		console.log(height)
 
 		return (
 			<div className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: height }}>
@@ -99,7 +98,7 @@ var ProteinViewer = React.createClass({
 		var domainNodeLineY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT + DOMAIN_NODE_HEIGHT / 2;
 
 		var transform, length, strokeColor, y;
-		var trackedDomains = AssignTracksToDomains(this.props.data);
+		var trackedDomains = this._getTrackedDomains();
 		var domainNodes = trackedDomains.map( (d, i) => {
 			y = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
 			transform = `translate(${xScale(d.start)}, ${y})`;
@@ -149,7 +148,7 @@ var ProteinViewer = React.createClass({
 		var xScale = this._getXScale();
 		var yScale = this._getYScale();
 		var left = xScale(d.start);
-		var top = yScale(d.source.id);
+		var top = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
 		return (<FlexibleTooltip
 			visible={true}
 			left={left}
@@ -223,7 +222,7 @@ var ProteinViewer = React.createClass({
 	},
 
 	_getHeight: function () {
-		return d3.max(this._getYScale().range());
+		return d3.max(this._getYScale().range()) + PX_PER_DOMAIN / 2;
 	}
 });
 
