@@ -207,9 +207,9 @@ var ProteinViewer = React.createClass({
 			range.push(sourceY);
 			sourceY += (maxTracks + 1) * PX_PER_DOMAIN;
 		});
-		range.push(sourceY)
+		range.push(sourceY);
 
-		return d3.scale.linear()
+		return d3.scale.ordinal()
 			.domain(domain)
 			.range(range);
 	},
