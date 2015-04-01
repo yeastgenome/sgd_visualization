@@ -51,16 +51,16 @@ var ProteinViewer = React.createClass({
 
 	_renderLabels: function () {
 		var sources = this._getSources();
+		var yScale = this._getYScale();
 
-		var y = this.props.locusData ? 50 : 0;
+		var trackedDomains = this._getTrackedDomains();
 		var node;
 		var labelNodes = sources.map( (d, i) => {
 			node = (
-				<div key={"proteinViewerLabel" + i} style={{ position: "absolute", top: y }}>
+				<div key={"proteinViewerLabel" + i} style={{ position: "absolute", top: yScale(d.id) }}>
 					<label>{d.name}</label>
 				</div>
 			);
-			y += d.numberDomains * PX_PER_DOMAIN;
 			return node;
 		});
 		return (
@@ -73,6 +73,7 @@ var ProteinViewer = React.createClass({
 	_renderViz: function () {
 		var domain = this._getXScale().domain();
 		var height = this._getHeight();
+		console.log(height)
 
 		return (
 			<div className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: height }}>
@@ -97,10 +98,11 @@ var ProteinViewer = React.createClass({
 		var domainNodeY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT;
 		var domainNodeLineY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT + DOMAIN_NODE_HEIGHT / 2;
 
-		var transform, length, strokeColor;
+		var transform, length, strokeColor, y;
 		var trackedDomains = AssignTracksToDomains(this.props.data);
 		var domainNodes = trackedDomains.map( (d, i) => {
-			transform = `translate(${xScale(d.start)}, ${yScale(i)})`;
+			y = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
+			transform = `translate(${xScale(d.start)}, ${y})`;
 			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
 			strokeColor = colorScale(d.source.name);
 			var _onMouseOver = (e) => { this._onDomainMouseOver(e, d); };
@@ -147,7 +149,7 @@ var ProteinViewer = React.createClass({
 		var xScale = this._getXScale();
 		var yScale = this._getYScale();
 		var left = xScale(d.start);
-		var top = yScale(this.props.data.indexOf(d));
+		var top = yScale(d.source.id);
 		return (<FlexibleTooltip
 			visible={true}
 			left={left}
@@ -176,6 +178,14 @@ var ProteinViewer = React.createClass({
 		return _dataAsArray;
 	},
 
+	_getTrackedDomains: function () {
+		// cache to this._trackedDomains
+		if (!this._trackedDomains) {
+			this._trackedDomains = AssignTracksToDomains(this.props.data);
+		}
+		return this._trackedDomains;
+	},
+
 	_getXScale: function () {
 		var locusData = this.props.locusData;
 		return d3.scale.linear()
@@ -184,11 +194,25 @@ var ProteinViewer = React.createClass({
 	},
 
 	_getYScale: function () {
-		var _length = this.props.data.length;
-		var _startY = this.props.locusData ? LOCUS_HEIGHT : 0;
+		var startY = this.props.locusData ? LOCUS_HEIGHT : 0;
+		var domain = [];
+		var range = [];
+		var sources = this._getSources();
+		var trackedDomains = this._getTrackedDomains();
+		var sourceY = startY;
+		var groupedDomains, maxTracks;
+		sources.forEach( d => {
+			groupedDomains = _.filter(trackedDomains, _d => { return d.id === _d.source.id; });
+			maxTracks = d3.max(groupedDomains, _d => { return _d._track; });
+			domain.push(d.id);
+			range.push(sourceY);
+			sourceY += (maxTracks + 1) * PX_PER_DOMAIN;
+		});
+		range.push(sourceY)
+
 		return d3.scale.linear()
-			.domain([0, _length])
-			.range([_startY,  _length * PX_PER_DOMAIN + _startY]);
+			.domain(domain)
+			.range(range);
 	},
 
 	_getColorScale: function () {
@@ -199,7 +223,7 @@ var ProteinViewer = React.createClass({
 	},
 
 	_getHeight: function () {
-		return this._getYScale().range()[1] + DOMAIN_TEXT_FONT_SIZE;
+		return d3.max(this._getYScale().range());
 	}
 });
 

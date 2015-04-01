@@ -110,7 +110,7 @@ var StandaloneAxis = React.createClass({
 		var _xTranslate = (this.getDOMNode().getBoundingClientRect().width * this.props.leftRatio)
 		var _yTranslate = (this.props.orientation === "top") ? 30 : 0;
 		if (this.props.gridTicks && this.props.orientation === "bottom") {
-			_yTranslate += this.getDOMNode().getBoundingClientRect().height - 27;
+			_yTranslate += this.getDOMNode().getBoundingClientRect().height - 24;
 		}
 		var _translate = `translate(${_xTranslate}, ${_yTranslate})`;
 		var axis = svg.selectAll("g.axis").data([null]);

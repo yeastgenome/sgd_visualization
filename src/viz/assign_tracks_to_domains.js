@@ -11,7 +11,7 @@ var AssignTracksToDomains = function (domains) {
 	var gDomains;
 	for (var key in groupedDomains) {
 		gDomains = groupedDomains[key];
-		gDomains = gDomains.map( function (d) {
+		gDomains = gDomains.map( function (d, i) {
 			d._track = 0;
 			return d;
 		});
