@@ -14,6 +14,7 @@ var DOMAIN_NODE_HEIGHT = 10;
 var DOMAIN_TEXT_FONT_SIZE = 14;
 var LOCUS_HEIGHT = 40;
 var PX_PER_DOMAIN = 24;
+var PX_PER_CHAR = 7;
 var LOCUS_FILL = "#696599";
 
 var ProteinViewer = React.createClass({
@@ -75,7 +76,7 @@ var ProteinViewer = React.createClass({
 		var height = this._getHeight();
 
 		return (
-			<div className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: height }}>
+			<div className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: height + 24 }}>
 				<StandaloneAxis
 					domain={domain}
 					leftRatio={0.20}
@@ -97,7 +98,7 @@ var ProteinViewer = React.createClass({
 		var domainNodeY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT;
 		var domainNodeLineY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT + DOMAIN_NODE_HEIGHT / 2;
 
-		var transform, length, strokeColor, y;
+		var transform, length, strokeColor, text, textCanFit, textNode, y;
 		var trackedDomains = this._getTrackedDomains();
 		var domainNodes = trackedDomains.map( (d, i) => {
 			y = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
@@ -105,9 +106,16 @@ var ProteinViewer = React.createClass({
 			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
 			strokeColor = colorScale(d.source.name);
 			var _onMouseOver = (e) => { this._onDomainMouseOver(e, d); };
+			text = d.domain.name;
+			textCanFit = text.length * PX_PER_CHAR < length;
+			textNode = null;
+			if (textCanFit) {
+				textNode = <text x="3" y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE}>{text}</text>;
+			}
+
 			return (
 				<g 	onMouseOver={_onMouseOver} key={"proteinDomain" + i} transform={transform}>
-					<text x="3" y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE}>{d.domain.name}</text>
+					{textNode}
 					<line strokeWidth="2" stroke={strokeColor} x1="0" x2={length} y1={domainNodeLineY} y2={domainNodeLineY}/>
 					<line strokeWidth="2" stroke={strokeColor} x1="0" x2="0" y1={domainNodeY} y2={PX_PER_DOMAIN}/>
 					<line strokeWidth="2" stroke={strokeColor} x1={length} x2={length} y1={domainNodeY} y2={PX_PER_DOMAIN}/>
@@ -130,6 +138,7 @@ var ProteinViewer = React.createClass({
 		var pathString = GenerateTrapezoidPath(width);
 		var lineY = LOCUS_HEIGHT - 13;
 		var endX = this._getXScale().range()[1] - 2;
+
 		return (
 			<g transform="translate(0, 7)">
 				<line x1="0" x2={endX} y1={lineY} y2={lineY} stroke="#ddd" strokeDasharray="5 3" />

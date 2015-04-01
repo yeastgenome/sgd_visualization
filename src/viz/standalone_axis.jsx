@@ -45,7 +45,9 @@ var StandaloneAxis = React.createClass({
 
 		var _height = this.props.height || (this.props.gridTicks ? "100%" : 32);
 		var _klass = `standalone-axis ${this.props.gridTicks ? "grid-ticks" : ""}`;
-		return (<div className={_klass} style={{ position: "relative" }}>
+		var _containerStyle = { position: "relative" };
+		if (this.props.gridTicks) _containerStyle.height = "100%";
+		return (<div className={_klass} style={_containerStyle}>
 			{labelNode}
 			<svg ref="svg" style={{ width: "100%", height: _height }}></svg>
 		</div>);
