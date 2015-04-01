@@ -57,14 +57,14 @@ var ProteinViewer = React.createClass({
 		var node;
 		var labelNodes = sources.map( (d, i) => {
 			node = (
-				<div key={"proteinViewerLabel" + i} style={{ position: "absolute", top: yScale(d.id) }}>
+				<div key={"proteinViewerLabel" + i} style={{ position: "absolute", top: yScale(d.id) + 3, right: "1rem" }}>
 					<label>{d.name}</label>
 				</div>
 			);
 			return node;
 		});
 		return (
-			<div className="protein-viewer-label-container" style={{ position: "relative" }}>
+			<div className="protein-viewer-label-container" style={{ position: "relative", width: "20%" }}>
 				{labelNodes}
 			</div>
 		);
