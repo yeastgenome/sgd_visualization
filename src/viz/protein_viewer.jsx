@@ -158,11 +158,18 @@ var ProteinViewer = React.createClass({
 		var yScale = this._getYScale();
 		var left = xScale(d.start);
 		var top = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
+		var _coordString = `${d.start}..${d.end}`;
+		var tooltipData = {
+			Coords: _coordString,
+		};
+		if (d.domain.description) tooltipData.Description = d.domain.description;
 		return (<FlexibleTooltip
 			visible={true}
 			left={left}
 			top={top}
-			text="Hola Mundo"
+			title={d.domain.name}
+			href={d.domain.href}
+			data={tooltipData}
 		/>);
 	},
 
