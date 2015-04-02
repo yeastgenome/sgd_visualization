@@ -3,7 +3,7 @@ var React = require("react");
 // jsx
 require("node-jsx").install({ harmony: true });
 
-var ProteinViewer = require("../src/sgd_visualization.jsx").proteinViewer;
+var ProteinViewer = require("../src/sgd_visualization.jsx").ProteinViewer;
 
 describe("ProteinViewer", function(){
 	it("should render to a viz with classes 'sgd-viz' and 'protein-viewer'", function(){

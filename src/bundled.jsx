@@ -6,7 +6,7 @@ var SGDVisualization = require("./sgd_visualization.jsx");
 
 // define bundled react components
 var componentTypes = {
-	proteinViewer: SGDVisualization.proteinViewer
+	proteinViewer: SGDVisualization.ProteinViewer
 };
 
 class BundledSGDVisualization {
