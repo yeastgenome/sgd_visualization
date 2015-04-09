@@ -1,5 +1,5 @@
 {
-  "name": "SGDVisualization",
+  "name": "sgd_visualization",
   "version": "0.0.1",
   "main": "src/sgd_visualization.jsx",
   "repository": "https://github.com/yeastgenome/sgd_visualization",
