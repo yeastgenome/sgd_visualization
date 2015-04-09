@@ -1,5 +1,4 @@
 "use strict";
-var BUILD_PATH = "dist/";
 var EXAMPLE_PATH = "examples/";
 var SRC_PATH = "src/sgd_visualization.jsx";
 
@@ -14,15 +13,6 @@ module.exports = function(grunt) {
                 options: {
                     browserifyOptions: {
                         debug: true
-                    }
-                }
-            },
-            build: {
-                dest: BUILD_PATH + "sgd_visualization.js",
-                src: SRC_PATH,
-                options: {
-                    browserifyOptions: {
-                        debug: false
                     }
                 }
             }
@@ -46,7 +36,6 @@ module.exports = function(grunt) {
                 tasks: ["browserify:dev"]
             }
         },
-
     });
 
     // load vendor tasks
@@ -55,6 +44,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-watch");
     
     // define custom tasks
-    grunt.registerTask("build", ["browserify:build"]);
     grunt.registerTask("default", ["browserify:dev", "connect","watch"]);
 };

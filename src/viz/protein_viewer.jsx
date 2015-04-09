@@ -22,7 +22,8 @@ var ProteinViewer = React.createClass({
 
 	propTypes: {
 		data: React.PropTypes.array.isRequired,
-		locusData: React.PropTypes.object.isRequired
+		locusData: React.PropTypes.object.isRequired,
+		colorScale: React.PropTypes.func // optional d3-ish scale
 	},
 
 	getInitialState: function () {
@@ -231,6 +232,7 @@ var ProteinViewer = React.createClass({
 	},
 
 	_getColorScale: function () {
+		if (this.props.colorScale) return this.props.colorScale;
 		var sources = this._getSources()
 			.map( d => { return d.name; });
 		return d3.scale.category10()

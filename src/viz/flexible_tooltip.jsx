@@ -76,9 +76,9 @@ var FlexibleTooltip = React.createClass({
 		var dataNode = null;
 		if (this.props.data) {
 			var _keys = _.keys(this.props.data);
-			var _innerNodes = _.reduce(_keys, (memo, k) => {
-				memo.push(<dt>{k}</dt>);
-				memo.push(<dd>{this.props.data[k]}</dd>);
+			var _innerNodes = _.reduce(_keys, (memo, k, i) => {
+				memo.push(<dt key={"flexToolTipT" + i}>{k}</dt>);
+				memo.push(<dd key={"flexToolTipD" + i}>{this.props.data[k]}</dd>);
 				return memo;
 			}, []);
 			dataNode = <dl className="key-value">{_innerNodes}</dl>;
