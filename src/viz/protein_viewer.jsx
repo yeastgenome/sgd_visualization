@@ -13,6 +13,7 @@ var StandaloneAxis = require("./standalone_axis.jsx");
 var DOMAIN_NODE_HEIGHT = 10;
 var DOMAIN_TEXT_FONT_SIZE = 14;
 var LOCUS_HEIGHT = 40;
+var MOUSE_LEAVE_DELAY = 250;
 var PX_PER_DOMAIN = 24;
 var PX_PER_CHAR = 7;
 var LOCUS_FILL = "#696599";
@@ -77,7 +78,7 @@ var ProteinViewer = React.createClass({
 		var height = this._getHeight();
 
 		return (
-			<div className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: height + 24 }}>
+			<div onMouseLeave={this._onDomainMouseLeave} className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: height + 24 }}>
 				<StandaloneAxis
 					domain={domain}
 					leftRatio={0.20}
@@ -113,14 +114,15 @@ var ProteinViewer = React.createClass({
 			if (textCanFit) {
 				textNode = <text x="3" y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE}>{text}</text>;
 			}
+			var backFill = (d.domain.id === this.state.mouseOverDomainId) ? "gray" : "none";
 
 			return (
-				<g 	onMouseOver={_onMouseOver} key={"proteinDomain" + i} transform={transform}>
+				<g onMouseOver={_onMouseOver} key={"proteinDomain" + i} transform={transform}>
+					<rect x="0" y="0" width={length} height={PX_PER_DOMAIN} fill={backFill} opacity={0.10}/>
 					{textNode}
 					<line strokeWidth="2" stroke={strokeColor} x1="0" x2={length} y1={domainNodeLineY} y2={domainNodeLineY}/>
 					<line strokeWidth="2" stroke={strokeColor} x1="0" x2="0" y1={domainNodeY} y2={PX_PER_DOMAIN}/>
 					<line strokeWidth="2" stroke={strokeColor} x1={length} x2={length} y1={domainNodeY} y2={PX_PER_DOMAIN}/>
-					<rect x="0" y="0" width={length} height={PX_PER_DOMAIN} fill="none"/>
 				</g>
 			);
 		});
@@ -158,7 +160,7 @@ var ProteinViewer = React.createClass({
 		var xScale = this._getXScale();
 		var yScale = this._getYScale();
 		var left = xScale(d.start);
-		var top = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
+		var top = yScale(d.source.id) + (d._track + 1) * PX_PER_DOMAIN;
 		var _coordString = `${d.start}..${d.end}`;
 		var tooltipData = {
 			Coords: _coordString,
@@ -175,9 +177,16 @@ var ProteinViewer = React.createClass({
 	},
 
 	_onDomainMouseOver: function (e, d) {
-		this.setState({
-			mouseOverDomainId: d.domain.id
-		});
+		if (this._mouseLeaveTimeout) clearTimeout(this._mouseLeaveTimeout)
+		this.setState({ mouseOverDomainId: d.domain.id });
+	},
+
+	_onDomainMouseLeave: function () {
+		this._mouseLeaveTimeout = setTimeout( () => {
+			if (this.isMounted()) {
+				this.setState({ mouseOverDomainId: null });
+			}
+		}, MOUSE_LEAVE_DELAY);
 	},
 
 	_getSources: function () {
