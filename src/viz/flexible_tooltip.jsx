@@ -84,7 +84,12 @@ var FlexibleTooltip = React.createClass({
 			dataNode = <dl className="key-value">{_innerNodes}</dl>;
 		}
 
-		return <div>{titleNode}<hr />{dataNode}</div>;
+		return (
+			<div>
+				{titleNode}
+				{dataNode}
+			</div>
+		);
 	},
 
 	_getTextNode: function () {

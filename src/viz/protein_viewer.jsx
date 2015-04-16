@@ -107,7 +107,7 @@ var ProteinViewer = React.createClass({
 			transform = `translate(${xScale(d.start)}, ${y})`;
 			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
 			strokeColor = colorScale(d.source.name);
-			var _onMouseOver = (e) => { this._onDomainMouseOver(e, d); };
+			var _onMouseOver = e => { this._onDomainMouseOver(e, d); };
 			text = d.domain.name;
 			textCanFit = text.length * PX_PER_CHAR < length;
 			textNode = null;

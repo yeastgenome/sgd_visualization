@@ -29,6 +29,27 @@
 				}
 			}
 
+			.flexible-tooltip dt {
+				display: inline-block;
+				float: left;
+				width: 160px;
+				text-align: left;
+				clear: left;
+			}
+
+			.flexible-tooltip dt:after {
+				content: ':';
+			}
+
+			.flexible-tooltip dd {
+				display: block;
+				margin-left: 170px;
+				word-wrap: break-word;
+				overflow-wrap: break-word;
+			}
+
+
+
 			.flexible-tooltip-text {
 				text-align: center;
 				margin: 0.5em;
@@ -44,14 +65,15 @@
 				border-left: 7px solid transparent;
 				border-right: 7px solid transparent;
 				border-top: 30px solid #e7e7e7;
-				&.complex {
-					top: -30px;
-					left: 280px;
-					border-left: 7px solid transparent;
-					border-right: 7px solid transparent;
-					border-bottom: 30px solid #e7e7e7;
-					border-top: none;
-				}
+			}
+
+			.flexible-tooltip-arrow.complex {
+				top: -30px;
+				left: 280px;
+				border-left: 7px solid transparent;
+				border-right: 7px solid transparent;
+				border-bottom: 30px solid #e7e7e7;
+				border-top: none;
 			}
 
 		</style>
