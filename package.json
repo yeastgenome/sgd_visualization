@@ -12,7 +12,8 @@
     "datatables": "./bower_components/datatables/media/js/jquery.dataTables.js"
   },
   "dependencies": {
-    "react": "^0.12.2",
+    "react": "^0.13.3",
+    "react-style": "^0.5.5",
     "d3": "^3.4.11",
     "underscore": "^1.8.3"
   },
