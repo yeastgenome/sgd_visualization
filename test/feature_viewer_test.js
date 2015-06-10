@@ -4,40 +4,15 @@ var React = require("react");
 require("node-jsx").install({ harmony: true });
 
 var FeatureViewer = require("../src/sgd_visualization.jsx").FeatureViewer;
+var FeatureViewerStore = require("../src/sgd_visualization/feature_viewer/feature_viewer_store.jsx");
 
 describe("FeatureViewer", function(){
 	it("should be constructed with lots of 'neighbor' data", function() {
-		var url = "http://www.yeastgenome.org/backend/contig/257964/sequence_details";
-		// TODO fetch from API Chromosome VI data
-		// 
-		var _data = [
-			{
-				chrom: "chriii",
-				chromStart: 1000,
-				chromEnd: 1500,
-				strand: "+"
-			},
-			{
-				chrom: "chriii",
-				chromStart: 1200,
-				chromEnd: 1550,
-				strand: "+"
-			},
-			{
-				chrom: "chriii",
-				chromStart: 1600,
-				chromEnd: 1450,
-				strand: "-"
-			}
-		];
-		var _position = {
-			chrom: "chriii",
-			chromStart: 1000,
-			chromEnd: 2000
-		};
+		var _store = new FeatureViewerStore();
+		_store.setFixtureData();
+
 		var element = React.createElement(FeatureViewer, {
-			data: _data,
-			position: _position
+			store: _store
 		});
 		var markup = React.renderToStaticMarkup(element);
 		assert.equal(markup.match('class="feature-viewer') !== null, true);

@@ -17,8 +17,7 @@ var styles = StyleSheet.create({
 
 var FeatureViewer = React.createClass({
 	propTypes: {
-		data: React.PropTypes.array.isRequired,
-		position: React.PropTypes.object.isRequired
+		store: React.PropTypes.object.isRequired
 	},
 
 	getInitialState: function () {
@@ -80,7 +79,7 @@ var FeatureViewer = React.createClass({
 	},
 
 	_getScale: function () {
-		var position = this.props.position
+		var position = this.props.store.getPosition();
 		return d3.scale.linear()
 			.domain([position.chromStart, position.chromEnd])
 			.range([0, this.state.DOMWidth]);
