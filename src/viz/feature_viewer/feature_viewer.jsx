@@ -94,6 +94,7 @@ var FeatureViewer = React.createClass({
 		});
 
 		var startPos, endPos, startX, endX, y;
+		var _startPos, _endPos, _startX, _width;
 		data.forEach( d => {
 			startPos = d.strand === "+" ? d.chromStart : d.chromEnd;
 			endPos = d.strand === "+" ? d.chromEnd : d.chromStart;
@@ -104,6 +105,15 @@ var FeatureViewer = React.createClass({
 			ctx.moveTo(startX, y);
 			ctx.lineTo(endX, y);
 			ctx.stroke();
+
+			// draw exons
+			d.blockSizes.forEach( (_d, _i) => {
+				_startPos = startPos + d.blockStarts[_i];
+				_endPos = _startPos + _d;
+				_startX = scale(_startPos);
+				_width = scale(_endPos) - _startX;
+				ctx.fillRect(_startX, y - 15, _width, 30);
+			});
 		});
 	},
 
