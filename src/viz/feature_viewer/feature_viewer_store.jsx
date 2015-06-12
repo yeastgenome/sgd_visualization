@@ -45,4 +45,9 @@ module.exports = class FeatureViewerStore {
 			chrom: "chriii"
 		};
 	}
+
+	translate (delta) {
+		position.chromStart = position.chromStart + delta;
+		position.chromEnd = position.chromEnd + delta;
+	}
 };

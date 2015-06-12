@@ -11,6 +11,14 @@ var HEIGHT = 300;
 var styles = StyleSheet.create({
 	frame: {
 		border: "1px solid #efefef",
+		height: HEIGHT,
+		overflow: "scroll",
+		position: "relative"
+	},
+
+	scroller: {
+		position: "absolute",
+		width: 100000,
 		height: HEIGHT
 	}
 });
@@ -22,7 +30,8 @@ var FeatureViewer = React.createClass({
 
 	getInitialState: function () {
 		return {
-			DOMWidth: 400
+			DOMWidth: 400,
+			offsetLeft: 0
 		};
 	},
 
@@ -37,8 +46,9 @@ var FeatureViewer = React.createClass({
 					<li><a href="#">Left</a></li>
 					<li><a href="#">Right</a></li>
 				</ul>
-				<div styles={[styles.frame]}>
-					<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} />
+				<div ref="container" styles={[styles.frame]}>
+					<div ref="scroller" styles={[styles.scroller]} />
+					<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
 				</div>
 			</div>
 		);
@@ -47,6 +57,7 @@ var FeatureViewer = React.createClass({
 	componentDidMount: function () {
 		this._calculateWidth();
 		this._drawCanvas();
+		this._setupScroll();
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
@@ -83,6 +94,20 @@ var FeatureViewer = React.createClass({
 		return d3.scale.linear()
 			.domain([position.chromStart, position.chromEnd])
 			.range([0, this.state.DOMWidth]);
+	},
+
+	_setupScroll: function () {
+		this.refs.container.getDOMNode().addEventListener("scroll", this._onScroll);
+	},
+
+	_onScroll: function (e) {
+		// var oldLeft = this.state.offsetLeft;
+		// var newLeft = this.refs.container.getDOMNode().scrollLeft;
+		// this.setState({ offsetLeft: newLeft });
+		// var oldPos
+		// var positionDelta = this._getScale().invert
+		this.props.store.translate(10);
+		this.forceUpdate()
 	}
 });
 
