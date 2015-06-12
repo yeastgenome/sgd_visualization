@@ -11,35 +11,8 @@
 		<script src="../assets/bundled_sgd_visualization.js"></script>
 		<script type="text/javascript">
 		 	var lib = new SGDVisualization();
-
- 			var _data = [
-				{
-					chrom: "chriii",
-					chromStart: 1000,
-					chromEnd: 1500,
-					strand: "+"
-				},
-				{
-					chrom: "chriii",
-					chromStart: 1200,
-					chromEnd: 1550,
-					strand: "+"
-				},
-				{
-					chrom: "chriii",
-					chromStart: 1600,
-					chromEnd: 1450,
-					strand: "-"
-				}
-			];
-			var _position = {
-				chrom: "chriii",
-				chromStart: 1000,
-				chromEnd: 2000
-			};
 			var options = {
-				data: _data,
-				position: _position,
+				fixtures: true,
 				type: "featureViewer"
 			};
 			lib.draw(options, document.getElementById("target"));

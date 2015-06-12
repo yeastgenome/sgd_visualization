@@ -15,9 +15,8 @@ class BundledSGDVisualization {
 
 	draw (options, targetNode) {
 		var store = new FeatureViewerStore();
-		if (options.type === "featureViewer") {
-			store.setData(options.data);
-			store.setPosition(options.position);
+		if (options.type === "featureViewer" && options.fixtures) {
+			store.setFixtureData();
 		}
 
 		var VizComponent = componentTypes[options.type];

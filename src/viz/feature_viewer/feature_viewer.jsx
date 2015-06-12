@@ -74,6 +74,7 @@ var FeatureViewer = React.createClass({
 	_drawCanvas: function () {
 		var scale = this._getScale();
 		var ticks = scale.ticks();
+		var data = this.props.store.getData();
 
 		var canvas = this.refs.canvas.getDOMNode();
 		var ctx = canvas.getContext("2d");
@@ -88,9 +89,21 @@ var FeatureViewer = React.createClass({
 			ctx.lineTo(x, HEIGHT);
 			ctx.stroke();
 
-			// tick
+			// tick label
 			ctx.fillText(d.toString(), x, HEIGHT - 14);
+		});
 
+		var startPos, endPos, startX, endX, y;
+		data.forEach( d => {
+			startPos = d.strand === "+" ? d.chromStart : d.chromEnd;
+			endPos = d.strand === "+" ? d.chromEnd : d.chromStart;
+			startX = scale(startPos);
+			endX = scale(endPos);
+			y = d.strand === "+" ? 50 : 100;
+			ctx.beginPath();
+			ctx.moveTo(startX, y);
+			ctx.lineTo(endX, y);
+			ctx.stroke();
 		});
 	},
 
@@ -106,13 +119,11 @@ var FeatureViewer = React.createClass({
 	},
 
 	_onScroll: function (e) {
-		// var oldLeft = this.state.offsetLeft;
-		// var newLeft = this.refs.container.getDOMNode().scrollLeft;
-		// this.setState({ offsetLeft: newLeft });
-		// var oldPos
-		// var positionDelta = this._getScale().invert
-		this.props.store.translate(10);
-		this.forceUpdate()
+		var oldLeft = this.state.offsetLeft;
+		var newLeft = this.refs.container.getDOMNode().scrollLeft;
+		var positionDelta = this._getScale().invert(newLeft) - this._getScale().invert(oldLeft);
+		this.props.store.translate(positionDelta);
+		this.setState({ offsetLeft: newLeft });
 	}
 });
 

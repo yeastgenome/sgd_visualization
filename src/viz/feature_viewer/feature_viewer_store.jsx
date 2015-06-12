@@ -24,19 +24,25 @@ module.exports = class FeatureViewerStore {
 				chrom: "chriii",
 				chromStart: 1000,
 				chromEnd: 1500,
-				strand: "+"
+				strand: "+",
+				blockSizes: [500],
+				blockStarts: [0]
 			},
 			{
 				chrom: "chriii",
-				chromStart: 1200,
-				chromEnd: 1550,
-				strand: "+"
+				chromStart: 1525,
+				chromEnd: 1875,
+				strand: "+",
+				blockSizes: [100, 50],
+				blockStarts: [0, 300]
 			},
 			{
 				chrom: "chriii",
 				chromStart: 1600,
 				chromEnd: 1450,
-				strand: "-"
+				strand: "-",
+				blockSizes: [150],
+				blockStarts: [0]
 			}
 		];
 		position = {
