@@ -77,6 +77,7 @@ var FeatureViewer = React.createClass({
 
 		var canvas = this.refs.canvas.getDOMNode();
 		var ctx = canvas.getContext("2d");
+		ctx.font = "14px Helvetica";
 		ctx.clearRect(0, 0, this.state.DOMWidth, HEIGHT);
 
 		var x;
@@ -86,6 +87,10 @@ var FeatureViewer = React.createClass({
 			ctx.moveTo(x, 0);
 			ctx.lineTo(x, HEIGHT);
 			ctx.stroke();
+
+			// tick
+			ctx.fillText(d.toString(), x, HEIGHT - 14);
+
 		});
 	},
 
