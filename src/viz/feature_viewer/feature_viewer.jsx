@@ -6,6 +6,7 @@ var StyleSheet = require("react-style");
 var _ = require("underscore");
 
 var HEIGHT = 300;
+var FILL_COLOR = "#356CA7";
 
 // CSS in JS
 var styles = StyleSheet.create({
@@ -82,15 +83,16 @@ var FeatureViewer = React.createClass({
 		ctx.clearRect(0, 0, this.state.DOMWidth, HEIGHT);
 
 		var x;
+		ctx.fillStyle = "black";
 		ticks.forEach( d => {
 			x = scale(d);
 			ctx.beginPath();
 			ctx.moveTo(x, 0);
-			ctx.lineTo(x, HEIGHT);
+			ctx.lineTo(x, 150);
 			ctx.stroke();
 
 			// tick label
-			ctx.fillText(d.toString(), x, HEIGHT - 14);
+			ctx.fillText(d.toString(), x, 16);
 		});
 
 		var startPos, endPos, startX, endX, y;
@@ -107,14 +109,44 @@ var FeatureViewer = React.createClass({
 			ctx.stroke();
 
 			// draw exons
+			ctx.fillStyle = FILL_COLOR;
 			d.blockSizes.forEach( (_d, _i) => {
 				_startPos = startPos + d.blockStarts[_i];
 				_endPos = _startPos + _d;
 				_startX = scale(_startPos);
 				_width = scale(_endPos) - _startX;
-				ctx.fillRect(_startX, y - 15, _width, 30);
+				ctx.fillRect(_startX, y - 6, _width, 16);
 			});
 		});
+
+		this._drawInteractions(ctx);
+	},
+
+	_drawInteractions: function (ctx) {
+		// TEMP
+		var interactionCoord = 1500;
+		var depth = 8;
+		var cScale = d3.scale.linear()
+			.domain([0, 1])
+			.range(["white", "#B94694"]);
+
+		var scale = this._getScale();
+		var x = scale(interactionCoord);
+		ctx.save();
+		ctx.translate(x, 150);
+
+		ctx.rotate(-Math.PI / 4);
+		for (var i = depth - 1; i >= 0; i--) {
+			for (var _i = depth - 1; _i >= 0; _i--) {
+				if (i < _i) {
+					ctx.fillStyle = cScale(Math.random());
+					ctx.fillRect(i * 20, _i * 20, 20, 20);
+				}
+			}
+		}
+
+		ctx.restore();
+
 	},
 
 	_getScale: function () {
