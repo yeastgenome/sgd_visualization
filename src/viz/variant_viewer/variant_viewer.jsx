@@ -5,6 +5,7 @@ var React = require("react");
 var _ = require("underscore");
 
 var AlignmentModel = require("./alignment_model.jsx");
+var FeatureViewer = require("../feature_viewer.jsx");
 var MultiAlignmentViewer = require("./multi_alignment_viewer.jsx");
 var Parset = require("./parset.jsx");
 var VariantPop = require("./variant_pop.jsx");
@@ -42,9 +43,21 @@ var VariantViewer = React.createClass({
 	},
 	
 	_renderFeatureViewer: function () {
-		return null;
+		var coord = this.props.coordinates;
+		var _features = [
+			{
+				chromStart: coord.start,
+				chromEnd: coord.end,
+				strand: this.props.strand
+			}
+		];
+		return (<FeatureViewer
+			canScroll={false}
+			chromStart={coord.start}
+			chromEnd={coord.end}
+			features={_features}
+		/>);
 	},
-
 
 	_renderParset: function () {
 		return null;
