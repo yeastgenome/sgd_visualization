@@ -44,17 +44,18 @@ var VariantViewer = React.createClass({
 	
 	_renderFeatureViewer: function () {
 		var coord = this.props.coordinates;
+		var padding = Math.round(Math.abs(coord.end - coord.start) * 0.1);
 		var _features = [
 			{
 				chromStart: coord.start,
 				chromEnd: coord.end,
-				strand: this.props.strand
+				strand: "+" // TEMP always +
 			}
 		];
 		return (<FeatureViewer
 			canScroll={false}
-			chromStart={coord.start}
-			chromEnd={coord.end}
+			chromStart={coord.start - padding}
+			chromEnd={coord.end + padding}
 			features={_features}
 		/>);
 	},
@@ -72,7 +73,6 @@ var VariantViewer = React.createClass({
 		};
 
 		// TODO onHighlight
-
 		return (
 			<div>
 				<MultiAlignmentViewer

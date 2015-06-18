@@ -5,8 +5,9 @@ var React = require("react");
 var StyleSheet = require("react-style");
 var _ = require("underscore");
 
-var HEIGHT = 300;
+var HEIGHT = 150;
 var FILL_COLOR = "#356CA7";
+var TRACK_HEIGHT = 20;
 
 // CSS in JS
 var styles = StyleSheet.create({
@@ -89,13 +90,14 @@ var FeatureViewer = React.createClass({
 			x = scale(d);
 			ctx.beginPath();
 			ctx.moveTo(x, 0);
-			ctx.lineTo(x, 150);
+			ctx.lineTo(x, HEIGHT);
 			ctx.stroke();
 
 			// tick label
 			ctx.fillText(d.toString(), x, 16);
 		});
 
+		ctx.fillStyle = FILL_COLOR;
 		var startPos, endPos, startX, endX, y;
 		var _startPos, _endPos, _startX, _width;
 		data.forEach( d => {
@@ -104,20 +106,15 @@ var FeatureViewer = React.createClass({
 			startX = scale(startPos);
 			endX = scale(endPos);
 			y = d.strand === "+" ? 50 : 100;
+
 			ctx.beginPath();
 			ctx.moveTo(startX, y);
-			ctx.lineTo(endX, y);
-			ctx.stroke();
-
-			// draw exons
-			ctx.fillStyle = FILL_COLOR;
-			d.blockSizes.forEach( (_d, _i) => {
-				_startPos = startPos + d.blockStarts[_i];
-				_endPos = _startPos + _d;
-				_startX = scale(_startPos);
-				_width = scale(_endPos) - _startX;
-				ctx.fillRect(_startX, y - 6, _width, 16);
-			});
+			ctx.lineTo(endX - TRACK_HEIGHT, y);
+			ctx.lineTo(endX, y + TRACK_HEIGHT / 2);
+			ctx.lineTo(endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
+			ctx.lineTo(startX, y + TRACK_HEIGHT);
+			ctx.closePath();
+			ctx.fill();
 		});
 	},
 
