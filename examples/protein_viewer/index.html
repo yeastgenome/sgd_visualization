@@ -138,8 +138,10 @@
 			};
 
 			var options = {
-				data: exampleData,
-				locusData: locusData,
+				data: {
+					data: exampleData,
+					locusData: locusData
+				},
 				type: "proteinViewer"
 			};
 			lib.draw(options, document.getElementById("target"));

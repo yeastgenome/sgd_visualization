@@ -13,7 +13,7 @@ var componentTypes = {
 class BundledSGDVisualization {
 	draw (options, targetNode) {
 		var VizComponent = componentTypes[options.type];
-		React.render(<VizComponent data={options.data} locusData={options.locusData} />, targetNode);
+		React.render(<VizComponent {...options.data} />, targetNode);
 	}
 }
 
