@@ -34,9 +34,20 @@ var VariantViewer = React.createClass({
 	render: function () {
 		return (
 			<div className="sgd-viz variant-viewer">
+				{this._renderFeatureViewer()}
+				{this._renderParset()}
 				{this._renderSequence()}
 			</div>
 		);
+	},
+	
+	_renderFeatureViewer: function () {
+		return null;
+	},
+
+
+	_renderParset: function () {
+		return null;
 	},
 
 	_renderSequence: function () {
