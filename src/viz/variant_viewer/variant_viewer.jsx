@@ -52,11 +52,15 @@ var VariantViewer = React.createClass({
 				strand: "+" // TEMP always +
 			}
 		];
+		var _onSetX1Scale = scale => {
+			this.setState({ x1Scale: scale });
+		};
 		return (<FeatureViewer
 			canScroll={false}
 			chromStart={coord.start - padding}
 			chromEnd={coord.end + padding}
 			features={_features}
+			onSetScale={_onSetX1Scale}
 		/>);
 	},
 

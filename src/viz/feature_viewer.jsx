@@ -29,7 +29,8 @@ var FeatureViewer = React.createClass({
 		canScroll: React.PropTypes.bool,
 		chromStart: React.PropTypes.number,
 		chromEnd: React.PropTypes.number,
-		features: React.PropTypes.array // [{ chromStart, chromEnd, strand }]
+		features: React.PropTypes.array, // [{ chromStart, chromEnd, strand }]
+		onSetScale: React.PropTypes.func
 	},
 
 	getDefaultProps: function () {
@@ -65,6 +66,9 @@ var FeatureViewer = React.createClass({
 
 	componentDidUpdate: function (prevProps, prevState) {
 		this._drawCanvas();
+		if (prevState.DOMWidth !== this.state.DOMWidth && this.props.onSetScale) {
+			this.props.onSetScale(this._getScale());
+		}
 	},
 
 	_calculateWidth: function () {
