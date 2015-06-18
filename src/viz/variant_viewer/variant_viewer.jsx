@@ -33,7 +33,7 @@ var VariantViewer = React.createClass({
 
 	render: function () {
 		return (
-			<div>
+			<div className="sgd-viz variant-viewer">
 				{this._renderSequence()}
 			</div>
 		);
