@@ -3,6 +3,8 @@
 
 var _ = require("underscore");
 
+var DEFAULT_REFERENCE_NAME = "S288C";
+
 module.exports = class AlignmentModel {
 
 	constructor (options) {
@@ -11,6 +13,7 @@ module.exports = class AlignmentModel {
 		this.attributes.alignedProteinSequences = options.alignedProteinSequences;
 		this.attributes.variantDataDna = options.variantDataDna;
 		this.attributes.variantDataProtein = options.variantDataProtein;
+		this.attributes.referenceName = options.referenceName || DEFAULT_REFERENCE_NAME;
 	}
 
 	parse (response) {
@@ -79,8 +82,8 @@ module.exports = class AlignmentModel {
 	// from start and end of aligned sequence, return reference coordinates (currently always S288C)
 	getReferenceCoordinatesFromAlignedCoordinates (alignedStart, alignedEnd, isProtein) {
 		var _attr = this.attributes;
-		var _seqs = isProtein ? _attr.aligned_protein_sequences : _attr.aligned_dna_sequences;
-		var referenceSequence = _.findWhere(_seqs, { strain_display_name: REFERENCE_DISPLAY_NAME }).sequence;
+		var _seqs = isProtein ? _attr.alignedProteinSequences : _attr.alignedDnaSequences;
+		var referenceSequence = _.findWhere(_seqs, { name: _attr.referenceName }).sequence;
 		var refDomain = referenceSequence
 			.split("")
 			.reduce( (memo, next, i) => {
@@ -204,7 +207,7 @@ module.exports = class AlignmentModel {
 		var _baseArray = isProtein ? this.attributes.alignedProteinSequences : this.attributes.alignedDnaSequences;
 		return _.map(_baseArray, d => {
 			return {
-				name: d.strain_display_name,
+				name: d.name,
 				href: d.strain_link,
 				sequence: d.sequence
 			};
