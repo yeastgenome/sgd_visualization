@@ -10,6 +10,8 @@ var MultiAlignmentViewer = require("./multi_alignment_viewer.jsx");
 var Parset = require("./parset.jsx");
 var VariantPop = require("./variant_pop.jsx");
 
+var LABEL_WIDTH = 150;
+
 var VariantViewer = React.createClass({
 	propTypes: {
 		alignedDnaSequences: React.PropTypes.array,
@@ -74,11 +76,11 @@ var VariantViewer = React.createClass({
 
 		var parsetX1Coord = _refCoord
 			.map( d => {
-				return this.state.x1Scale(d);
+				return this.state.x1Scale(d + this.props.coordinates.start);
 			});
 		var parsetX2Coord = _alignedCoord
 			.map( d => {
-				return this.state.x2Scale(d);
+				return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
 		var text = "FOO"
@@ -88,7 +90,7 @@ var VariantViewer = React.createClass({
 		}
 
 		return (<Parset 
-			isVisible={this.state.parsetVisible}
+			isVisible={true}
 			x1Coordinates={parsetX1Coord}
 			x2Coordinates={parsetX2Coord}
 			text={text}
@@ -104,13 +106,16 @@ var VariantViewer = React.createClass({
 		var _onSetX2Scale = scale => {
 			this.setState({ x2Scale: scale });
 		};
+		var _onHighlightSegment = (start, end) => {
+			this.setState({ highlightedAlignedSegment: [start, end] })
+		};
 
 		// TODO onHighlight
 		return (
 			<div>
 				<MultiAlignmentViewer
 					segments={_segments} sequences={_sequences}
-					onSetScale={_onSetX2Scale}
+					onSetScale={_onSetX2Scale} onHighlightSegment={_onHighlightSegment}
 					highlightedSegmentDomain={this.state.highlightedAlignedSegment}
 				/>
 			</div>
