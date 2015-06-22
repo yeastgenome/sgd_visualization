@@ -57,12 +57,20 @@ var VariantViewer = React.createClass({
 		var _onSetX1Scale = scale => {
 			this.setState({ x1Scale: scale });
 		};
+		var _variantData = this.props.variantDataDna.map( d => {
+			return {
+				coordinates: [d.start, d.end],
+				type: d.variant_type
+			}
+		});
 		return (<FeatureViewer
 			canScroll={false}
 			chromStart={coord.start - padding}
 			chromEnd={coord.end + padding}
 			features={_features}
+			focusFeature={_features[0]}
 			onSetScale={_onSetX1Scale}
+			variantData={_variantData}
 		/>);
 	},
 

@@ -8,6 +8,8 @@ var _ = require("underscore");
 var HEIGHT = 150;
 var FILL_COLOR = "#356CA7";
 var TRACK_HEIGHT = 20;
+var VARIANT_HEIGHT = 15;
+var VARIANT_DIAMETER = 7;
 
 // CSS in JS
 var styles = StyleSheet.create({
@@ -29,8 +31,10 @@ var FeatureViewer = React.createClass({
 		canScroll: React.PropTypes.bool,
 		chromStart: React.PropTypes.number,
 		chromEnd: React.PropTypes.number,
-		features: React.PropTypes.array, // [{ chromStart, chromEnd, strand }]
-		onSetScale: React.PropTypes.func
+		features: React.PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
+		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
+		onSetScale: React.PropTypes.func,
+		variantData: React.PropTypes.array // [{ coordinates: [0, 5], type: "Insertion" }, ...]
 	},
 
 	getDefaultProps: function () {
@@ -119,6 +123,26 @@ var FeatureViewer = React.createClass({
 			ctx.lineTo(startX, y + TRACK_HEIGHT);
 			ctx.closePath();
 			ctx.fill();
+		});
+
+		this._drawVariants(ctx);
+	},
+
+	_drawVariants: function (ctx) {
+		var feature = this.props.focusFeature;
+		var variantData = this.props.variantData;
+		var scale = this._getScale();
+
+		var y = 50; // TEMP
+
+		var avgCoord, x;
+		variantData.forEach( d => {
+			avgCoord = feature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
+			x = Math.round(scale(avgCoord));
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			ctx.lineTo(x, y - VARIANT_HEIGHT);
+			ctx.stroke();
 		});
 	},
 
