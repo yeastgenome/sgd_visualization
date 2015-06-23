@@ -6,6 +6,7 @@ var StyleSheet = require("react-style");
 var _ = require("underscore");
 
 var HEIGHT = 150;
+var HIGHLIGHT_COLOR = "#DEC113";
 var FILL_COLOR = "#356CA7";
 var TRACK_HEIGHT = 20;
 var VARIANT_HEIGHT = 15;
@@ -33,6 +34,7 @@ var FeatureViewer = React.createClass({
 		chromEnd: React.PropTypes.number,
 		features: React.PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
 		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
+		highlightedSegment: React.PropTypes.array, // []
 		onSetScale: React.PropTypes.func,
 		variantData: React.PropTypes.array // [{ coordinates: [0, 5], type: "Insertion" }, ...]
 	},
@@ -92,6 +94,7 @@ var FeatureViewer = React.createClass({
 		ctx.font = "14px Helvetica";
 		ctx.clearRect(0, 0, this.state.DOMWidth, HEIGHT);
 
+		// draw axis
 		var x;
 		ctx.fillStyle = "black";
 		ticks.forEach( d => {
@@ -105,6 +108,10 @@ var FeatureViewer = React.createClass({
 			ctx.fillText(d.toString(), x, 16);
 		});
 
+		// highlight
+		this._drawHighlightedSegment(ctx);
+
+		// draw features
 		ctx.fillStyle = FILL_COLOR;
 		var startPos, endPos, startX, endX, y;
 		var _startPos, _endPos, _startX, _width;
@@ -126,6 +133,16 @@ var FeatureViewer = React.createClass({
 		});
 
 		this._drawVariants(ctx);
+	},
+
+	_drawHighlightedSegment: function (ctx) {
+		if (!this.props.highlightedSegment) return;
+		var scale = this._getScale();
+		var startX = scale(this.props.highlightedSegment[0]);
+		var endX = scale(this.props.highlightedSegment[1]);
+		var width = Math.abs(endX - startX);
+		ctx.fillStyle = HIGHLIGHT_COLOR;
+		ctx.fillRect(startX, 0 , width, HEIGHT);
 	},
 
 	_drawVariants: function (ctx) {

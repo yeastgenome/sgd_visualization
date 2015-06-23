@@ -54,6 +54,7 @@ var VariantViewer = React.createClass({
 				strand: "+" // TEMP always +
 			}
 		];
+		var _focusFeature = _features[0];
 		var _onSetX1Scale = scale => {
 			this.setState({ x1Scale: scale });
 		};
@@ -63,12 +64,19 @@ var VariantViewer = React.createClass({
 				type: d.variant_type
 			}
 		});
+		var _highlightedSegment = null;
+		if (this.state.highlightedAlignedSegment) {
+			_highlightedSegment = this.state.highlightedAlignedSegment.map( d => {
+				return d + _focusFeature.chromStart;
+			});
+		}
 		return (<FeatureViewer
 			canScroll={false}
 			chromStart={coord.start - padding}
 			chromEnd={coord.end + padding}
 			features={_features}
-			focusFeature={_features[0]}
+			focusFeature={_focusFeature}
+			highlightedSegment={_highlightedSegment}
 			onSetScale={_onSetX1Scale}
 			variantData={_variantData}
 		/>);

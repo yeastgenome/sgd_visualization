@@ -7,6 +7,7 @@ var _ = require("underscore");
 
 // style static elements
 var HEIGHT = 100;
+var HIGHLIGHT_COLOR = "#DEC113";
 var LINE_HEIGHT = 6;
 
 var Parset = React.createClass({
@@ -34,7 +35,7 @@ var Parset = React.createClass({
 		var _polygonString = `${x1[0]},${LINE_HEIGHT} ${x1[1]},${LINE_HEIGHT} ${x2[1]},${HEIGHT - LINE_HEIGHT} ${x2[0]},${HEIGHT - LINE_HEIGHT}`;
 
 		var labelNode = this._getLabelNode();
-		var polygonNode = !this.props.isVisible ? null : <polygon points={_polygonString} fill="#DEC113" opacity={0.5} />;
+		var polygonNode = !this.props.isVisible ? null : <polygon points={_polygonString} fill={HIGHLIGHT_COLOR} opacity={0.5} />;
 		var x1LineNode = this._getX1LineNode();
 		var x2LineNode = this._getX2LineNode();
 
