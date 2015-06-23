@@ -61,7 +61,8 @@ var VariantViewer = React.createClass({
 		var _variantData = this.props.variantDataDna.map( d => {
 			return {
 				coordinates: [d.start, d.end],
-				type: d.variant_type
+				type: d.variant_type,
+				snpType: d.snp_type
 			}
 		});
 		var _highlightedSegment = null;
