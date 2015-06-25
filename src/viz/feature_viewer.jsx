@@ -73,13 +73,15 @@ var FeatureViewer = React.createClass({
 	componentDidMount: function () {
 		this._calculateWidth();
 		this._drawCanvas();
+		this._setupMousemoveEvents();
 		if (this.props.canScroll) this._setupScroll();
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
 		this._drawCanvas();
-		if (prevState.DOMWidth !== this.state.DOMWidth && this.props.onSetScale) {
-			this.props.onSetScale(this._getScale());
+		if (prevState.DOMWidth !== this.state.DOMWidth) {
+			this._setupMousemoveEvents();
+			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
 		}
 	},
 
@@ -219,10 +221,19 @@ var FeatureViewer = React.createClass({
 				ctx.moveTo(avgX - r, y - 15 - r);
 				ctx.lineTo(avgX + r, y - 15 + r);
 				ctx.stroke();
-
-
 			}
 		});
+	},
+
+	_setupMousemoveEvents: function () {
+		var scale = this._getScale();
+		var coord;
+		this.refs.canvas.getDOMNode().onmousemove = _.throttle( e => {
+			coord = Math.round(scale.invert(e.clientX));
+			// if onVariantMouseover, then check to see if it falls within a variant
+			// TODO
+
+		}, 100);
 	},
 
 	_getScale: function () {
