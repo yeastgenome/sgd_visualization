@@ -14,13 +14,19 @@ var componentTypes = {
 class BundledSGDVisualization {
 
 	draw (options, targetNode) {
-		var store = new FeatureViewerStore();
 		if (options.type === "featureViewer" && options.fixtures) {
+			var store = new FeatureViewerStore();
 			store.setFixtureData();
+			options.data = {
+				features: store.getData(),
+				chromStart: store.getPosition().chromStart,
+				chromEnd: store.getPosition().chromEnd,
+				canScroll: true
+			}
 		}
 
 		var VizComponent = componentTypes[options.type];
-		React.render(<VizComponent data={options.data} locusData={options.locusData} store={store} />, targetNode);
+		React.render(<VizComponent {...options.data} />, targetNode);
 	}
 }
 
