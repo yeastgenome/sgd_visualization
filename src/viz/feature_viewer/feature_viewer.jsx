@@ -5,7 +5,7 @@ var React = require("react");
 var StyleSheet = require("react-style");
 var _ = require("underscore");
 
-var HEIGHT = 450;
+var HEIGHT = 150;
 var HIGHLIGHT_COLOR = "#DEC113";
 var FILL_COLOR = "#356CA7";
 var TRACK_HEIGHT = 20;
@@ -24,7 +24,8 @@ var styles = StyleSheet.create({
 		border: "1px solid #efefef",
 		height: HEIGHT,
 		position: "relative",
-		overflow: "scroll"
+		overflow: "scroll",
+		display: "inline-block"
 	},
 
 	scroller: {
@@ -64,9 +65,13 @@ var FeatureViewer = React.createClass({
 		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
 		return (
 			<div className="feature-viewer">
-				<div ref="container" styles={[styles.frame]}>
+				<div ref="container" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 2 }]}>
 					{scrollNode}
-					<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
+					<canvas ref="canvas1" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
+				</div>
+				<div ref="container2" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 2 }]}>
+					{scrollNode}
+					<canvas ref="canvas2" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
 				</div>
 			</div>
 		);
@@ -74,13 +79,13 @@ var FeatureViewer = React.createClass({
 
 	componentDidMount: function () {
 		this._calculateWidth();
-		this._drawCanvas();
+		this._drawAllCanvases();
 		this._setupMousemoveEvents();
 		if (this.props.canScroll) this._setupScroll();
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
-		this._drawCanvas();
+		this._drawAllCanvases();
 		if (prevState.DOMWidth !== this.state.DOMWidth) {
 			this._setupMousemoveEvents();
 			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
@@ -94,13 +99,21 @@ var FeatureViewer = React.createClass({
 		});
 	},
 
-	_drawCanvas: function () {
+	_drawAllCanvases: function () {
+		var canvas1 = this.refs.canvas1.getDOMNode();
+		var ctx1 = canvas1.getContext("2d");
+		this._drawCanvas(ctx1);
+		var canvas2 = this.refs.canvas2.getDOMNode();
+		var ctx2 = canvas2.getContext("2d");
+		this._drawCanvas(ctx2);
+	},
+
+	_drawCanvas: function (ctx) {
 		var scale = this._getScale();
 		var ticks = scale.ticks();
 		var data = this.props.features;
 
-		var canvas = this.refs.canvas.getDOMNode();
-		var ctx = canvas.getContext("2d");
+
 		ctx.font = "14px Helvetica";
 		ctx.clearRect(0, 0, this.state.DOMWidth, HEIGHT);
 
@@ -259,7 +272,7 @@ var FeatureViewer = React.createClass({
 	_setupMousemoveEvents: function () {
 		var scale = this._getScale();
 		var coord;
-		this.refs.canvas.getDOMNode().onmousemove = _.throttle( e => {
+		this.refs.canvas1.getDOMNode().onmousemove = _.throttle( e => {
 			coord = Math.round(scale.invert(e.clientX));
 			// if onVariantMouseover, then check to see if it falls within a variant
 			// TODO
