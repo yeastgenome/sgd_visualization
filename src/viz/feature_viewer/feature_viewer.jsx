@@ -5,7 +5,7 @@ var React = require("react");
 var StyleSheet = require("react-style");
 var _ = require("underscore");
 
-var HEIGHT = 150;
+var HEIGHT = 450;
 var HIGHLIGHT_COLOR = "#DEC113";
 var FILL_COLOR = "#356CA7";
 var TRACK_HEIGHT = 20;
@@ -23,7 +23,8 @@ var styles = StyleSheet.create({
 	frame: {
 		border: "1px solid #efefef",
 		height: HEIGHT,
-		position: "relative"
+		position: "relative",
+		overflow: "scroll"
 	},
 
 	scroller: {
@@ -41,6 +42,7 @@ var FeatureViewer = React.createClass({
 		features: React.PropTypes.array.isRequired, // [{ chromStart, chromEnd, strand }, ...]
 		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
 		highlightedSegment: React.PropTypes.array, // []
+		interactionData: React.PropTypes.array.isRequired,
 		onSetScale: React.PropTypes.func,
 		variantData: React.PropTypes.array // [{ coordinates: [0, 5], type: "Insertion" }, ...]
 	},
@@ -141,7 +143,9 @@ var FeatureViewer = React.createClass({
 			ctx.fill();
 		});
 
-		if (this.props.variantDat) this._drawVariants(ctx);
+		if (this.props.variantData) this._drawVariants(ctx);
+
+		if (this.props.interactionData) this._drawInteractions(ctx);
 	},
 
 	_drawHighlightedSegment: function (ctx) {
