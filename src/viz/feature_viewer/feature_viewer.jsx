@@ -4,6 +4,10 @@ var d3 = require("d3");
 var React = require("react");
 var StyleSheet = require("react-style");
 var _ = require("underscore");
+var HTML5Backend = require("react-dnd/modules/backends/HTML5");
+var DragDropContext = require("react-dnd").DragDropContext;
+
+var DraggableItem = require("./draggable_item.jsx");
 
 var HEIGHT = 150;
 var HIGHLIGHT_COLOR = "#DEC113";
@@ -65,6 +69,11 @@ var FeatureViewer = React.createClass({
 		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
 		return (
 			<div className="feature-viewer">
+				<div>
+					<DraggableItem text="Example File 1"/>
+					<DraggableItem text="Example File 2"/>
+					<DraggableItem text="Example File 3"/>
+				</div>
 				<div ref="container" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 2 }]}>
 					{scrollNode}
 					<canvas ref="canvas1" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
@@ -291,4 +300,4 @@ var FeatureViewer = React.createClass({
 	}
 });
 
-module.exports = FeatureViewer;
+module.exports = DragDropContext(HTML5Backend)(FeatureViewer);

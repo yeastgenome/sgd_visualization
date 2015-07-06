@@ -5,16 +5,24 @@
   "repository": "https://github.com/yeastgenome/sgd_visualization",
   "homepage": "http://www.yeastgenome.org",
   "browserify": {
-    "transform": [["reactify", { "es6": true }]]
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ]
+    ]
   },
   "browser": {
     "foundation": "./bower_components/foundation/js/foundation.min.js",
     "datatables": "./bower_components/datatables/media/js/jquery.dataTables.js"
   },
   "dependencies": {
-    "react": "^0.13.3",
-    "react-style": "^0.5.5",
     "d3": "^3.4.11",
+    "react": "^0.13.3",
+    "react-dnd": "^1.1.3",
+    "react-style": "^0.5.5",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
