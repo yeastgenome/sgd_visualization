@@ -4,7 +4,7 @@ var React = require("react");
 require("node-jsx").install({ harmony: true });
 
 var FeatureViewer = require("../src/sgd_visualization.jsx").FeatureViewer;
-var FeatureViewerStore = require("../src/sgd_visualization/feature_viewer/feature_viewer_store.jsx");
+var FeatureViewerStore = require("../src/viz/feature_viewer/feature_viewer_store.jsx");
 
 describe("FeatureViewer", function(){
 	it("should be constructed with lots of 'neighbor' data", function() {
