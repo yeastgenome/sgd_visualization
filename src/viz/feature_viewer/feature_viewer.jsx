@@ -8,6 +8,7 @@ var HTML5Backend = require("react-dnd/modules/backends/HTML5");
 var DragDropContext = require("react-dnd").DragDropContext;
 
 var DraggableItem = require("./draggable_item.jsx");
+var VizTrack = require("./viz_track.jsx");
 
 var HEIGHT = 150;
 var HIGHLIGHT_COLOR = "#DEC113";
@@ -69,23 +70,31 @@ var FeatureViewer = React.createClass({
 	render: function () {
 		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
 		return (
-			<div className="feature-viewer">
-				<div>
-					<DraggableItem text="Example File 1"/>
-					<DraggableItem text="Example File 2"/>
-					<DraggableItem text="Example File 3"/>
-				</div>
-				<div ref="container" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 2 }]}>
-					{scrollNode}
-					<canvas ref="canvas1" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
-				</div>
-				<div ref="container2" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 2 }]}>
-					{scrollNode}
-					<canvas ref="canvas2" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
-				</div>
-				<div ref="container3" styles={[styles.frame, { width: this.state.DOMWidth, height: HEIGHT * 5 }]}>
-					{scrollNode}
-					<canvas ref="canvas3" width={this.state.DOMWidth} height={HEIGHT * 5} styles={[{ marginLeft: this.state.offsetLeft }]} />
+			<div className="feature-viewer" style={{ padding: "1rem" }}>
+				<div className="row">
+					<div className="col-md-12">
+						<div className="row">
+							<div className="col-md-12">
+								<DraggableItem text="Example File 1"/>
+								<DraggableItem text="Example File 2"/>
+								<DraggableItem text="Example File 3"/>
+							</div>
+						</div>
+						<div className="row">
+							<div className="col-md-12">
+								<div ref="container" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 12 }]}>
+									{scrollNode}
+									<canvas ref="canvas1" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
+								</div>
+								<div ref="container2" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 12 }]}>
+									{scrollNode}
+									<canvas ref="canvas2" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
+								</div>
+								<VizTrack chromStart={this.props.chromStart} chromEnd={this.props.chromEnd} width={this.state.DOMWidth - 24} store={this.props.store} />
+								
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -120,10 +129,6 @@ var FeatureViewer = React.createClass({
 		var canvas2 = this.refs.canvas2.getDOMNode();
 		var ctx2 = canvas2.getContext("2d");
 		this._drawCanvas(ctx2);
-
-		var canvas3 = this.refs.canvas3.getDOMNode();
-		var ctx3 = canvas3.getContext("2d");
-		this._drawInteractions(ctx3);
 	},
 
 	_drawCanvas: function (ctx) {
@@ -257,32 +262,6 @@ var FeatureViewer = React.createClass({
 				ctx.stroke();
 			}
 		});
-	},
-
-	_drawInteractions: function (ctx) {
-		// TEMP
-		var interactionCoord = 1500;
-		var depth = 15;
-		var cScale = d3.scale.linear()
-			.domain([0, 1])
-			.range(["white", "#B94694"]);
-
-		var scale = this._getScale();
-		var x = scale(interactionCoord);
-		ctx.save();
-		ctx.translate(x, 15);
-
-		ctx.rotate(-Math.PI / 4);
-		for (var i = depth - 1; i >= 0; i--) {
-			for (var _i = depth - 1; _i >= 0; _i--) {
-				if (i < _i) {
-					ctx.fillStyle = cScale(Math.random());
-					ctx.fillRect(i * 20, _i * 20, 20, 20);
-				}
-			}
-		}
-		
-		ctx.restore();
 	},
 
 	_setupMousemoveEvents: function () {

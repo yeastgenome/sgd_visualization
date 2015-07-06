@@ -11,9 +11,9 @@ var _ = require("underscore");
  */
 var cardSource = {
   beginDrag: function (props) {
-  return {
-    text: props.text
-  };
+    return {
+      text: props.text
+    };
   }
 };
 
@@ -45,11 +45,11 @@ var DataSourceCard = React.createClass({
 
     return connectDragSource(
       <div style={{ opacity: isDragging ? 0.5 : 1 }}>
-        - {text}
+        <span><span className="glyphicon glyphicon-file"></span> {text}</span>
       </div>
     );
   }
 });
 
 // Export the wrapped component:
-module.exports = DragSource("Hola", cardSource, collect)(DataSourceCard);
+module.exports = DragSource("vizTrack", cardSource, collect)(DataSourceCard);

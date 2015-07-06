@@ -8,6 +8,8 @@ var position = {
 }
 var data = [];
 
+var interactionData = [];
+
 module.exports = class FeatureViewerStore {
 
 	getData () { return data; }
@@ -55,5 +57,13 @@ module.exports = class FeatureViewerStore {
 	translate (delta) {
 		position.chromStart = position.chromStart + delta;
 		position.chromEnd = position.chromEnd + delta;
+	}
+
+	addInteractionData () {
+		interactionData = [1,2,3];
+	}
+
+	getInteractionData () {
+		return interactionData;
 	}
 };

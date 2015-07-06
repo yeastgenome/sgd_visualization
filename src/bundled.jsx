@@ -27,7 +27,7 @@ class BundledSGDVisualization {
 		}
 
 		var VizComponent = componentTypes[options.type];
-		React.render(<VizComponent {...options.data} />, targetNode);
+		React.render(<VizComponent {...options.data} store={store} />, targetNode);
 	}
 }
 
