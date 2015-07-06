@@ -11,7 +11,8 @@ var DraggableItem = require("./draggable_item.jsx");
 
 var HEIGHT = 150;
 var HIGHLIGHT_COLOR = "#DEC113";
-var FILL_COLOR = "#356CA7";
+var FILL_COLOR = "#09AEB2";
+// ?? other color to use for this color scheme is #FFDD19
 var TRACK_HEIGHT = 20;
 var VARIANT_HEIGHT = 20;
 var VARIANT_DIAMETER = 7;
@@ -131,7 +132,7 @@ var FeatureViewer = React.createClass({
 		var data = this.props.features;
 
 
-		ctx.font = "14px Helvetica";
+		ctx.font = "14px Lato";
 		ctx.clearRect(0, 0, this.state.DOMWidth, HEIGHT);
 
 		// draw axis
