@@ -82,6 +82,10 @@ var FeatureViewer = React.createClass({
 					{scrollNode}
 					<canvas ref="canvas2" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
 				</div>
+				<div ref="container3" styles={[styles.frame, { width: this.state.DOMWidth, height: HEIGHT * 5 }]}>
+					{scrollNode}
+					<canvas ref="canvas3" width={this.state.DOMWidth} height={HEIGHT * 5} styles={[{ marginLeft: this.state.offsetLeft }]} />
+				</div>
 			</div>
 		);
 	},
@@ -115,6 +119,10 @@ var FeatureViewer = React.createClass({
 		var canvas2 = this.refs.canvas2.getDOMNode();
 		var ctx2 = canvas2.getContext("2d");
 		this._drawCanvas(ctx2);
+
+		var canvas3 = this.refs.canvas3.getDOMNode();
+		var ctx3 = canvas3.getContext("2d");
+		this._drawInteractions(ctx3);
 	},
 
 	_drawCanvas: function (ctx) {
@@ -167,7 +175,6 @@ var FeatureViewer = React.createClass({
 
 		if (this.props.variantData) this._drawVariants(ctx);
 
-		if (this.props.interactionData) this._drawInteractions(ctx);
 	},
 
 	_drawHighlightedSegment: function (ctx) {
@@ -254,7 +261,7 @@ var FeatureViewer = React.createClass({
 	_drawInteractions: function (ctx) {
 		// TEMP
 		var interactionCoord = 1500;
-		var depth = 8;
+		var depth = 15;
 		var cScale = d3.scale.linear()
 			.domain([0, 1])
 			.range(["white", "#B94694"]);
@@ -262,7 +269,7 @@ var FeatureViewer = React.createClass({
 		var scale = this._getScale();
 		var x = scale(interactionCoord);
 		ctx.save();
-		ctx.translate(x, 150);
+		ctx.translate(x, 15);
 
 		ctx.rotate(-Math.PI / 4);
 		for (var i = depth - 1; i >= 0; i--) {
@@ -273,9 +280,8 @@ var FeatureViewer = React.createClass({
 				}
 			}
 		}
-
+		
 		ctx.restore();
-
 	},
 
 	_setupMousemoveEvents: function () {

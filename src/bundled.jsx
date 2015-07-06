@@ -22,7 +22,7 @@ class BundledSGDVisualization {
 				chromStart: store.getPosition().chromStart,
 				chromEnd: store.getPosition().chromEnd,
 				canScroll: true,
-				interactionData: [] // TEMP, should be feature
+				interactionData: [1,2,3] // TEMP, should be feature
 			}
 		}
 
