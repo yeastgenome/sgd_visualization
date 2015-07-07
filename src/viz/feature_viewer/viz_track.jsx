@@ -9,31 +9,29 @@ var StyleSheet = require("react-style");
 var _ = require("underscore");
 
 var HEIGHT = 240;
-
+var TEXT_COLOR = "#808080";
+var LIGHT_BORDER = "#e6e6e6";
 // CSS in JS
 var styles = StyleSheet.create({
 	frame: {
 		height: HEIGHT,
 		position: "relative",
-		display: "inline-block"
+		display: "inline-block",
+		marginTop: "1rem"
 	}
 });
 
 var VizTrack = React.createClass({
 	propTypes: {
-		chromStart: React.PropTypes.number.isRequired,
-		chromEnd: React.PropTypes.number.isRequired,
+		onRemove: React.PropTypes.func.isRequired,
 		width: React.PropTypes.number,
 		isOver: React.PropTypes.bool.isRequired
 	},
 
 	render: function () {
-		var textNode = this._canRender() ? null : <p>Drag some data to render</p>;
-
-		var _border = this.props.isOver ? "1px solid #FFDD19" : "1px solid white";
 		return this.props.connectDropTarget(
-			<div className="viz-track" styles={[styles.frame, { width: this.props.width, height: HEIGHT, border: _border }]}>
-				{textNode}
+			<div className="viz-track" styles={[styles.frame, { width: this.props.width, height: HEIGHT }]}>
+				{this._renderUserPanel()}
 				<canvas ref="canvas" width={this.props.width} height={HEIGHT} />
 			</div>
 		)
@@ -45,6 +43,24 @@ var VizTrack = React.createClass({
 
 	componentDidUpdate: function () {
 		this._renderCanvas();
+	},
+
+	_renderUserPanel: function () {
+		if (this._canRender()) return null;
+		var _className = this.props.isOver ? "panel panel-info" : "panel panel-default";
+		return (
+			<div className={_className} style={{ height: "100%" }}>
+				<div className="panel-heading">
+					<p className="text-right" style={{ marginBottom: 0 }}>
+						<a onClick={this.props.onRemove}><span className="glyphicon glyphicon-remove"></span></a>
+					</p>
+				</div>
+				<div className="panel-body">
+					<p style={{ textAlign: "center" }}>Drag some data from the top panel.</p>
+				</div>
+			</div>
+			
+		);
 	},
 
 	_canRender: function () {
@@ -61,7 +77,7 @@ var VizTrack = React.createClass({
 		var data = this.props.store.getInteractionData();
 		if (!data.length) return;
 		var interactionCoord = 1500;
-		var depth = 15;
+		var depth = 30;
 		var cScale = d3.scale.linear()
 			.domain([0, 1])
 			.range(["white", "#B94694"]);
@@ -76,7 +92,7 @@ var VizTrack = React.createClass({
 			for (var _i = depth - 1; _i >= 0; _i--) {
 				if (i < _i) {
 					ctx.fillStyle = cScale(Math.random());
-					ctx.fillRect(i * 20, _i * 20, 20, 20);
+					ctx.fillRect(i * 10, _i * 10, 10, 10);
 				}
 			}
 		}

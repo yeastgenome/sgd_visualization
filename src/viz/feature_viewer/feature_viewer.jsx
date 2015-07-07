@@ -43,7 +43,8 @@ var styles = StyleSheet.create({
 
 	flexParent: {
 		display: "flex",
-		height: 150
+		height: 150,
+		marginTop: "1rem"
 	}
 });
 
@@ -78,15 +79,20 @@ var FeatureViewer = React.createClass({
 					<div className="col-md-12">
 						<div className="row">
 							<div className="col-md-12">
-								<DraggableItem text="Example File 1" />
-								<DraggableItem text="Example File 2"/>
-								<DraggableItem text="Example File 3"/>
+								<div className="panel panel-default">
+								<div className="panel-heading">Datasets</div>
+									<div className="panel-body">
+										<DraggableItem text="Example File 1" />
+										<DraggableItem text="Example File 2" />
+										<DraggableItem text="Example File 3" />
+									</div>
+								</div>
 							</div>
 						</div>
 						<div className="row">
 							<div className="col-md-12">
 								{this._renderFeatureTracks()}
-								<VizTrack chromStart={this.props.chromStart} chromEnd={this.props.chromEnd} width={this.state.DOMWidth - 24} store={this.props.store} />
+								{this._renderVizTracks()}
 							</div>
 						</div>
 					</div>
@@ -115,7 +121,7 @@ var FeatureViewer = React.createClass({
 		var _onScroll = () => { this.forceUpdate(); };
 		var featureProps = _.extend(this.props);
 
-		var _featureTrackData = [null]; //TEMP
+		var _featureTrackData = this.props.store.getFeatureTracks();
 		var trackNodes = _featureTrackData.map( (d, i) => {
 			return (
 				<FeatureTrack key={"featureTrack" + i}
@@ -127,13 +133,41 @@ var FeatureViewer = React.createClass({
 					onScroll={_onScroll}
 				/>
 			)
-		})
+		});
 
+		var _onAddFeatureTrack = e => {
+			e.preventDefault();
+			this.props.store.addFeatureTrack();
+			this.forceUpdate();
+		}
 		return (
-			<div styles={[styles.flexParent]}>
+			<div>
+				<a onClick={_onAddFeatureTrack} className="btn btn-default"><span className="glyphicon glyphicon-plus"></span> Add Frame</a>
+				<div styles={[styles.flexParent]}>
+					{trackNodes}
+				</div>
+			</div>
+		);
+	},
+
+	_renderVizTracks: function () {
+		var trackData = this.props.store.getVizTracks();
+		var trackNodes = trackData.map( (d, i) => {
+			var _onRemove = () => {
+				this.props.store.removeVizTrack(d.id);
+				this.forceUpdate();
+			};
+			return (
+				<VizTrack key={"vizTrack" + i} onRemove={_onRemove}chromStart={this.props.chromStart} chromEnd={this.props.chromEnd} width={this.state.DOMWidth - 24} store={this.props.store} />
+			);
+		});
+		return (
+			<div style={{ marginTop: "1rem" }}>
+				<a onClick={this._onClickAdd} className="btn btn-default"><span className="glyphicon glyphicon-plus"></span> Add Track</a>
 				{trackNodes}
 			</div>
 		);
+
 	},
 
 	_calculateWidth: function () {
@@ -218,6 +252,12 @@ var FeatureViewer = React.createClass({
 		return d3.scale.linear()
 			.domain([this.props.chromStart, this.props.chromEnd])
 			.range([0, this.state.DOMWidth]);
+	},
+
+	_onClickAdd: function (e) {
+		e.preventDefault();
+		this.props.store.addVizTrack();
+		this.forceUpdate();
 	}
 });
 

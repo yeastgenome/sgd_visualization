@@ -13,10 +13,13 @@ var originalPosition = {
 }
 var features = [];
 
+var featureTracks = [null]; // TEMP example [null, null]
+var vizTracks = []; // TEMP example [{ id: "viz1", type:"checker" }, false, false]
+
 var interactionData = [];
 
 module.exports = class FeatureViewerStore {
-	// accessors
+	// *** accessors ***
 
 	getFeatures () { return features; }
 
@@ -27,6 +30,28 @@ module.exports = class FeatureViewerStore {
 
 	getInteractionData () {
 		return interactionData;
+	}
+
+	getFeatureTracks() { return featureTracks; }
+
+	getVizTracks () { return vizTracks; }
+
+	// *** mutators ***
+
+	addFeatureTrack () {
+		featureTracks.push(null);
+	}
+
+	addVizTrack () {
+		var index = vizTracks.length.toString();
+		vizTracks.push({
+			id: "viz" + index,
+			type: null
+		});
+	}
+
+	removeVizTrack (id) {
+		vizTracks = [];
 	}
 
 	setFeatures (_features) { features = _features; }

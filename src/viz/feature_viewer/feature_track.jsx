@@ -20,6 +20,7 @@ var MAIN_BORDER_COLOR = "#e6e6e6";
 var SYNONYMOUS_COLOR = "#4D9221";  // dark yellow-green
 var NON_SYNONYMOUS_COLOR = "#C51B7D"; // dark pink
 var INTRON_COLOR = "#E6F5D0"; // pale yellow-green
+var TEXT_COLOR = "#808080";
 var UNTRANSLATEABLE_COLOR = "gray";
 var SCROLL_WIDTH = 100000;
 
@@ -114,7 +115,7 @@ var FeatureTrack = React.createClass({
 
 		// draw axis
 		var x;
-		ctx.fillStyle = "#808080";
+		ctx.fillStyle = TEXT_COLOR;
 		ctx.strokeStyle = MAIN_BORDER_COLOR;
 		ctx.lineWidth = 1;
 		ticks.forEach( d => {
