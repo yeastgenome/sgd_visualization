@@ -27,7 +27,6 @@ var UNTRANSLATEABLE_COLOR = "gray";
 // CSS in JS
 var styles = StyleSheet.create({
 	frame: {
-		border: "1px solid #efefef",
 		height: HEIGHT,
 		position: "relative",
 		overflow: "scroll",

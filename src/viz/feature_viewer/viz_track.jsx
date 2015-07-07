@@ -2,7 +2,9 @@
 "use strict";
 var d3 = require("d3");
 var React = require("react");
-var DropTarget = require("react-dnd").DropTarget;
+var ReactDnD = require("react-dnd");
+var DragSource = ReactDnD.DragSource;
+var DropTarget = ReactDnD.DropTarget;
 var StyleSheet = require("react-style");
 var _ = require("underscore");
 
@@ -11,7 +13,6 @@ var HEIGHT = 240;
 // CSS in JS
 var styles = StyleSheet.create({
 	frame: {
-		border: "1px solid #efefef",
 		height: HEIGHT,
 		position: "relative",
 		overflow: "scroll",
@@ -36,8 +37,9 @@ var VizTrack = React.createClass({
 	render: function () {
 		var textNode = this._canRender() ? null : <p>Drag some data to render</p>;
 
+		var _border = this.props.isOver ? "1px solid #FFDD19" : "1px solid white";
 		return this.props.connectDropTarget(
-			<div styles={[styles.frame, { width: this.props.width, height: HEIGHT }]}>
+			<div className="viz-track" styles={[styles.frame, { width: this.props.width, height: HEIGHT, border: _border }]}>
 				<div ref="scroller" styles={[styles.scroller]} />
 				{textNode}
 				<canvas ref="canvas" width={this.props.width} height={HEIGHT} />
@@ -115,4 +117,19 @@ function collect(connect, monitor) {
 	};
 };
 
-module.exports = DropTarget("vizTrack", vizTrackTarget, collect)(VizTrack);
+var dragTrackTarget = {
+	beginDrag: function (props) {
+		return {};
+	}
+};
+
+function collectDragTarget(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  };
+}
+
+// make draggable and droppable
+var DroppableTrackZone = DropTarget("vizTrackData", vizTrackTarget, collect)(VizTrack);
+module.exports = DragSource("vizTrack", dragTrackTarget, collectDragTarget)(DroppableTrackZone);

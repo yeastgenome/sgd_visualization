@@ -52,4 +52,4 @@ var DataSourceCard = React.createClass({
 });
 
 // Export the wrapped component:
-module.exports = DragSource("vizTrack", cardSource, collect)(DataSourceCard);
+module.exports = DragSource("vizTrackData", cardSource, collect)(DataSourceCard);
