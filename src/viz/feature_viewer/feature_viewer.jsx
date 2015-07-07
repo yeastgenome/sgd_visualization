@@ -43,7 +43,7 @@ var styles = StyleSheet.create({
 
 	flexParent: {
 		display: "flex",
-		height: 100
+		height: 150
 	}
 });
 
@@ -74,7 +74,6 @@ var FeatureViewer = React.createClass({
 	},
 
 	render: function () {
-		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
 		return (
 			<div className="feature-viewer" style={{ padding: "1rem" }}>
 				<div className="row">
@@ -82,7 +81,6 @@ var FeatureViewer = React.createClass({
 						<div className="row">
 							<div className="col-md-12">
 								<DraggableItem text="Example File 1" />
-		
 								<DraggableItem text="Example File 2"/>
 								<DraggableItem text="Example File 3"/>
 							</div>
@@ -91,7 +89,6 @@ var FeatureViewer = React.createClass({
 							<div className="col-md-12">
 								{this._renderFeatureTracks()}
 								<VizTrack chromStart={this.props.chromStart} chromEnd={this.props.chromEnd} width={this.state.DOMWidth - 24} store={this.props.store} />
-								
 							</div>
 						</div>
 					</div>
@@ -102,35 +99,19 @@ var FeatureViewer = React.createClass({
 
 	componentDidMount: function () {
 		this._calculateWidth();
-		this._drawAllCanvases();
-		this._setupMousemoveEvents();
-		if (this.props.canScroll) this._setupScroll();
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
-		this._drawAllCanvases();
 		if (prevState.DOMWidth !== this.state.DOMWidth) {
-			this._setupMousemoveEvents();
 			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
 		}
 	},
 
 	_renderFeatureTracks: function () {
-		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
+		var featureProps = _.extend(this.props);
 		return (
 			<div styles={[styles.flexParent]}>
-				<FeatureTrack>
-					<div ref="container" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 12 }]}>
-						{scrollNode}
-						<canvas ref="canvas1" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
-					</div>
-				</FeatureTrack>
-				<FeatureTrack>
-					<div ref="container2" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 12 }]}>
-						{scrollNode}
-						<canvas ref="canvas2" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
-					</div>
-				</FeatureTrack>
+				<FeatureTrack {...featureProps} width={this.state.DOMWidth  - 24}/>
 			</div>
 		);
 	},
@@ -140,78 +121,6 @@ var FeatureViewer = React.createClass({
 		this.setState({
 			DOMWidth: _width
 		});
-	},
-
-	_drawAllCanvases: function () {
-		var canvas1 = this.refs.canvas1.getDOMNode();
-		var ctx1 = canvas1.getContext("2d");
-		this._drawCanvas(ctx1);
-		var canvas2 = this.refs.canvas2.getDOMNode();
-		var ctx2 = canvas2.getContext("2d");
-		this._drawCanvas(ctx2);
-	},
-
-	_drawCanvas: function (ctx) {
-		var scale = this._getScale();
-		var ticks = scale.ticks();
-		var data = this.props.features;
-
-
-		ctx.font = "14px Lato";
-		ctx.clearRect(0, 0, this.state.DOMWidth, HEIGHT);
-
-		// draw axis
-		var x;
-		ctx.fillStyle = "#808080";
-		ctx.strokeStyle = MAIN_BORDER_COLOR;
-		ctx.lineWidth = 1;
-		ticks.forEach( d => {
-			x = scale(d);
-			ctx.beginPath();
-			ctx.moveTo(x, 0);
-			ctx.lineTo(x, HEIGHT);
-			ctx.stroke();
-
-			// tick label
-			ctx.fillText(d.toString(), x, 16);
-		});
-
-		// highlight
-		this._drawHighlightedSegment(ctx);
-
-		// draw features
-		ctx.fillStyle = FILL_COLOR;
-		var startPos, endPos, startX, endX, y;
-		var _startPos, _endPos, _startX, _width;
-		data.forEach( d => {
-			startPos = d.strand === "+" ? d.chromStart : d.chromEnd;
-			endPos = d.strand === "+" ? d.chromEnd : d.chromStart;
-			startX = scale(startPos);
-			endX = scale(endPos);
-			y = d.strand === "+" ? 50 : 100;
-
-			ctx.beginPath();
-			ctx.moveTo(startX, y);
-			ctx.lineTo(endX - TRACK_HEIGHT, y);
-			ctx.lineTo(endX, y + TRACK_HEIGHT / 2);
-			ctx.lineTo(endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
-			ctx.lineTo(startX, y + TRACK_HEIGHT);
-			ctx.closePath();
-			ctx.fill();
-		});
-
-		if (this.props.variantData) this._drawVariants(ctx);
-
-	},
-
-	_drawHighlightedSegment: function (ctx) {
-		if (!this.props.highlightedSegment) return;
-		var scale = this._getScale();
-		var startX = scale(this.props.highlightedSegment[0]);
-		var endX = scale(this.props.highlightedSegment[1]);
-		var width = Math.abs(endX - startX);
-		ctx.fillStyle = HIGHLIGHT_COLOR;
-		ctx.fillRect(startX, 0 , width, HEIGHT);
 	},
 
 	_drawVariants: function (ctx) {
@@ -285,25 +194,10 @@ var FeatureViewer = React.createClass({
 		});
 	},
 
-	_setupMousemoveEvents: function () {
-		var scale = this._getScale();
-		var coord;
-		this.refs.canvas1.getDOMNode().onmousemove = _.throttle( e => {
-			coord = Math.round(scale.invert(e.clientX));
-			// if onVariantMouseover, then check to see if it falls within a variant
-			// TODO
-
-		}, 100);
-	},
-
 	_getScale: function () {
 		return d3.scale.linear()
 			.domain([this.props.chromStart, this.props.chromEnd])
 			.range([0, this.state.DOMWidth]);
-	},
-
-	_setupScroll: function () {
-		// this.refs.container.getDOMNode().addEventListener("scroll", this._onScroll);
 	}
 });
 

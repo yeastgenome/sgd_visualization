@@ -15,14 +15,7 @@ var styles = StyleSheet.create({
 	frame: {
 		height: HEIGHT,
 		position: "relative",
-		overflow: "scroll",
 		display: "inline-block"
-	},
-
-	scroller: {
-		position: "absolute",
-		width: 100000,
-		height: HEIGHT
 	}
 });
 
@@ -40,7 +33,6 @@ var VizTrack = React.createClass({
 		var _border = this.props.isOver ? "1px solid #FFDD19" : "1px solid white";
 		return this.props.connectDropTarget(
 			<div className="viz-track" styles={[styles.frame, { width: this.props.width, height: HEIGHT, border: _border }]}>
-				<div ref="scroller" styles={[styles.scroller]} />
 				{textNode}
 				<canvas ref="canvas" width={this.props.width} height={HEIGHT} />
 			</div>
