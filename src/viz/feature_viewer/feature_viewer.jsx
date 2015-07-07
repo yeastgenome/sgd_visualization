@@ -115,15 +115,23 @@ var FeatureViewer = React.createClass({
 		var _onScroll = () => { this.forceUpdate(); };
 		var featureProps = _.extend(this.props);
 
-		return (
-			<div styles={[styles.flexParent]}>
-				<FeatureTrack {...featureProps}
-					width={this.state.DOMWidth - 24}
+		var _featureTrackData = [null]; //TEMP
+		var trackNodes = _featureTrackData.map( (d, i) => {
+			return (
+				<FeatureTrack key={"featureTrack" + i}
+					{...featureProps}
+					width={this.state.DOMWidth / _featureTrackData.length - 24}
 					features={_features}
 					chromStart={_position.chromStart}
 					chromEnd={_position.chromEnd}
 					onScroll={_onScroll}
 				/>
+			)
+		})
+
+		return (
+			<div styles={[styles.flexParent]}>
+				{trackNodes}
 			</div>
 		);
 	},
