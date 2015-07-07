@@ -17,17 +17,11 @@ class BundledSGDVisualization {
 		if (options.type === "featureViewer" && options.fixtures) {
 			var store = new FeatureViewerStore();
 			store.setFixtureData();
-			options.data = {
-				features: store.getData(),
-				chromStart: store.getPosition().chromStart,
-				chromEnd: store.getPosition().chromEnd,
-				canScroll: true,
-				interactionData: [1,2,3] // TEMP, should be feature
-			}
 		}
 
+		// need to feed from store !!!
 		var VizComponent = componentTypes[options.type];
-		React.render(<VizComponent {...options.data} store={store} />, targetNode);
+		React.render(<VizComponent store={store} />, targetNode);
 	}
 }
 

@@ -50,12 +50,10 @@ var styles = StyleSheet.create({
 var FeatureViewer = React.createClass({
 	propTypes: {
 		canScroll: React.PropTypes.bool,
-		chromStart: React.PropTypes.number.isRequired,
-		chromEnd: React.PropTypes.number.isRequired,
-		features: React.PropTypes.array.isRequired, // [{ chromStart, chromEnd, strand }, ...]
+		store: React.PropTypes.object,
 		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
 		highlightedSegment: React.PropTypes.array, // []
-		interactionData: React.PropTypes.array.isRequired,
+		interactionData: React.PropTypes.array,
 		onSetScale: React.PropTypes.func,
 		variantData: React.PropTypes.array // [{ coordinates: [0, 5], type: "Insertion" }, ...]
 	},
@@ -98,7 +96,10 @@ var FeatureViewer = React.createClass({
 	},
 
 	componentDidMount: function () {
-		this._calculateWidth();
+		// try to let the font load
+		setTimeout( () => {
+			this._calculateWidth();
+		}, 250)
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
@@ -108,10 +109,21 @@ var FeatureViewer = React.createClass({
 	},
 
 	_renderFeatureTracks: function () {
+		var store = this.props.store;
+		var _features = store.getFeatures();
+		var _position = store.getPosition();
+		var _onScroll = () => { this.forceUpdate(); };
 		var featureProps = _.extend(this.props);
+
 		return (
 			<div styles={[styles.flexParent]}>
-				<FeatureTrack {...featureProps} width={this.state.DOMWidth  - 24}/>
+				<FeatureTrack {...featureProps}
+					width={this.state.DOMWidth - 24}
+					features={_features}
+					chromStart={_position.chromStart}
+					chromEnd={_position.chromEnd}
+					onScroll={_onScroll}
+				/>
 			</div>
 		);
 	},

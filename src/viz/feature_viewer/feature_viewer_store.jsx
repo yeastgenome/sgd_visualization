@@ -6,22 +6,35 @@ var position = {
 	chromEnd: null,
 	chrom: null
 }
-var data = [];
+var originalPosition = {
+	chromStart: null,
+	chromEnd: null,
+	chrom: null
+}
+var features = [];
 
 var interactionData = [];
 
 module.exports = class FeatureViewerStore {
+	// accessors
 
-	getData () { return data; }
+	getFeatures () { return features; }
 
 	getPosition () { return position; }
 
-	setData (_data) { data = _data; }
+	getOriginalPosition () { return originalPosition; }
+
+
+	getInteractionData () {
+		return interactionData;
+	}
+
+	setFeatures (_features) { features = _features; }
 
 	setPosition (_position) { position = _position; }
 
 	setFixtureData () {
-		data = [
+		features = [
 			{
 				chrom: "chriii",
 				chromStart: 1000,
@@ -52,18 +65,19 @@ module.exports = class FeatureViewerStore {
 			chromEnd: 2000,
 			chrom: "chriii"
 		};
+		originalPosition = {
+			chromStart: 1000,
+			chromEnd: 2000,
+			chrom: "chriii"
+		};
 	}
 
 	translate (delta) {
-		position.chromStart = position.chromStart + delta;
-		position.chromEnd = position.chromEnd + delta;
+		position.chromStart = originalPosition.chromStart + delta;
+		position.chromEnd = originalPosition.chromEnd + delta;
 	}
 
 	addInteractionData () {
 		interactionData = [1,2,3];
-	}
-
-	getInteractionData () {
-		return interactionData;
 	}
 };

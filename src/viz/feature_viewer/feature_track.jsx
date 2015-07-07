@@ -8,6 +8,7 @@ var StyleSheet = require("react-style");
 var _ = require("underscore");
 
 var HEIGHT = 150;
+var AXIS_HEIGHT = 15;
 
 var HIGHLIGHT_COLOR = "#DEC113";
 var FILL_COLOR = "#09AEB2";
@@ -54,8 +55,18 @@ var styles = StyleSheet.create({
 
 var FeatureTrack = React.createClass({
 	propTypes: {
+		store: React.PropTypes.object,
 		width: React.PropTypes.number.isRequired,
-		isDragging: React.PropTypes.bool.isRequired
+		isDragging: React.PropTypes.bool.isRequired,
+		chromStart: React.PropTypes.number.isRequired,
+		chromEnd: React.PropTypes.number.isRequired,
+		features: React.PropTypes.array.isRequired, // [{ chromStart, chromEnd, strand }, ...]
+		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
+		onScroll: React.PropTypes.func
+	},
+
+	getInitialState: function () {
+		return {};
 	},
 
 	render: function () {
@@ -91,7 +102,8 @@ var FeatureTrack = React.createClass({
 		var ticks = scale.ticks();
 		var data = this.props.features;
 
-		ctx.font = "14px Lato Helvetica";
+		ctx.font = "14px 'Lato', sans-serif";
+		ctx.textAlign = "center"; 
 		ctx.clearRect(0, 0, this.props.width, HEIGHT);
 
 		// draw axis
@@ -103,11 +115,11 @@ var FeatureTrack = React.createClass({
 			x = scale(d);
 			ctx.beginPath();
 			ctx.moveTo(x, 0);
-			ctx.lineTo(x, HEIGHT);
+			ctx.lineTo(x, HEIGHT - AXIS_HEIGHT);
 			ctx.stroke();
 
 			// tick label
-			ctx.fillText(d.toString(), x, 16);
+			ctx.fillText(d.toString(), x, HEIGHT);
 		});
 
 		// highlight
@@ -149,9 +161,14 @@ var FeatureTrack = React.createClass({
 	_setupScroll: function () {
 		var frameNode = this.refs.frame.getDOMNode();
 		var scrollNode = this.refs.scroller.getDOMNode();
+		var scale = this._getScale();
+		var scrollNum, translateDelta;
+		var originalPosition = this.props.store.getOriginalPosition();
 		frameNode.onscroll = e => {
-			// TODO, translate viz with this number
-			// console.log(e.currentTarget.scrollLeft);
+			scrollNum = e.currentTarget.scrollLeft;
+			translateDelta = (scale.invert(scale.range()[0] + scrollNum)) - originalPosition.chromStart;
+			this.props.store.translate(translateDelta);
+			if (typeof this.props.onScroll === "function") this.props.onScroll();
 		};
 	},
 
