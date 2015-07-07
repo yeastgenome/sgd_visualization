@@ -8,9 +8,10 @@ var HTML5Backend = require("react-dnd/modules/backends/HTML5");
 var DragDropContext = require("react-dnd").DragDropContext;
 
 var DraggableItem = require("./draggable_item.jsx");
+var FeatureTrack = require("./feature_track.jsx");
 var VizTrack = require("./viz_track.jsx");
 
-var HEIGHT = 150;
+var HEIGHT = 250;
 var HIGHLIGHT_COLOR = "#DEC113";
 var FILL_COLOR = "#09AEB2";
 // ?? other color to use for this color scheme is #FFDD19
@@ -19,6 +20,7 @@ var VARIANT_HEIGHT = 20;
 var VARIANT_DIAMETER = 7;
 
 // fill colors for variants
+var MAIN_BORDER_COLOR = "#e6e6e6";
 var SYNONYMOUS_COLOR = "#4D9221";  // dark yellow-green
 var NON_SYNONYMOUS_COLOR = "#C51B7D"; // dark pink
 var INTRON_COLOR = "#E6F5D0"; // pale yellow-green
@@ -37,6 +39,11 @@ var styles = StyleSheet.create({
 		position: "absolute",
 		width: 100000,
 		height: HEIGHT
+	},
+
+	flexParent: {
+		display: "flex",
+		height: 100
 	}
 });
 
@@ -74,21 +81,15 @@ var FeatureViewer = React.createClass({
 					<div className="col-md-12">
 						<div className="row">
 							<div className="col-md-12">
-								<DraggableItem text="Example File 1"/>
+								<DraggableItem text="Example File 1" />
+		
 								<DraggableItem text="Example File 2"/>
 								<DraggableItem text="Example File 3"/>
 							</div>
 						</div>
 						<div className="row">
 							<div className="col-md-12">
-								<div ref="container" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 12 }]}>
-									{scrollNode}
-									<canvas ref="canvas1" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
-								</div>
-								<div ref="container2" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 12 }]}>
-									{scrollNode}
-									<canvas ref="canvas2" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
-								</div>
+								{this._renderFeatureTracks()}
 								<VizTrack chromStart={this.props.chromStart} chromEnd={this.props.chromEnd} width={this.state.DOMWidth - 24} store={this.props.store} />
 								
 							</div>
@@ -112,6 +113,26 @@ var FeatureViewer = React.createClass({
 			this._setupMousemoveEvents();
 			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
 		}
+	},
+
+	_renderFeatureTracks: function () {
+		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
+		return (
+			<div styles={[styles.flexParent]}>
+				<FeatureTrack>
+					<div ref="container" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 12 }]}>
+						{scrollNode}
+						<canvas ref="canvas1" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
+					</div>
+				</FeatureTrack>
+				<FeatureTrack>
+					<div ref="container2" styles={[styles.frame, { width: this.state.DOMWidth / 2 - 12 }]}>
+						{scrollNode}
+						<canvas ref="canvas2" width={this.state.DOMWidth / 2} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
+					</div>
+				</FeatureTrack>
+			</div>
+		);
 	},
 
 	_calculateWidth: function () {
@@ -141,7 +162,8 @@ var FeatureViewer = React.createClass({
 
 		// draw axis
 		var x;
-		ctx.fillStyle = "black";
+		ctx.fillStyle = "#808080";
+		ctx.strokeStyle = MAIN_BORDER_COLOR;
 		ctx.lineWidth = 1;
 		ticks.forEach( d => {
 			x = scale(d);
