@@ -21,6 +21,7 @@ var SYNONYMOUS_COLOR = "#4D9221";  // dark yellow-green
 var NON_SYNONYMOUS_COLOR = "#C51B7D"; // dark pink
 var INTRON_COLOR = "#E6F5D0"; // pale yellow-green
 var UNTRANSLATEABLE_COLOR = "gray";
+var SCROLL_WIDTH = 100000;
 
 // CSS in JS
 var styles = StyleSheet.create({
@@ -48,8 +49,8 @@ var styles = StyleSheet.create({
 
 	scroller: {
 		position: "absolute",
-		width: 100000,
-		height: HEIGHT
+		width: SCROLL_WIDTH,
+		height: HEIGHT * 5
 	},
 });
 
@@ -86,12 +87,17 @@ var FeatureTrack = React.createClass({
 	componentDidMount: function () {
 		this._drawCanvas();
 		// this._setupMousemoveEvents();
+		// this.refs.frame.getDOMNode().scrollLeft = SCROLL_WIDTH / 2;
+		var node = this.refs.frame.getDOMNode();
+		node.scrollTop = node.scrollHeight / 2;
 		this._setupScroll();
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
 		this._drawCanvas();
 		if (this.props.width !== prevProps.width) this._setupScroll();
+
+		
 	},
 
 	_drawCanvas: function () {
