@@ -42,7 +42,8 @@ var FeatureViewer = React.createClass({
 		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
 		highlightedSegment: React.PropTypes.array, // []
 		onSetScale: React.PropTypes.func,
-		variantData: React.PropTypes.array // [{ coordinates: [0, 5], type: "Insertion" }, ...]
+		variantData: React.PropTypes.array, // [{ coordinates: [0, 5], type: "Insertion" }, ...]
+		onHighlightSegment: React.PropTypes.func
 	},
 
 	getDefaultProps: function () {
@@ -64,6 +65,7 @@ var FeatureViewer = React.createClass({
 			<div className="feature-viewer">
 				<div ref="container" styles={[styles.frame]}>
 					{scrollNode}
+					{this._renderVoronoi()}
 					<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
 				</div>
 			</div>
@@ -83,6 +85,42 @@ var FeatureViewer = React.createClass({
 			this._setupMousemoveEvents();
 			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
 		}
+	},
+
+	_renderVoronoi: function () {
+		if (!this.props.variantData) return null;
+
+		var scale = this._getScale();
+		var avgCoord, x;
+		var y  = 50; // TEMP
+		var points = this.props.variantData.map( d => {
+			avgCoord = this.props.focusFeature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
+			x = Math.round(scale(avgCoord));
+			return [x, y];
+		});
+
+		var voronoiFn = d3.geom.voronoi()
+			.clipExtent([[0, 0], [this.state.DOMWidth, HEIGHT]]);
+
+		var voronoiPoints = voronoiFn(points);
+		var color = d3.scale.category10();
+		var pathString;
+		var pathNodes = voronoiPoints.map( (d, i) => {
+			pathString = "M" + d.join("L") + "Z";
+			var _onMouseOver = e => {
+				var coord = this.props.variantData[i].coordinates;
+				if (this.props.onHighlightSegment) {
+					this.props.onHighlightSegment(coord[0], coord[1]);
+				}
+			}
+			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0"/>;
+		});
+
+		return (
+			<svg width={this.state.DOMWidth} height={HEIGHT} style={{ position: "absolute", top: 0 }}>
+				{pathNodes}
+			</svg>
+		);
 	},
 
 	_calculateWidth: function () {

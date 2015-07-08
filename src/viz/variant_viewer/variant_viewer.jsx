@@ -80,6 +80,7 @@ var VariantViewer = React.createClass({
 			highlightedSegment={_highlightedSegment}
 			onSetScale={_onSetX1Scale}
 			variantData={_variantData}
+			onHighlightSegment={this._highlightSegment}
 		/>);
 	},
 
@@ -123,20 +124,20 @@ var VariantViewer = React.createClass({
 		var _onSetX2Scale = scale => {
 			this.setState({ x2Scale: scale });
 		};
-		var _onHighlightSegment = (start, end) => {
-			this.setState({ highlightedAlignedSegment: [start, end] })
-		};
 
-		// TODO onHighlight
 		return (
 			<div>
 				<MultiAlignmentViewer
 					segments={_segments} sequences={_sequences}
-					onSetScale={_onSetX2Scale} onHighlightSegment={_onHighlightSegment}
+					onSetScale={_onSetX2Scale} onHighlightSegment={this._highlightSegment}
 					highlightedSegmentDomain={this.state.highlightedAlignedSegment}
 				/>
 			</div>
 		);
+	},
+
+	_highlightSegment: function (start, end) {
+		this.setState({ highlightedAlignedSegment: [start, end] })
 	},
 
 	_getModel: function () {
