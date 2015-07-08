@@ -1,36 +1,20 @@
 /** @jsx React.DOM */
 "use strict";
+var _ = require("underscore");
 
-var position = {
-	chromStart: null,
-	chromEnd: null,
-	chrom: null
-}
-var originalPosition = {
-	chromStart: null,
-	chromEnd: null,
-	chrom: null
-}
-var features = [];
-
-var featureTracks = [null]; // TEMP example [null, null]
+var featureTracks = [];
 var vizTracks = []; // TEMP example [{ id: "viz1", type:"checker" }, false, false]
 
 var interactionData = [];
 
 module.exports = class FeatureViewerStore {
 	// *** accessors ***
-
-	getFeatures () { return features; }
-
-	getPosition () { return position; }
-
-	getOriginalPosition () { return originalPosition; }
-
-
-	getInteractionData () {
-		return interactionData;
+	getOriginalPosition (featureTrackId) {
+		var datum = _.findWhere(featureTracks, { id: featureTrackId });
+		return datum ? datum.originalPosition : {};
 	}
+
+	getInteractionData () { return interactionData; }
 
 	getFeatureTracks() { return featureTracks; }
 
@@ -39,7 +23,10 @@ module.exports = class FeatureViewerStore {
 	// *** mutators ***
 
 	addFeatureTrack () {
-		featureTracks.push(null);
+		var featureDatum = this.getFeatureFixture();
+		featureDatum.originalPosition = featureDatum.position;
+		featureDatum.id = "featureTrack" + featureTracks.length.toString();
+		featureTracks.push(featureDatum);
 	}
 
 	addVizTrack () {
@@ -59,47 +46,49 @@ module.exports = class FeatureViewerStore {
 	setPosition (_position) { position = _position; }
 
 	setFixtureData () {
-		features = [
-			{
-				chrom: "chriii",
+		this.addFeatureTrack();
+	}
+
+	getFeatureFixture () {
+		return {
+			features: [
+				{
+					chrom: "chriii",
+					chromStart: 1000,
+					chromEnd: 1500,
+					strand: "+",
+					blockSizes: [500],
+					blockStarts: [0]
+				},
+				{
+					chrom: "chriii",
+					chromStart: 1525,
+					chromEnd: 1875,
+					strand: "+",
+					blockSizes: [100, 50],
+					blockStarts: [0, 300]
+				},
+				{
+					chrom: "chriii",
+					chromStart: 1600,
+					chromEnd: 1450,
+					strand: "-",
+					blockSizes: [150],
+					blockStarts: [0]
+				}
+			],
+			position: {
 				chromStart: 1000,
-				chromEnd: 1500,
-				strand: "+",
-				blockSizes: [500],
-				blockStarts: [0]
-			},
-			{
-				chrom: "chriii",
-				chromStart: 1525,
-				chromEnd: 1875,
-				strand: "+",
-				blockSizes: [100, 50],
-				blockStarts: [0, 300]
-			},
-			{
-				chrom: "chriii",
-				chromStart: 1600,
-				chromEnd: 1450,
-				strand: "-",
-				blockSizes: [150],
-				blockStarts: [0]
+				chromEnd: 2000,
+				chrom: "chriii"
 			}
-		];
-		position = {
-			chromStart: 1000,
-			chromEnd: 2000,
-			chrom: "chriii"
-		};
-		originalPosition = {
-			chromStart: 1000,
-			chromEnd: 2000,
-			chrom: "chriii"
 		};
 	}
 
-	translate (delta) {
-		position.chromStart = originalPosition.chromStart + delta;
-		position.chromEnd = originalPosition.chromEnd + delta;
+	translate (featureTrackId, delta) {
+		var datum = _.findWhere(featureTracks, { id: featureTrackId });
+		datum.position.chromStart = datum.originalPosition.chromStart + delta;
+		datum.position.chromEnd = datum.originalPosition.chromEnd + delta;
 	}
 
 	zoom (newDomain) {

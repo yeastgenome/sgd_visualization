@@ -57,6 +57,7 @@ var styles = StyleSheet.create({
 
 var FeatureTrack = React.createClass({
 	propTypes: {
+		featureTrackId: React.PropTypes.string.isRequired,
 		store: React.PropTypes.object,
 		width: React.PropTypes.number.isRequired,
 		isDragging: React.PropTypes.bool.isRequired,
@@ -77,7 +78,7 @@ var FeatureTrack = React.createClass({
 			<div styles={[styles.flexChild]}>
 				<div className="feature-track" styles={[styles.container, { width: this.props.width }]}>
 					<div ref="frame" styles={[styles.frame, { width: this.props.width }]}>
-						<div ref="scroller" styles={[styles.scroller]} />
+						<div ref="scroller" styles={[styles.scroller, { background: "white" }]} />
 					</div>
 					<canvas ref="canvas" width={this.props.width} height={HEIGHT} styles={[styles.canvas]} />
 				</div>
@@ -170,11 +171,11 @@ var FeatureTrack = React.createClass({
 		var scrollNode = this.refs.scroller.getDOMNode();
 		var scale = this._getScale();
 		var scrollNum, translateDelta;
-		var originalPosition = this.props.store.getOriginalPosition();
+		var originalPosition = this.props.store.getOriginalPosition(this.props.featureTrackId);
 		frameNode.onscroll = e => {
 			scrollNum = e.currentTarget.scrollLeft;
 			translateDelta = (scale.invert(scale.range()[0] + scrollNum)) - originalPosition.chromStart;
-			this.props.store.translate(translateDelta);
+			this.props.store.translate(this.props.featureTrackId, translateDelta);
 			if (typeof this.props.onScroll === "function") this.props.onScroll();
 		};
 	},
