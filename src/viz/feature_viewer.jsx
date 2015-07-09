@@ -5,9 +5,12 @@ var React = require("react");
 var StyleSheet = require("react-style");
 var _ = require("underscore");
 
-var HEIGHT = 150;
-var HIGHLIGHT_COLOR = "#DEC113";
-var FILL_COLOR = "#356CA7";
+var HEIGHT = 100;
+var AXIS_HEIGHT = 16;
+var HIGHLIGHT_COLOR = "#EBDD71";
+var FONT_SIZE = 14;
+var FILL_COLOR = "#09AEB2";
+var TICK_COLOR = "#b0b0b0";
 var TRACK_HEIGHT = 20;
 var VARIANT_HEIGHT = 20;
 var VARIANT_DIAMETER = 7;
@@ -21,7 +24,6 @@ var UNTRANSLATEABLE_COLOR = "gray";
 // CSS in JS
 var styles = StyleSheet.create({
 	frame: {
-		border: "1px solid #efefef",
 		height: HEIGHT,
 		position: "relative"
 	},
@@ -30,6 +32,10 @@ var styles = StyleSheet.create({
 		position: "absolute",
 		width: 100000,
 		height: HEIGHT
+	},
+
+	uiContainer: {
+		padding: "1rem"
 	}
 });
 
@@ -63,6 +69,9 @@ var FeatureViewer = React.createClass({
 		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
 		return (
 			<div className="feature-viewer">
+				<div styles={[styles.uiContainer]}>
+					<a onClick={this._downloadImage} className="btn btn-default">Download</a>
+				</div>
 				<div ref="container" styles={[styles.frame]}>
 					{scrollNode}
 					{this._renderVoronoi()}
@@ -75,14 +84,12 @@ var FeatureViewer = React.createClass({
 	componentDidMount: function () {
 		this._calculateWidth();
 		this._drawCanvas();
-		this._setupMousemoveEvents();
 		if (this.props.canScroll) this._setupScroll();
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
 		this._drawCanvas();
 		if (prevState.DOMWidth !== this.state.DOMWidth) {
-			this._setupMousemoveEvents();
 			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
 		}
 	},
@@ -132,32 +139,17 @@ var FeatureViewer = React.createClass({
 
 	_drawCanvas: function () {
 		var scale = this._getScale();
-		var ticks = scale.ticks();
 		var data = this.props.features;
 
 		var canvas = this.refs.canvas.getDOMNode();
 		var ctx = canvas.getContext("2d");
-		ctx.font = "14px Helvetica";
+		ctx.font = FONT_SIZE + "px 'Lato' sans-serif";
+		ctx.textAlign = "center";
 		ctx.clearRect(0, 0, this.state.DOMWidth, HEIGHT);
 
-		// draw axis
-		var x;
-		ctx.fillStyle = "black";
-		ctx.lineWidth = 1;
-		ticks.forEach( d => {
-			x = scale(d);
-			ctx.beginPath();
-			ctx.moveTo(x, 0);
-			ctx.lineTo(x, HEIGHT);
-			ctx.stroke();
-
-			// tick label
-			ctx.fillText(d.toString(), x, 16);
-		});
-
-		// highlight
 		this._drawHighlightedSegment(ctx);
-
+		this._drawAxis(ctx);
+	
 		// draw features
 		ctx.fillStyle = FILL_COLOR;
 		var startPos, endPos, startX, endX, y;
@@ -192,6 +184,25 @@ var FeatureViewer = React.createClass({
 		ctx.fillRect(startX, 0 , width, HEIGHT);
 	},
 
+	_drawAxis: function (ctx) {
+		var scale = this._getScale();
+		var ticks = scale.ticks();
+		var x;
+		ctx.strokeStyle = TICK_COLOR;
+		ctx.fillStyle = "black";
+		ctx.lineWidth = 1;
+		ticks.forEach( d => {
+			x = scale(d);
+			// tick
+			ctx.beginPath();
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, HEIGHT - AXIS_HEIGHT);
+			ctx.stroke();
+			// tick label
+			ctx.fillText(d.toString(), x, HEIGHT);
+		});
+	},
+
 	_drawVariants: function (ctx) {
 		var feature = this.props.focusFeature;
 		var variantData = this.props.variantData;
@@ -205,6 +216,7 @@ var FeatureViewer = React.createClass({
 
 		var y = 50 + TRACK_HEIGHT / 2; // TEMP
 
+		ctx.strokeStyle = "black";
 		var avgCoord, snpType, type, x;
 		variantData.forEach( d => {
 			avgCoord = feature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
@@ -219,7 +231,6 @@ var FeatureViewer = React.createClass({
 				ctx.lineTo(x, y - VARIANT_HEIGHT);
 				ctx.stroke();
 			}
-			
 
 			if (type === "snp") {
 				ctx.fillStyle = colors[snpType] || "gray";
@@ -263,17 +274,6 @@ var FeatureViewer = React.createClass({
 		});
 	},
 
-	_setupMousemoveEvents: function () {
-		var scale = this._getScale();
-		var coord;
-		this.refs.canvas.getDOMNode().onmousemove = _.throttle( e => {
-			coord = Math.round(scale.invert(e.clientX));
-			// if onVariantMouseover, then check to see if it falls within a variant
-			// TODO
-
-		}, 100);
-	},
-
 	_getScale: function () {
 		return d3.scale.linear()
 			.domain([this.props.chromStart, this.props.chromEnd])
@@ -282,6 +282,18 @@ var FeatureViewer = React.createClass({
 
 	_setupScroll: function () {
 		// this.refs.container.getDOMNode().addEventListener("scroll", this._onScroll);
+	},
+
+	_downloadImage: function (e) {
+		if (e) e.preventDefault();
+		var canvas = this.refs.canvas.getDOMNode();
+		var image = new Image();
+		var a = document.createElement('a');
+		a.download = "image.png";
+		a.href = canvas.toDataURL("image/png");
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
 	}
 });
 
