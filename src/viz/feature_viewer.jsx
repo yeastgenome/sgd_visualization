@@ -21,24 +21,6 @@ var NON_SYNONYMOUS_COLOR = "#C51B7D"; // dark pink
 var INTRON_COLOR = "#E6F5D0"; // pale yellow-green
 var UNTRANSLATEABLE_COLOR = "gray";
 
-// CSS in JS
-var styles = StyleSheet.create({
-	frame: {
-		height: HEIGHT,
-		position: "relative"
-	},
-
-	scroller: {
-		position: "absolute",
-		width: 100000,
-		height: HEIGHT
-	},
-
-	uiContainer: {
-		padding: "1rem"
-	}
-});
-
 var FeatureViewer = React.createClass({
 	propTypes: {
 		canScroll: React.PropTypes.bool,
@@ -50,19 +32,6 @@ var FeatureViewer = React.createClass({
 		onSetScale: React.PropTypes.func,
 		variantData: React.PropTypes.array, // [{ coordinates: [0, 5], type: "Insertion" }, ...]
 		onHighlightSegment: React.PropTypes.func
-	},
-
-	getDefaultProps: function () {
-		return {
-			canScroll: true
-		};
-	},
-
-	getInitialState: function () {
-		return {
-			DOMWidth: 400,
-			offsetLeft: 0
-		};
 	},
 
 	render: function () {
@@ -79,6 +48,19 @@ var FeatureViewer = React.createClass({
 				</div>
 			</div>
 		);
+	},
+
+	getDefaultProps: function () {
+		return {
+			canScroll: true
+		};
+	},
+
+	getInitialState: function () {
+		return {
+			DOMWidth: 400,
+			offsetLeft: 0
+		};
 	},
 
 	componentDidMount: function () {
@@ -298,3 +280,21 @@ var FeatureViewer = React.createClass({
 });
 
 module.exports = FeatureViewer;
+
+// CSS in JS
+var styles = StyleSheet.create({
+	frame: {
+		height: HEIGHT,
+		position: "relative"
+	},
+
+	scroller: {
+		position: "absolute",
+		width: 100000,
+		height: HEIGHT
+	},
+
+	uiContainer: {
+		padding: "1rem"
+	}
+});
