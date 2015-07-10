@@ -7,6 +7,7 @@ var _ = require("underscore");
 
 var FeatureViewer = React.createClass({
 	propTypes: {
+		featureTrackId: React.PropTypes.string,
 		canScroll: React.PropTypes.bool,
 		chromStart: React.PropTypes.number,
 		chromEnd: React.PropTypes.number,
@@ -28,7 +29,7 @@ var FeatureViewer = React.createClass({
 						<a className="btn btn-default">Right</a>
 					</div>
 				</div>
-				<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[styles.canvas, { marginLeft: this.state.offsetLeft }]} />
+				<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[styles.canvas]} />
 				<div ref="frame" styles={[styles.frame]}>
 					{scrollNode}
 					{this._renderVoronoi()}
@@ -51,18 +52,36 @@ var FeatureViewer = React.createClass({
 	},
 
 	componentDidMount: function () {
+		var frame = this.refs.frame.getDOMNode();
 		// scroll to half
-		this.refs.frame.getDOMNode().scrollLeft = SCROLL_WIDTH / 2;
+		frame.scrollLeft = SCROLL_WIDTH / 2;
 
 		this._calculateWidth();
 		this._drawCanvas();
-		if (this.props.canScroll) this._setupScroll();
+		if (this.props.canScroll) frame.addEventListener("scroll", this._onScroll);
+
+		this._setupZoomEvents();
+	},
+
+	_setupZoomEvents: function () {
+		// play with d3 zoom
+		var scroller = this.refs.scroller.getDOMNode();
+		var scale = this._getScale();
+		var zoomFn = d3.behavior.zoom()
+			.x(scale)
+			.on("zoom", () => {
+				var dm = scale.domain();
+				this.props.store.setPositionByFeatureTrack(this.props.featureTrackId, dm[0], dm[1]);
+				this.props.onSetScale(scale)
+			});
+		d3.select(scroller).call(zoomFn);
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
 		this._drawCanvas();
 		if (prevState.DOMWidth !== this.state.DOMWidth) {
 			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
+			this._setupZoomEvents();
 		}
 	},
 
@@ -252,9 +271,10 @@ var FeatureViewer = React.createClass({
 			.range([0, this.state.DOMWidth]);
 	},
 
-	_setupScroll: function () {
+	_onScroll: function () {
+		var frame = this._frame || this.refs.frame.getDOMNode();
+		var left = frame.scrollLeft;
 		console.log("scroll")
-		// this.refs.frame.getDOMNode().addEventListener("scroll", this._onScroll);
 	},
 
 	_downloadImage: function (e) {

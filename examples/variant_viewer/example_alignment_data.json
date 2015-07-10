@@ -191,10 +191,8 @@
       "end":130
     }
   ],
-  "coordinates":{  
-    "start":193707,
-    "end":196403
-  },
+  "chromStart": 193707,
+  "chromEnd": 196403,
   "introns":[  
 
   ],

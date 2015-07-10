@@ -14,11 +14,13 @@ var LABEL_WIDTH = 150;
 
 var VariantViewer = React.createClass({
 	propTypes: {
+		store: React.PropTypes.object.isRequired,
+		chromStart: React.PropTypes.number,
+		chromEnd: React.PropTypes.number,
 		alignedDnaSequences: React.PropTypes.array,
 		alignedProteinSequences: React.PropTypes.array,
 		variantDataDna: React.PropTypes.array,
 		variantDataProtein: React.PropTypes.array,
-		coordinates: React.PropTypes.object,
 		name: React.PropTypes.string,
 		dnaLength: React.PropTypes.number,
 		proteinLength: React.PropTypes.number,
@@ -45,15 +47,8 @@ var VariantViewer = React.createClass({
 	},
 	
 	_renderFeatureViewer: function () {
-		var coord = this.props.coordinates;
-		var padding = Math.round(Math.abs(coord.end - coord.start) * 0.1);
-		var _features = [
-			{
-				chromStart: coord.start,
-				chromEnd: coord.end,
-				strand: "+" // TEMP always +
-			}
-		];
+		var featureData = this.props.store.getFeatureTrackData("variantViewer");
+		var _features = featureData.features;
 		var _focusFeature = _features[0];
 		var _onSetX1Scale = scale => {
 			this.setState({ x1Scale: scale });
@@ -72,9 +67,11 @@ var VariantViewer = React.createClass({
 			});
 		}
 		return (<FeatureViewer
+			featureTrackId={"variantViewer"}
+			store={this.props.store}
 			canScroll={true}
-			chromStart={coord.start - padding}
-			chromEnd={coord.end + padding}
+			chromStart={featureData.position.chromStart}
+			chromEnd={featureData.position.chromEnd}
 			features={_features}
 			focusFeature={_focusFeature}
 			highlightedSegment={_highlightedSegment}
@@ -94,7 +91,7 @@ var VariantViewer = React.createClass({
 
 		var parsetX1Coord = _refCoord
 			.map( d => {
-				return this.state.x1Scale(d + this.props.coordinates.start);
+				return this.state.x1Scale(d + this.props.chromStart);
 			});
 		var parsetX2Coord = _alignedCoord
 			.map( d => {
