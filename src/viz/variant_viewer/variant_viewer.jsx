@@ -72,7 +72,7 @@ var VariantViewer = React.createClass({
 			});
 		}
 		return (<FeatureViewer
-			canScroll={false}
+			canScroll={true}
 			chromStart={coord.start - padding}
 			chromEnd={coord.end + padding}
 			features={_features}

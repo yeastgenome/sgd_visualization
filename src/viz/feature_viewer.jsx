@@ -5,22 +5,6 @@ var React = require("react");
 var StyleSheet = require("react-style");
 var _ = require("underscore");
 
-var HEIGHT = 100;
-var AXIS_HEIGHT = 16;
-var HIGHLIGHT_COLOR = "#EBDD71";
-var FONT_SIZE = 14;
-var FILL_COLOR = "#09AEB2";
-var TICK_COLOR = "#b0b0b0";
-var TRACK_HEIGHT = 20;
-var VARIANT_HEIGHT = 20;
-var VARIANT_DIAMETER = 7;
-
-// fill colors for variants
-var SYNONYMOUS_COLOR = "#4D9221";  // dark yellow-green
-var NON_SYNONYMOUS_COLOR = "#C51B7D"; // dark pink
-var INTRON_COLOR = "#E6F5D0"; // pale yellow-green
-var UNTRANSLATEABLE_COLOR = "gray";
-
 var FeatureViewer = React.createClass({
 	propTypes: {
 		canScroll: React.PropTypes.bool,
@@ -37,14 +21,17 @@ var FeatureViewer = React.createClass({
 	render: function () {
 		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
 		return (
-			<div className="feature-viewer">
+			<div className="feature-viewer" styles={[styles.container]}>
 				<div styles={[styles.uiContainer]}>
-					<a onClick={this._downloadImage} className="btn btn-default">Download</a>
+					<div className="btn-group">
+						<a className="btn btn-default">Left</a>
+						<a className="btn btn-default">Right</a>
+					</div>
 				</div>
-				<div ref="container" styles={[styles.frame]}>
+				<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[styles.canvas, { marginLeft: this.state.offsetLeft }]} />
+				<div ref="frame" styles={[styles.frame]}>
 					{scrollNode}
 					{this._renderVoronoi()}
-					<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[{ marginLeft: this.state.offsetLeft }]} />
 				</div>
 			</div>
 		);
@@ -64,6 +51,9 @@ var FeatureViewer = React.createClass({
 	},
 
 	componentDidMount: function () {
+		// scroll to half
+		this.refs.frame.getDOMNode().scrollLeft = SCROLL_WIDTH / 2;
+
 		this._calculateWidth();
 		this._drawCanvas();
 		if (this.props.canScroll) this._setupScroll();
@@ -263,7 +253,8 @@ var FeatureViewer = React.createClass({
 	},
 
 	_setupScroll: function () {
-		// this.refs.container.getDOMNode().addEventListener("scroll", this._onScroll);
+		console.log("scroll")
+		// this.refs.frame.getDOMNode().addEventListener("scroll", this._onScroll);
 	},
 
 	_downloadImage: function (e) {
@@ -281,20 +272,49 @@ var FeatureViewer = React.createClass({
 
 module.exports = FeatureViewer;
 
+var HEIGHT = 100;
+var AXIS_HEIGHT = 16;
+var HIGHLIGHT_COLOR = "#EBDD71";
+var FONT_SIZE = 14;
+var FILL_COLOR = "#09AEB2";
+var SCROLL_WIDTH = 10000;
+var TICK_COLOR = "#b0b0b0";
+var TRACK_HEIGHT = 20;
+var VARIANT_HEIGHT = 20;
+var VARIANT_DIAMETER = 7;
+
+// fill colors for variants
+var SYNONYMOUS_COLOR = "#4D9221";  // dark yellow-green
+var NON_SYNONYMOUS_COLOR = "#C51B7D"; // dark pink
+var INTRON_COLOR = "#E6F5D0"; // pale yellow-green
+var UNTRANSLATEABLE_COLOR = "gray";
+
 // CSS in JS
 var styles = StyleSheet.create({
+	container: {
+		position: "relative",
+		minHeight: 200
+	},
+
+	canvas: {
+		position: "absolute",
+		top: 0
+	},
+
 	frame: {
 		height: HEIGHT,
-		position: "relative"
+		position: "relative",
+		overflow: "scroll"
 	},
 
 	scroller: {
-		position: "absolute",
-		width: 100000,
+		width: SCROLL_WIDTH,
 		height: HEIGHT
 	},
 
 	uiContainer: {
+		width: 200,
+		position: "absolute",
 		padding: "1rem"
 	}
 });
