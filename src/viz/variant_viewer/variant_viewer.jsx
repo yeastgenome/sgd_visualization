@@ -68,7 +68,7 @@ var VariantViewer = React.createClass({
 		}
 
 		var _onForceUpdate = () => {
-			if (this.isMounted()) this.forceUpdate();
+			this.forceUpdate();
 		}
 
 		return (<FeatureViewer

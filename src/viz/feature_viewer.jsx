@@ -31,8 +31,8 @@ var FeatureViewer = React.createClass({
 				</div>
 				<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[styles.canvas]} />
 				<div ref="frame" styles={[styles.frame]}>
-					{this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null}
 					{this._renderVoronoi()}
+					{this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null}
 				</div>
 			</div>
 		);
@@ -85,7 +85,6 @@ var FeatureViewer = React.createClass({
 	},
 
 	_renderVoronoi: function () {
-		return null // TEMP
 		if (!this.props.variantData) return null;
 
 		var scale = this._getScale();
@@ -104,6 +103,7 @@ var FeatureViewer = React.createClass({
 		var color = d3.scale.category10();
 		var pathString;
 		var pathNodes = voronoiPoints.map( (d, i) => {
+			if (d.length === 0) return null;
 			pathString = "M" + d.join("L") + "Z";
 			var _onMouseOver = e => {
 				var coord = this.props.variantData[i].coordinates;
@@ -111,11 +111,11 @@ var FeatureViewer = React.createClass({
 					this.props.onHighlightSegment(coord[0], coord[1]);
 				}
 			}
-			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0"/>;
+			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" stroke="black" strokeWidth="1"/>;
 		});
 
 		return (
-			<svg width={this.state.DOMWidth} height={HEIGHT} style={{ position: "absolute", top: 0 }}>
+			<svg width={this.state.DOMWidth} height={HEIGHT} style={{ position: "absolute", top: 0, left: this.state.offsetLeft }}>
 				{pathNodes}
 			</svg>
 		);
@@ -283,6 +283,8 @@ var FeatureViewer = React.createClass({
 		var newChromStart = originalScale.invert(left);
 		var newChromEnd = newChromStart + bpDelta;
 
+		this.setState({ offsetLeft: left });
+
 		this.props.store.setPositionByFeatureTrack(this.props.featureTrackId, newChromStart, newChromEnd);
 		if (typeof this.props.onForceUpdate === "function") this.props.onForceUpdate();
 	},
@@ -340,7 +342,7 @@ var styles = StyleSheet.create({
 
 	scroller: {
 		width: SCROLL_WIDTH,
-		height: HEIGHT
+		height: HEIGHT * 5
 	},
 
 	uiContainer: {
