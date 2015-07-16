@@ -54,7 +54,7 @@ var FeatureViewer = React.createClass({
 	componentDidMount: function () {
 		var frame = this.refs.frame.getDOMNode();
 		// scroll to half
-		frame.scrollLeft = SCROLL_WIDTH / 2;
+		frame.scrollLeft = SCROLL_START;
 
 		this._calculateWidth();
 		this._drawCanvas();
@@ -279,7 +279,7 @@ var FeatureViewer = React.createClass({
 		var oldScale = this._getScale();
 		var bpDelta = oldScale.domain()[1] - oldScale.domain()[0];
 		var originalPosition = this.props.store.getOriginalPosition(this.props.featureTrackId);
-		var originalScale = d3.scale.linear().domain([originalPosition.chromStart, originalPosition.chromEnd]).range(oldScale.range());
+		var originalScale = d3.scale.linear().domain([originalPosition.chromStart, originalPosition.chromEnd]).range([SCROLL_START, SCROLL_START + this.state.DOMWidth]);
 		var newChromStart = originalScale.invert(left);
 		var newChromEnd = newChromStart + bpDelta;
 
@@ -308,6 +308,7 @@ var HIGHLIGHT_COLOR = "#EBDD71";
 var FONT_SIZE = 14;
 var FILL_COLOR = "#09AEB2";
 var SCROLL_WIDTH = 10000;
+var SCROLL_START = SCROLL_WIDTH / 2;
 var TICK_COLOR = "#b0b0b0";
 var TRACK_HEIGHT = 20;
 var VARIANT_HEIGHT = 20;
