@@ -16,11 +16,11 @@ var FeatureViewer = React.createClass({
 		highlightedSegment: React.PropTypes.array, // []
 		onSetScale: React.PropTypes.func,
 		variantData: React.PropTypes.array, // [{ coordinates: [0, 5], type: "Insertion" }, ...]
-		onHighlightSegment: React.PropTypes.func
+		onHighlightSegment: React.PropTypes.func,
+		onForceUpdate: React.PropTypes.func
 	},
 
 	render: function () {
-		var scrollNode = this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null;
 		return (
 			<div className="feature-viewer" styles={[styles.container]}>
 				<div styles={[styles.uiContainer]}>
@@ -31,7 +31,7 @@ var FeatureViewer = React.createClass({
 				</div>
 				<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[styles.canvas]} />
 				<div ref="frame" styles={[styles.frame]}>
-					{scrollNode}
+					{this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null}
 					{this._renderVoronoi()}
 				</div>
 			</div>
@@ -60,7 +60,7 @@ var FeatureViewer = React.createClass({
 		this._drawCanvas();
 		if (this.props.canScroll) frame.addEventListener("scroll", this._onScroll);
 
-		this._setupZoomEvents();
+		// if (isMobile) this._setupZoomEvents();
 	},
 
 	_setupZoomEvents: function () {
@@ -68,7 +68,7 @@ var FeatureViewer = React.createClass({
 		var scroller = this.refs.scroller.getDOMNode();
 		var scale = this._getScale();
 		var zoomFn = d3.behavior.zoom()
-			.x(scale)
+			.y(scale)
 			.on("zoom", () => {
 				var dm = scale.domain();
 				this.props.store.setPositionByFeatureTrack(this.props.featureTrackId, dm[0], dm[1]);
@@ -81,11 +81,11 @@ var FeatureViewer = React.createClass({
 		this._drawCanvas();
 		if (prevState.DOMWidth !== this.state.DOMWidth) {
 			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
-			this._setupZoomEvents();
 		}
 	},
 
 	_renderVoronoi: function () {
+		return null // TEMP
 		if (!this.props.variantData) return null;
 
 		var scale = this._getScale();
@@ -272,9 +272,19 @@ var FeatureViewer = React.createClass({
 	},
 
 	_onScroll: function () {
-		var frame = this._frame || this.refs.frame.getDOMNode();
+		var frame = this.refs.frame.getDOMNode();
 		var left = frame.scrollLeft;
-		console.log("scroll")
+		var originalLeft = SCROLL_WIDTH / 2;
+		var leftDelta = originalLeft - left;
+		var oldScale = this._getScale();
+		var bpDelta = oldScale.domain()[1] - oldScale.domain()[0];
+		var originalPosition = this.props.store.getOriginalPosition(this.props.featureTrackId);
+		var originalScale = d3.scale.linear().domain([originalPosition.chromStart, originalPosition.chromEnd]).range(oldScale.range());
+		var newChromStart = originalScale.invert(left);
+		var newChromEnd = newChromStart + bpDelta;
+
+		this.props.store.setPositionByFeatureTrack(this.props.featureTrackId, newChromStart, newChromEnd);
+		if (typeof this.props.onForceUpdate === "function") this.props.onForceUpdate();
 	},
 
 	_downloadImage: function (e) {

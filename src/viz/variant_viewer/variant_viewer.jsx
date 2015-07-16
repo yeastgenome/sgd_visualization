@@ -66,6 +66,11 @@ var VariantViewer = React.createClass({
 				return d + _focusFeature.chromStart;
 			});
 		}
+
+		var _onForceUpdate = () => {
+			if (this.isMounted()) this.forceUpdate();
+		}
+
 		return (<FeatureViewer
 			featureTrackId={"variantViewer"}
 			store={this.props.store}
@@ -78,6 +83,7 @@ var VariantViewer = React.createClass({
 			onSetScale={_onSetX1Scale}
 			variantData={_variantData}
 			onHighlightSegment={this._highlightSegment}
+			onForceUpdate={_onForceUpdate}
 		/>);
 	},
 

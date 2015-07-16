@@ -28,7 +28,7 @@ module.exports = class FeatureViewerStore {
 	// *** mutators ***
 
 	addFeatureTrack (featureDatum) {
-		featureDatum.originalPosition = featureDatum.position;
+		featureDatum.originalPosition = _.clone(featureDatum.position);
 		if (typeof featureDatum.id === "undefined") featureDatum.id = "featureTrack" + featureTracks.length.toString();
 		featureTracks.push(featureDatum);
 	}
