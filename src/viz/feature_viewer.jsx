@@ -47,7 +47,9 @@ var FeatureViewer = React.createClass({
 	getInitialState: function () {
 		return {
 			DOMWidth: 400,
-			offsetLeft: 0
+			offsetLeft: 0,
+			offsetTop: 0,
+			zoomLevel: 0,
 		};
 	},
 
@@ -55,6 +57,7 @@ var FeatureViewer = React.createClass({
 		var frame = this.refs.frame.getDOMNode();
 		// scroll to half
 		frame.scrollLeft = SCROLL_START;
+		frame.scrollTop = HEIGHT * 4;
 
 		this._calculateWidth();
 		this._drawCanvas();
@@ -115,7 +118,7 @@ var FeatureViewer = React.createClass({
 		});
 
 		return (
-			<svg width={this.state.DOMWidth} height={HEIGHT} style={{ position: "absolute", top: 0, left: this.state.offsetLeft }}>
+			<svg width={this.state.DOMWidth} height={HEIGHT} style={{ position: "absolute", top: this.state.offsetTop, left: this.state.offsetLeft }}>
 				{pathNodes}
 			</svg>
 		);
@@ -272,8 +275,10 @@ var FeatureViewer = React.createClass({
 	},
 
 	_onScroll: function () {
+		console.log("scroll")
 		var frame = this.refs.frame.getDOMNode();
 		var left = frame.scrollLeft;
+		var top = frame.scrollTop;
 		var originalLeft = SCROLL_WIDTH / 2;
 		var leftDelta = originalLeft - left;
 		var oldScale = this._getScale();
@@ -283,7 +288,7 @@ var FeatureViewer = React.createClass({
 		var newChromStart = originalScale.invert(left);
 		var newChromEnd = newChromStart + bpDelta;
 
-		this.setState({ offsetLeft: left });
+		this.setState({ offsetLeft: left, offsetTop: top });
 
 		this.props.store.setPositionByFeatureTrack(this.props.featureTrackId, newChromStart, newChromEnd);
 		if (typeof this.props.onForceUpdate === "function") this.props.onForceUpdate();
