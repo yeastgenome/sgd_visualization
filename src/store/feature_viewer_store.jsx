@@ -1,11 +1,14 @@
 /** @jsx React.DOM */
 "use strict";
 var _ = require("underscore");
+var d3 = require("d3");
 
 var featureTracks = [];
 var vizTracks = []; // TEMP example [{ id: "viz1", type:"checker" }, false, false]
 
 var interactionData = [];
+
+var MIN_BP_PER_FRAME = 100;
 
 module.exports = class FeatureViewerStore {
 	// *** accessors ***
@@ -29,6 +32,7 @@ module.exports = class FeatureViewerStore {
 
 	addFeatureTrack (featureDatum) {
 		featureDatum.originalPosition = _.clone(featureDatum.position);
+		featureDatum.zoomLevel = 0;
 		if (typeof featureDatum.id === "undefined") featureDatum.id = "featureTrack" + featureTracks.length.toString();
 		featureTracks.push(featureDatum);
 	}
@@ -45,6 +49,20 @@ module.exports = class FeatureViewerStore {
 		var datum = _.findWhere(featureTracks, { id: featureTrackId });
 		datum.position.chromStart = _chromStart;
 		datum.position.chromEnd = chromEnd;
+	}
+
+	zoomByFeatureTrack (featureTrackId, newZoomLevel) {
+		var datum = _.findWhere(featureTracks, { id: featureTrackId });
+		datum.zoomLevel = newZoomLevel;
+		var originalBpPerFrame = Math.abs(datum.originalPosition.chromEnd - datum.originalPosition.chromStart);
+		var bpScale = d3.scale.linear()
+			.domain([0, 1])
+			.range([originalBpPerFrame, MIN_BP_PER_FRAME]);
+		var newBpPerFrame = bpScale(newZoomLevel);
+		var centralPosition = Math.round((datum.position.chromStart + datum.position.chromEnd) / 2);
+		var newStart = centralPosition - newBpPerFrame / 2;
+		var newEnd = centralPosition + newBpPerFrame / 2;
+		this.setPositionByFeatureTrack(featureTrackId, newStart, newEnd);
 	}
 
 	removeVizTrack (id) {

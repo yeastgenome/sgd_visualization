@@ -48,8 +48,7 @@ var FeatureViewer = React.createClass({
 		return {
 			DOMWidth: 400,
 			offsetLeft: 0,
-			offsetTop: 0,
-			zoomLevel: 0,
+			offsetTop: 0
 		};
 	},
 
@@ -57,7 +56,7 @@ var FeatureViewer = React.createClass({
 		var frame = this.refs.frame.getDOMNode();
 		// scroll to half
 		frame.scrollLeft = SCROLL_START;
-		frame.scrollTop = HEIGHT * 4;
+		frame.scrollTop = MAX_Y_SCROLL;
 
 		this._calculateWidth();
 		this._drawCanvas();
@@ -114,7 +113,7 @@ var FeatureViewer = React.createClass({
 					this.props.onHighlightSegment(coord[0], coord[1]);
 				}
 			}
-			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" stroke="black" strokeWidth="1"/>;
+			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" strokeWidth="1"/>;
 		});
 
 		return (
@@ -274,8 +273,7 @@ var FeatureViewer = React.createClass({
 			.range([0, this.state.DOMWidth]);
 	},
 
-	_onScroll: function () {
-		console.log("scroll")
+	_onScroll: function (e) {
 		var frame = this.refs.frame.getDOMNode();
 		var left = frame.scrollLeft;
 		var top = frame.scrollTop;
@@ -288,9 +286,17 @@ var FeatureViewer = React.createClass({
 		var newChromStart = originalScale.invert(left);
 		var newChromEnd = newChromStart + bpDelta;
 
-		this.setState({ offsetLeft: left, offsetTop: top });
-
+		// mutate data in store
 		this.props.store.setPositionByFeatureTrack(this.props.featureTrackId, newChromStart, newChromEnd);
+		if (this.state.offsetTop !== top) {
+			var yScale = d3.scale.linear()
+				.domain([MAX_Y_SCROLL, 0])
+				.range([0, 1]);
+			var newZoomLevel = yScale(top);
+			this.props.store.zoomByFeatureTrack(this.props.featureTrackId, newZoomLevel);
+		}
+
+		this.setState({ offsetLeft: left, offsetTop: top });
 		if (typeof this.props.onForceUpdate === "function") this.props.onForceUpdate();
 	},
 
@@ -314,6 +320,7 @@ var AXIS_HEIGHT = 16;
 var HIGHLIGHT_COLOR = "#EBDD71";
 var FONT_SIZE = 14;
 var FILL_COLOR = "#09AEB2";
+var MAX_Y_SCROLL = HEIGHT * 4;
 var SCROLL_WIDTH = 10000;
 var SCROLL_START = SCROLL_WIDTH / 2;
 var TICK_COLOR = "#b0b0b0";
@@ -331,7 +338,7 @@ var UNTRANSLATEABLE_COLOR = "gray";
 var styles = StyleSheet.create({
 	container: {
 		position: "relative",
-		minHeight: 200
+		minHeight: HEIGHT
 	},
 
 	canvas: {
