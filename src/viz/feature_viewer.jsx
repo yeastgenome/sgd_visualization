@@ -5,12 +5,15 @@ var React = require("react");
 var StyleSheet = require("react-style");
 var _ = require("underscore");
 
+var AssignTracksToDomains = require("./assign_tracks_to_domains");
+
 var FeatureViewer = React.createClass({
 	propTypes: {
 		featureTrackId: React.PropTypes.string,
 		canScroll: React.PropTypes.bool,
 		chromStart: React.PropTypes.number,
 		chromEnd: React.PropTypes.number,
+		domains: React.PropTypes.array,
 		features: React.PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
 		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
 		highlightedSegment: React.PropTypes.array, // []
@@ -21,6 +24,7 @@ var FeatureViewer = React.createClass({
 	},
 
 	render: function () {
+		var _height = this._calculateHeight();
 		return (
 			<div className="feature-viewer" styles={[styles.container]}>
 				<div styles={[styles.uiContainer]}>
@@ -29,8 +33,8 @@ var FeatureViewer = React.createClass({
 						<a className="btn btn-default">Right</a>
 					</div>
 				</div>
-				<canvas ref="canvas" width={this.state.DOMWidth} height={HEIGHT} styles={[styles.canvas]} />
-				<div ref="frame" styles={[styles.frame]}>
+				<canvas ref="canvas" width={this.state.DOMWidth} height={_height} styles={[styles.canvas]} />
+				<div ref="frame" styles={[styles.frame, { height: _height }]}>
 					{this._renderVoronoi()}
 					{this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null}
 				</div>
@@ -63,6 +67,13 @@ var FeatureViewer = React.createClass({
 		if (this.props.canScroll) frame.addEventListener("scroll", this._onScroll);
 
 		// if (isMobile) this._setupZoomEvents();
+	},
+
+	_calculateHeight: function () {
+		if (!this.props.domains) return HEIGHT;
+
+		// TEMP
+		return HEIGHT + 200;
 	},
 
 	_setupZoomEvents: function () {
@@ -133,12 +144,13 @@ var FeatureViewer = React.createClass({
 	_drawCanvas: function () {
 		var scale = this._getScale();
 		var data = this.props.features;
+		var height = this._calculateHeight();
 
 		var canvas = this.refs.canvas.getDOMNode();
 		var ctx = canvas.getContext("2d");
 		ctx.font = FONT_SIZE + "px 'Lato' sans-serif";
 		ctx.textAlign = "center";
-		ctx.clearRect(0, 0, this.state.DOMWidth, HEIGHT);
+		ctx.clearRect(0, 0, this.state.DOMWidth, height);
 
 		this._drawHighlightedSegment(ctx);
 		this._drawAxis(ctx);
@@ -165,6 +177,7 @@ var FeatureViewer = React.createClass({
 		});
 
 		this._drawVariants(ctx);
+		this._drawDomains(ctx);
 	},
 
 	_drawHighlightedSegment: function (ctx) {
@@ -180,6 +193,8 @@ var FeatureViewer = React.createClass({
 	_drawAxis: function (ctx) {
 		var scale = this._getScale();
 		var ticks = scale.ticks();
+		var featureZoneHeight = HEIGHT;
+		var totalHeight = this._calculateHeight();
 		var x;
 		ctx.strokeStyle = TICK_COLOR;
 		ctx.fillStyle = "black";
@@ -189,10 +204,18 @@ var FeatureViewer = React.createClass({
 			// tick
 			ctx.beginPath();
 			ctx.moveTo(x, 0);
-			ctx.lineTo(x, HEIGHT - AXIS_HEIGHT);
+			ctx.lineTo(x, featureZoneHeight - AXIS_HEIGHT);
 			ctx.stroke();
 			// tick label
-			ctx.fillText(d.toString(), x, HEIGHT);
+			ctx.fillText(d.toString(), x, featureZoneHeight);
+
+			// draw extended axis
+			if (this.props.domains) {
+				ctx.beginPath();
+				ctx.moveTo(x, featureZoneHeight + 3);
+				ctx.lineTo(x, totalHeight);
+				ctx.stroke();
+			}
 		});
 	},
 
@@ -267,13 +290,91 @@ var FeatureViewer = React.createClass({
 		});
 	},
 
+	_drawDomains: function (ctx) {
+		if (!this.props.domains) return;
+		var domains = this._getTrackedDomains();
+		var xScale = this._getScale();
+		var yScale = this._getDomainYScale();
+		var colorScale = d3.scale.category10();
+		var chromStart = this.props.focusFeature.chromStart;
+		var startX, endX, y;
+		domains.forEach( d => {
+			startX = xScale(chromStart + d.start);
+			endX = xScale(chromStart + d.end);
+			y = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
+
+			ctx.strokeStyle = colorScale(d.source.id);
+			ctx.strokeWidth = 2;
+			// left tick
+			ctx.beginPath();
+			ctx.moveTo(startX, y - DOMAIN_NODE_HEIGHT / 2);
+			ctx.lineTo(startX, y + DOMAIN_NODE_HEIGHT / 2);
+			ctx.stroke();
+			// line
+			ctx.beginPath();
+			ctx.moveTo(startX, y);
+			ctx.lineTo(endX, y);
+			ctx.stroke();
+			// left tick
+			ctx.beginPath();
+			ctx.moveTo(endX, y - DOMAIN_NODE_HEIGHT / 2);
+			ctx.lineTo(endX, y + DOMAIN_NODE_HEIGHT / 2);
+			ctx.stroke();
+		});
+	},
+
 	_getScale: function () {
 		return d3.scale.linear()
 			.domain([this.props.chromStart, this.props.chromEnd])
 			.range([0, this.state.DOMWidth]);
 	},
 
+	_getTrackedDomains: function () {
+		if (typeof this._trackedDomains === "undefined") {
+			this._trackedDomains = AssignTracksToDomains(this.props.domains);
+		}
+		return this._trackedDomains;
+	},
+
+	_getDomainYScale: function () {
+		var startY = HEIGHT;
+		var domain = [];
+		var range = [];
+		var sources = this._getDomainSources();
+		var trackedDomains = this._getTrackedDomains();
+		var sourceY = startY;
+		var groupedDomains, maxTracks;
+		sources.forEach( d => {
+			groupedDomains = _.filter(trackedDomains, _d => { return d.id === _d.source.id; });
+			maxTracks = d3.max(groupedDomains, _d => { return _d._track; });
+			domain.push(d.id);
+			range.push(sourceY);
+			sourceY += (maxTracks + 1) * PX_PER_DOMAIN;
+		});
+		range.push(sourceY);
+
+		return d3.scale.ordinal()
+			.domain(domain)
+			.range(range);
+	},
+
+	_getDomainSources: function () {
+		var _groupedData = _.groupBy(this.props.domains, d => {
+			return d.source.name;
+		});
+		var _keys = _.keys(_groupedData);
+		var _dataAsArray = _keys.map( d => {
+			var _baseData = _groupedData[d][0].source;
+			// add data length
+			var _length =  _groupedData[d].length;
+			return _.extend(_baseData, { numberDomains: _length });
+		});
+		return _dataAsArray;
+	},
+
+
 	_onScroll: function (e) {
+		return // TEMP
 		var frame = this.refs.frame.getDOMNode();
 		var left = frame.scrollLeft;
 		var top = frame.scrollTop;
@@ -317,10 +418,12 @@ module.exports = FeatureViewer;
 
 var HEIGHT = 100;
 var AXIS_HEIGHT = 16;
+var DOMAIN_NODE_HEIGHT = 10;
 var HIGHLIGHT_COLOR = "#EBDD71";
 var FONT_SIZE = 14;
 var FILL_COLOR = "#09AEB2";
 var MAX_Y_SCROLL = HEIGHT * 4;
+var PX_PER_DOMAIN = 24;
 var SCROLL_WIDTH = 10000;
 var SCROLL_START = SCROLL_WIDTH / 2;
 var TICK_COLOR = "#b0b0b0";
@@ -347,7 +450,6 @@ var styles = StyleSheet.create({
 	},
 
 	frame: {
-		height: HEIGHT,
 		position: "relative",
 		overflow: "scroll"
 	},

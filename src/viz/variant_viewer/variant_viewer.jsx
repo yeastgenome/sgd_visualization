@@ -24,7 +24,9 @@ var VariantViewer = React.createClass({
 		name: React.PropTypes.string,
 		dnaLength: React.PropTypes.number,
 		proteinLength: React.PropTypes.number,
-		strand: React.PropTypes.string // "+" or "-"
+		strand: React.PropTypes.string, // "+" or "-"
+		isProteinMode: React.PropTypes.bool,
+		domains: React.PropTypes.array
 	},
 
 	getInitialState: function () {
@@ -71,9 +73,12 @@ var VariantViewer = React.createClass({
 			this.forceUpdate();
 		}
 
+		var _domains = (this.props.isProteinMode && this.props.domains) ? this.props.domains: null;
+
 		return (<FeatureViewer
 			featureTrackId={"variantViewer"}
 			store={this.props.store}
+			domains={_domains}
 			canScroll={true}
 			chromStart={featureData.position.chromStart}
 			chromEnd={featureData.position.chromEnd}
