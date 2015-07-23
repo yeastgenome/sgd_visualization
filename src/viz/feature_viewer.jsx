@@ -25,18 +25,14 @@ var FeatureViewer = React.createClass({
 
 	render: function () {
 		var _height = this._calculateHeight();
+		var scrollerNode = null// {this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null} // TEMP
 		return (
 			<div className="feature-viewer" styles={[styles.container]}>
-				<div styles={[styles.uiContainer]}>
-					<div className="btn-group">
-						<a className="btn btn-default">Left</a>
-						<a className="btn btn-default">Right</a>
-					</div>
-				</div>
+				{this._renderControls()}
 				<canvas ref="canvas" width={this.state.DOMWidth} height={_height} styles={[styles.canvas]} />
 				<div ref="frame" styles={[styles.frame, { height: _height }]}>
 					{this._renderVoronoi()}
-					{this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null}
+					{scrollerNode}
 				</div>
 			</div>
 		);
@@ -97,38 +93,71 @@ var FeatureViewer = React.createClass({
 		}
 	},
 
+	_renderControls: function () {
+		return null // TEMP
+		return (
+			<div styles={[styles.uiContainer]}>
+				<div className="btn-group">
+					<a className="btn btn-default">Left</a>
+					<a className="btn btn-default">Right</a>
+				</div>
+			</div>
+		);
+	},
+
 	_renderVoronoi: function () {
 		if (!this.props.variantData) return null;
 
 		var scale = this._getScale();
+		var domainYScale = this._getDomainYScale();
 		var avgCoord, x;
 		var y  = 50; // TEMP
+		var height = this._calculateHeight();
+
+		// create array of points
 		var points = this.props.variantData.map( d => {
 			avgCoord = this.props.focusFeature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
 			x = Math.round(scale(avgCoord));
 			return [x, y];
 		});
+		// add points for domains
+		if (this.props.domains) {
+			var chromStart = this.props.focusFeature.chromStart;
+			var startX, endX, steps, pointX, pointY;
+			this.props.domains.forEach( d => {
+				startX = scale(chromStart + d.start);
+				endX = scale(chromStart + d.end);
+				steps = Math.abs(endX - startX) / DOMAIN_VORONOI_INTERVAL;
+				for (var i = steps - 1; i >= 0; i--) {
+					pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
+					pointY = domainYScale(d.source.id) + d._track * PX_PER_DOMAIN;
+					points.push([pointX, pointY]);
+				};
+			});
+		}
 
+		// declare d3 voronoi function and run on points to generate points for path
 		var voronoiFn = d3.geom.voronoi()
-			.clipExtent([[0, 0], [this.state.DOMWidth, HEIGHT]]);
-
+			.clipExtent([[0, 0], [this.state.DOMWidth, height]]);
 		var voronoiPoints = voronoiFn(points);
+
 		var color = d3.scale.category10();
 		var pathString;
 		var pathNodes = voronoiPoints.map( (d, i) => {
 			if (d.length === 0) return null;
 			pathString = "M" + d.join("L") + "Z";
-			var _onMouseOver = e => {
-				var coord = this.props.variantData[i].coordinates;
-				if (this.props.onHighlightSegment) {
-					this.props.onHighlightSegment(coord[0], coord[1]);
-				}
-			}
-			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" strokeWidth="1"/>;
+			// var _onMouseOver = e => {
+			// 	var coord = this.props.variantData[i].coordinates;
+			// 	if (this.props.onHighlightSegment) {
+			// 		this.props.onHighlightSegment(coord[0], coord[1]);
+			// 	}
+			// }
+			var _onMouseOver = null;
+			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" stroke="black" strokeWidth="1"/>;
 		});
 
 		return (
-			<svg width={this.state.DOMWidth} height={HEIGHT} style={{ position: "absolute", top: this.state.offsetTop, left: this.state.offsetLeft }}>
+			<svg width={this.state.DOMWidth} height={height} style={{ position: "absolute", top: this.state.offsetTop, left: this.state.offsetLeft }}>
 				{pathNodes}
 			</svg>
 		);
@@ -197,7 +226,7 @@ var FeatureViewer = React.createClass({
 		var totalHeight = this._calculateHeight();
 		var x;
 		ctx.strokeStyle = TICK_COLOR;
-		ctx.fillStyle = "black";
+		ctx.fillStyle = TEXT_COLOR;
 		ctx.lineWidth = 1;
 		ticks.forEach( d => {
 			x = scale(d);
@@ -232,7 +261,7 @@ var FeatureViewer = React.createClass({
 
 		var y = 50 + TRACK_HEIGHT / 2; // TEMP
 
-		ctx.strokeStyle = "black";
+		ctx.strokeStyle = TEXT_COLOR;
 		var avgCoord, snpType, type, x;
 		variantData.forEach( d => {
 			avgCoord = feature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
@@ -298,6 +327,8 @@ var FeatureViewer = React.createClass({
 		var colorScale = d3.scale.category10();
 		var chromStart = this.props.focusFeature.chromStart;
 		var startX, endX, y;
+		ctx.fillStyle = TEXT_COLOR;
+		ctx.textAlign = "left";
 		domains.forEach( d => {
 			startX = xScale(chromStart + d.start);
 			endX = xScale(chromStart + d.end);
@@ -320,6 +351,9 @@ var FeatureViewer = React.createClass({
 			ctx.moveTo(endX, y - DOMAIN_NODE_HEIGHT / 2);
 			ctx.lineTo(endX, y + DOMAIN_NODE_HEIGHT / 2);
 			ctx.stroke();
+
+			// label
+			ctx.fillText(d.domain.name, startX + 3, y - 3);
 		});
 	},
 
@@ -337,7 +371,7 @@ var FeatureViewer = React.createClass({
 	},
 
 	_getDomainYScale: function () {
-		var startY = HEIGHT;
+		var startY = HEIGHT + 35;
 		var domain = [];
 		var range = [];
 		var sources = this._getDomainSources();
@@ -416,9 +450,10 @@ var FeatureViewer = React.createClass({
 
 module.exports = FeatureViewer;
 
+var DOMAIN_VORONOI_INTERVAL = 15; // add a new voronio point for every n px across domain
 var HEIGHT = 100;
 var AXIS_HEIGHT = 16;
-var DOMAIN_NODE_HEIGHT = 10;
+var DOMAIN_NODE_HEIGHT = 7;
 var HIGHLIGHT_COLOR = "#EBDD71";
 var FONT_SIZE = 14;
 var FILL_COLOR = "#09AEB2";
@@ -426,10 +461,11 @@ var MAX_Y_SCROLL = HEIGHT * 4;
 var PX_PER_DOMAIN = 24;
 var SCROLL_WIDTH = 10000;
 var SCROLL_START = SCROLL_WIDTH / 2;
+var TEXT_COLOR = "black";
 var TICK_COLOR = "#b0b0b0";
 var TRACK_HEIGHT = 20;
-var VARIANT_HEIGHT = 20;
-var VARIANT_DIAMETER = 7;
+var VARIANT_HEIGHT = 17;
+var VARIANT_DIAMETER = 4;
 
 // fill colors for variants
 var SYNONYMOUS_COLOR = "#4D9221";  // dark yellow-green
