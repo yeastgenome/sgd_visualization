@@ -28,8 +28,8 @@ class BundledSGDVisualization {
 						chromStart:  options.data.chromStart,
 						chromEnd: options.data.chromEnd,
 						strand: "+",
-						blockSizes: [500], // TEMP
-						blockStarts: [0] // TEMP
+						blockSizes: options.data.blockSizes,
+						blockStarts: options.data.blockStarts
 					}
 				]
 			};

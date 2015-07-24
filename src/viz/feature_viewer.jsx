@@ -134,7 +134,7 @@ var FeatureViewer = React.createClass({
 				for (var i = steps - 1; i >= 0; i--) {
 					// record a mouseOver cb
 					mouseOverFns.push( () => { console.log("domain mouseover ", d.source.id); });
-					
+
 					pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
 					pointY = domainYScale(d.source.id) + d._track * PX_PER_DOMAIN;
 					points.push([pointX, pointY]);
@@ -171,24 +171,27 @@ var FeatureViewer = React.createClass({
 	},
 
 	_drawCanvas: function () {
-		var scale = this._getScale();
-		var data = this.props.features;
-		var height = this._calculateHeight();
-
 		var canvas = this.refs.canvas.getDOMNode();
 		var ctx = canvas.getContext("2d");
 		ctx.font = FONT_SIZE + "px 'Lato' sans-serif";
 		ctx.textAlign = "center";
+		var height = this._calculateHeight();
 		ctx.clearRect(0, 0, this.state.DOMWidth, height);
 
 		this._drawHighlightedSegment(ctx);
 		this._drawAxis(ctx);
-	
-		// draw features
+		this._drawFeatures(ctx);
+		this._drawVariants(ctx);
+		this._drawDomains(ctx);
+	},
+
+	_drawFeatures: function (ctx) {
 		ctx.fillStyle = FILL_COLOR;
 		var startPos, endPos, startX, endX, y;
 		var _startPos, _endPos, _startX, _width;
-		data.forEach( d => {
+		var scale = this._getScale();
+		this.props.features.forEach( d => {
+			console.log(d.blockStarts)
 			startPos = d.strand === "+" ? d.chromStart : d.chromEnd;
 			endPos = d.strand === "+" ? d.chromEnd : d.chromStart;
 			startX = scale(startPos);
@@ -204,9 +207,6 @@ var FeatureViewer = React.createClass({
 			ctx.closePath();
 			ctx.fill();
 		});
-
-		this._drawVariants(ctx);
-		this._drawDomains(ctx);
 	},
 
 	_drawHighlightedSegment: function (ctx) {

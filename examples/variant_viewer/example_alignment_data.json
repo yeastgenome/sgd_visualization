@@ -193,9 +193,8 @@
   ],
   "chromStart": 193707,
   "chromEnd": 196403,
-  "introns":[  
-
-  ],
+  "blockStarts": [0, 1000],
+  "blockSizes": [300, 1696],
   "link":"/locus/S000003131/overview",
   "dna_length":2697,
   "aligned_dna_sequences":[  
