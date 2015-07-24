@@ -187,25 +187,57 @@ var FeatureViewer = React.createClass({
 
 	_drawFeatures: function (ctx) {
 		ctx.fillStyle = FILL_COLOR;
-		var startPos, endPos, startX, endX, y;
-		var _startPos, _endPos, _startX, _width;
 		var scale = this._getScale();
+		var startPos, endPos, startX, endX, y, isPlusStrand;
 		this.props.features.forEach( d => {
-			console.log(d.blockStarts)
-			startPos = d.strand === "+" ? d.chromStart : d.chromEnd;
-			endPos = d.strand === "+" ? d.chromEnd : d.chromStart;
+			isPlusStrand = d.strand === "+";
+			startPos = isPlusStrand ? d.chromStart : d.chromEnd;
+			endPos = isPlusStrand ? d.chromEnd : d.chromStart;
 			startX = scale(startPos);
 			endX = scale(endPos);
-			y = d.strand === "+" ? 50 : 100;
+			y = isPlusStrand ? 50 : 100; // TEMP
 
-			ctx.beginPath();
-			ctx.moveTo(startX, y);
-			ctx.lineTo(endX - TRACK_HEIGHT, y);
-			ctx.lineTo(endX, y + TRACK_HEIGHT / 2);
-			ctx.lineTo(endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
-			ctx.lineTo(startX, y + TRACK_HEIGHT);
-			ctx.closePath();
-			ctx.fill();
+			// draw exons and introns if blockStarts and blockSizes defined
+			if (d.blockStarts && d.blockSizes) {
+				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX;
+				d.blockStarts.forEach( (_d, _i) => {
+					isLast = isPlusStrand ? (_i === d.blockStarts.length - 1) : (_i === 0);
+					_startX = Math.round(scale(_d + startPos));
+					_endX = Math.round(scale(_d + d.blockSizes[_i] + startPos));
+					if (isLast) {
+						ctx.beginPath();
+						ctx.moveTo(_startX, y);
+						ctx.lineTo(_endX - TRACK_HEIGHT, y);
+						ctx.lineTo(_endX, y + TRACK_HEIGHT / 2);
+						ctx.lineTo(_endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
+						ctx.lineTo(_startX, y + TRACK_HEIGHT);
+						ctx.closePath();
+						ctx.fill();
+					} else {
+						_width = Math.abs(_endX - _startX);
+						ctx.fillRect(_startX, y , _width, TRACK_HEIGHT);
+						// intron to next exon
+						_nextRelStart = isPlusStrand ? d.blockStarts[_i + 1] : d.blockStarts[_i - 1];
+						_nextStartX = Math.round(scale(startPos + _nextRelStart));
+						ctx.strokeStyle = TEXT_COLOR;
+						ctx.beginPath();
+						ctx.moveTo(_endX, y + TRACK_HEIGHT / 2);
+						ctx.lineTo(_nextStartX, y + TRACK_HEIGHT / 2);
+						ctx.stroke();
+					}
+				});
+
+			// or just draw simple "blocky" feature
+			} else {
+				ctx.beginPath();
+				ctx.moveTo(startX, y);
+				ctx.lineTo(endX - TRACK_HEIGHT, y);
+				ctx.lineTo(endX, y + TRACK_HEIGHT / 2);
+				ctx.lineTo(endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
+				ctx.lineTo(startX, y + TRACK_HEIGHT);
+				ctx.closePath();
+				ctx.fill();
+			}
 		});
 	},
 
