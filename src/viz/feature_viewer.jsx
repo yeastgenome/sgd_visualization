@@ -113,9 +113,12 @@ var FeatureViewer = React.createClass({
 		var avgCoord, x;
 		var y  = 50; // TEMP
 		var height = this._calculateHeight();
+		var mouseOverFns = [];
 
 		// create array of points
 		var points = this.props.variantData.map( d => {
+			// record a mouseOver cb
+			mouseOverFns.push( () => { console.log("variant mouseover"); });
 			avgCoord = this.props.focusFeature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
 			x = Math.round(scale(avgCoord));
 			return [x, y];
@@ -129,6 +132,9 @@ var FeatureViewer = React.createClass({
 				endX = scale(chromStart + d.end);
 				steps = Math.abs(endX - startX) / DOMAIN_VORONOI_INTERVAL;
 				for (var i = steps - 1; i >= 0; i--) {
+					// record a mouseOver cb
+					mouseOverFns.push( () => { console.log("domain mouseover ", d.source.id); });
+					
 					pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
 					pointY = domainYScale(d.source.id) + d._track * PX_PER_DOMAIN;
 					points.push([pointX, pointY]);
@@ -146,13 +152,7 @@ var FeatureViewer = React.createClass({
 		var pathNodes = voronoiPoints.map( (d, i) => {
 			if (d.length === 0) return null;
 			pathString = "M" + d.join("L") + "Z";
-			// var _onMouseOver = e => {
-			// 	var coord = this.props.variantData[i].coordinates;
-			// 	if (this.props.onHighlightSegment) {
-			// 		this.props.onHighlightSegment(coord[0], coord[1]);
-			// 	}
-			// }
-			var _onMouseOver = null;
+			var _onMouseOver = mouseOverFns[i];
 			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" stroke="black" strokeWidth="1"/>;
 		});
 
