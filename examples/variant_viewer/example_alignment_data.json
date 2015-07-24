@@ -191,8 +191,8 @@
       "end":130
     }
   ],
-  "chromEnd": 193707,
-  "chromStart": 196403,
+  "chromStart": 193707,
+  "chromEnd": 196403,
   "blockStarts": [0, 1000],
   "blockSizes": [300, 1696],
   "link":"/locus/S000003131/overview",
@@ -272,7 +272,7 @@
     }
   ],
   "id":4672,
-  "strand":"-",
+  "strand":"+",
   "domains": [
     {
       "start": 1,

@@ -199,7 +199,7 @@ var FeatureViewer = React.createClass({
 
 			// draw exons and introns if blockStarts and blockSizes defined
 			if (d.blockStarts && d.blockSizes) {
-				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX;
+				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
 				d.blockStarts.forEach( (_d, _i) => {
 					isLast = (_i === d.blockStarts.length - 1);
 					if (isPlusStrand) {
@@ -230,14 +230,14 @@ var FeatureViewer = React.createClass({
 						ctx.fill();
 					} else {
 						_width = Math.abs(_endX - _startX);
-						console.log(_startX)
 						ctx.fillRect(_startX, y , _width, TRACK_HEIGHT);
 						// intron to next exon
 						_nextRelStart = d.blockStarts[_i + 1];
-						_nextStartX = Math.round(scale(startPos + _nextRelStart));
+						_nextStartX = isPlusStrand ? Math.round(scale(startPos + _nextRelStart)) : Math.round(scale(endPos - d.blockStarts[_i + 1] - d.blockSizes[_i + 1]));
+						_nextEndX = isPlusStrand ? _endX : _startX;
 						ctx.strokeStyle = TEXT_COLOR;
 						ctx.beginPath();
-						ctx.moveTo(_endX, y + TRACK_HEIGHT / 2);
+						ctx.moveTo(_nextEndX, y + TRACK_HEIGHT / 2);
 						ctx.lineTo(_nextStartX, y + TRACK_HEIGHT / 2);
 						ctx.stroke();
 					}
