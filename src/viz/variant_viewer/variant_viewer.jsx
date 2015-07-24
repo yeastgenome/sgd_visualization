@@ -68,20 +68,20 @@ var VariantViewer = React.createClass({
 				return d + _focusFeature.chromStart;
 			});
 		}
-
 		var _onForceUpdate = () => {
 			this.forceUpdate();
 		}
-
 		var _domains = (this.props.isProteinMode && this.props.domains) ? this.props.domains: null;
+		var _chromStart = Math.min(featureData.position.chromStart, featureData.position.chromEnd);
+		var _chromEnd = Math.max(featureData.position.chromStart, featureData.position.chromEnd);
 
 		return (<FeatureViewer
 			featureTrackId={"variantViewer"}
 			store={this.props.store}
 			domains={_domains}
 			canScroll={true}
-			chromStart={featureData.position.chromStart}
-			chromEnd={featureData.position.chromEnd}
+			chromStart={_chromStart}
+			chromEnd={_chromEnd}
 			features={_features}
 			focusFeature={_focusFeature}
 			highlightedSegment={_highlightedSegment}

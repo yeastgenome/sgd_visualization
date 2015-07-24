@@ -195,29 +195,45 @@ var FeatureViewer = React.createClass({
 			endPos = isPlusStrand ? d.chromEnd : d.chromStart;
 			startX = scale(startPos);
 			endX = scale(endPos);
-			y = isPlusStrand ? 50 : 100; // TEMP
+			y = isPlusStrand ? 50 : 50; // TEMP
 
 			// draw exons and introns if blockStarts and blockSizes defined
 			if (d.blockStarts && d.blockSizes) {
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX;
 				d.blockStarts.forEach( (_d, _i) => {
-					isLast = isPlusStrand ? (_i === d.blockStarts.length - 1) : (_i === 0);
-					_startX = Math.round(scale(_d + startPos));
-					_endX = Math.round(scale(_d + d.blockSizes[_i] + startPos));
+					isLast = (_i === d.blockStarts.length - 1);
+					if (isPlusStrand) {
+						_startX = Math.round(scale(_d + startPos));
+						_endX = Math.round(scale(_d + d.blockSizes[_i] + startPos));
+					} else {
+						_startX = Math.round(scale(endPos - _d - d.blockSizes[_i]));
+						_endX = Math.round(scale(endPos - _d));
+					}
+					
+					// draw arrow shape
 					if (isLast) {
 						ctx.beginPath();
-						ctx.moveTo(_startX, y);
-						ctx.lineTo(_endX - TRACK_HEIGHT, y);
-						ctx.lineTo(_endX, y + TRACK_HEIGHT / 2);
-						ctx.lineTo(_endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
-						ctx.lineTo(_startX, y + TRACK_HEIGHT);
+						if (isPlusStrand) {
+							ctx.moveTo(_startX, y);
+							ctx.lineTo(_endX - TRACK_HEIGHT, y);
+							ctx.lineTo(_endX, y + TRACK_HEIGHT / 2);
+							ctx.lineTo(_endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
+							ctx.lineTo(_startX, y + TRACK_HEIGHT);
+						} else {
+							ctx.moveTo(_startX + TRACK_HEIGHT, y);
+							ctx.lineTo(_endX, y);
+							ctx.lineTo(_endX, y + TRACK_HEIGHT);
+							ctx.lineTo(_startX + TRACK_HEIGHT, y + TRACK_HEIGHT);
+							ctx.lineTo(_startX, y + TRACK_HEIGHT / 2);
+						}
 						ctx.closePath();
 						ctx.fill();
 					} else {
 						_width = Math.abs(_endX - _startX);
+						console.log(_startX)
 						ctx.fillRect(_startX, y , _width, TRACK_HEIGHT);
 						// intron to next exon
-						_nextRelStart = isPlusStrand ? d.blockStarts[_i + 1] : d.blockStarts[_i - 1];
+						_nextRelStart = d.blockStarts[_i + 1];
 						_nextStartX = Math.round(scale(startPos + _nextRelStart));
 						ctx.strokeStyle = TEXT_COLOR;
 						ctx.beginPath();

@@ -27,7 +27,7 @@ class BundledSGDVisualization {
 						chrom: "chriii", // TEMP
 						chromStart:  options.data.chromStart,
 						chromEnd: options.data.chromEnd,
-						strand: "+",
+						strand: options.data.strand,
 						blockSizes: options.data.blockSizes,
 						blockStarts: options.data.blockStarts
 					}
@@ -38,7 +38,7 @@ class BundledSGDVisualization {
 		}
 
 		var VizComponent = componentTypes[options.type];
-		React.render(<VizComponent {...options.data}  store={store}/>, targetNode);
+		React.render(<VizComponent {...options.data} store={store}/>, targetNode);
 	}
 }
 
