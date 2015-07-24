@@ -27,12 +27,14 @@ var FeatureViewer = React.createClass({
 		var _height = this._calculateHeight();
 		var scrollerNode = null// {this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null} // TEMP
 		return (
-			<div className="feature-viewer" styles={[styles.container]}>
+			<div className="feature-viewer">
 				{this._renderControls()}
-				<canvas ref="canvas" width={this.state.DOMWidth} height={_height} styles={[styles.canvas]} />
-				<div ref="frame" styles={[styles.frame, { height: _height }]}>
-					{this._renderVoronoi()}
-					{scrollerNode}
+				<div styles={[styles.container]}>
+					<canvas ref="canvas" width={this.state.DOMWidth} height={_height} styles={[styles.canvas]} />
+					<div ref="frame" styles={[styles.frame, { height: _height }]}>
+						{this._renderVoronoi()}
+						{scrollerNode}
+					</div>
 				</div>
 			</div>
 		);
@@ -94,12 +96,18 @@ var FeatureViewer = React.createClass({
 	},
 
 	_renderControls: function () {
-		return null // TEMP
 		return (
 			<div styles={[styles.uiContainer]}>
-				<div className="btn-group">
+				<div className="btn-group" styles={[styles.btnGroup]}>
+					<a className="btn btn-default" onClick={this._downloadImage}>Download</a>
+				</div>
+				<div className="btn-group" styles={[styles.btnGroup]}>
 					<a className="btn btn-default">Left</a>
 					<a className="btn btn-default">Right</a>
+				</div>
+				<div className="btn-group" styles={[styles.btnGroup]}>
+					<a className="btn btn-default">In</a>
+					<a className="btn btn-default">Out</a>
 				</div>
 			</div>
 		);
@@ -544,8 +552,12 @@ var styles = StyleSheet.create({
 	},
 
 	uiContainer: {
-		width: 200,
-		position: "absolute",
-		padding: "1rem"
+		padding: "1rem 0 1rem 1rem",
+		textAlign: "right"
+	},
+
+	btnGroup: {
+		display: "inline-block",
+		marginLeft: "1rem"
 	}
 });
