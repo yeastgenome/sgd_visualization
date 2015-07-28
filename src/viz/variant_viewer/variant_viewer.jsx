@@ -119,9 +119,6 @@ var VariantViewer = React.createClass({
 			isVisible={true}
 			x1Coordinates={parsetX1Coord}
 			x2Coordinates={parsetX2Coord}
-			text={text}
-			contigDisplayName={"FOOBAR"}
-			contigHref={"http://google.com"}
 		/>);
 	},
 

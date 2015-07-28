@@ -2,19 +2,12 @@
 var d3 = require("d3");
 var React = require("react");
 var _ = require("underscore");
+var StyleSheet = require("react-style");
 
 var getJaggedScale = require("./get_jagged_scale.jsx");
 var MultiScaleAxis = require("./multi_scale_axis.jsx");
 
-// TEMP vars
-var AXIS_HEIGHT = 30;
-var FONT_SIZE = 14;
-var LABEL_WIDTH = 150;
-var PX_PER_CHAR = 9.25;
-var TICK_HEIGHT = 6;
-
 var MultiAlignmentViewer = React.createClass({
-
 	propTypes: {
 		// highlightedSegmentDomain: null or [start, end]
 		onHighlightSegment: React.PropTypes.func, // (start, end) =>
@@ -42,7 +35,7 @@ var MultiAlignmentViewer = React.createClass({
 
 		return (<div>
 			{this._getLabelsNode()}
-			<div ref="scroller" style={{ marginLeft: LABEL_WIDTH, overflow: "scroll" }}>
+			<div ref="scroller" styles={[styles.scroller]}>
 				<div style={{ width: maxX + FONT_SIZE }}>
 					<MultiScaleAxis segments={this.props.segments} scale={xScale} />
 					<svg ref="svg" style={{ width: maxX + FONT_SIZE, height: svgHeight }}>
@@ -93,15 +86,11 @@ var MultiAlignmentViewer = React.createClass({
 	_getLabelsNode: function () {
 		var yScale = this._getYScale();
 		var labelNodes = _.map(this.props.sequences, (s, i) => {
-			var _style = {
-				position: "absolute",
-				right: "1rem",
-				top: yScale(s.name) + 28
-			}
+			var _styles = [styles.sequenceLabel, { top: yScale(s.name) + 28 }];
 			var indicatorNode = (this.state.activeSequenceName === s.name) ? <i className="fa fa-chevron-right"></i> : null;
-			return <a href={s.href} key={"sequenceAlignLabel" + i} target="_new" style={_style}>{indicatorNode} {s.name}</a>
+			return <a href={s.href} key={"sequenceAlignLabel" + i} target="_new" styles={_styles}>{indicatorNode} {s.name}</a>
 		});
-		return (<div style={{ position: "absolute", height: "100%", background: "#efefef", width: LABEL_WIDTH }}>
+		return (<div styles={[styles.sequenceLabelContainer]}>
 			{labelNodes}
 		</div>);
 	},
@@ -118,7 +107,7 @@ var MultiAlignmentViewer = React.createClass({
 			var _opacity = 0.5;
 			var _onMouseOver = e => {
 				this._onSegmentMouseOver(e, s, i);
-			}
+			};
 			return <rect onMouseOver={_onMouseOver} key={"segRect" + i} x={_x} y={_y} width={_width} height={_height} fill={"none"} stroke="none" opacity={_opacity} style={{ pointerEvents: "all" }} />;
 		});
 	},
@@ -156,6 +145,32 @@ var MultiAlignmentViewer = React.createClass({
 		return d3.scale.ordinal()
 			.domain(names)
 			.rangePoints([PX_PER_CHAR + 3, height + PX_PER_CHAR]);
+	}
+});
+
+var AXIS_HEIGHT = 40;
+var FONT_SIZE = 14;
+var LABEL_WIDTH = 150;
+var PX_PER_CHAR = 9.25;
+var TICK_HEIGHT = 6;
+
+// CSS in JS
+var styles = StyleSheet.create({
+	scroller: {
+		marginLeft: LABEL_WIDTH,
+		overflow: "scroll"
+	},
+
+	sequenceLabelContainer: {
+		position: "absolute",
+		height: "100%",
+		background: "white",
+		width: LABEL_WIDTH
+	},
+
+	sequenceLabel: {
+		position: "absolute",
+		right: "1rem"
 	}
 });
 

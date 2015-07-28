@@ -4,7 +4,7 @@ var React = require("react");
 var _ = require("underscore");
 
 var TICK_HEIGHT = 6;
-var HEIGHT = 35;
+var HEIGHT = 40;
 
 var MultiScaleAxis = React.createClass({
 	propTypes: {

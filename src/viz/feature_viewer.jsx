@@ -161,7 +161,7 @@ var FeatureViewer = React.createClass({
 			if (d.length === 0) return null;
 			pathString = "M" + d.join("L") + "Z";
 			var _onMouseOver = mouseOverFns[i];
-			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" stroke="black" strokeWidth="1"/>;
+			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" strokeWidth="1"/>;
 		});
 
 		return (
@@ -271,8 +271,9 @@ var FeatureViewer = React.createClass({
 		var startX = scale(this.props.highlightedSegment[0]);
 		var endX = scale(this.props.highlightedSegment[1]);
 		var width = Math.abs(endX - startX);
+		var height = this._calculateHeight();
 		ctx.fillStyle = HIGHLIGHT_COLOR;
-		ctx.fillRect(startX, 0 , width, HEIGHT);
+		ctx.fillRect(startX, 0 , width, height);
 	},
 
 	_drawAxis: function (ctx) {
@@ -506,7 +507,7 @@ var FeatureViewer = React.createClass({
 
 module.exports = FeatureViewer;
 
-var DOMAIN_VORONOI_INTERVAL = 15; // add a new voronio point for every n px across domain
+var DOMAIN_VORONOI_INTERVAL = 15; // add a new voronoi point for every n px across domain
 var HEIGHT = 100;
 var AXIS_HEIGHT = 16;
 var DOMAIN_NODE_HEIGHT = 7;
