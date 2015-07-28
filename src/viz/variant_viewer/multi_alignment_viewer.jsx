@@ -148,7 +148,6 @@ var MultiAlignmentViewer = React.createClass({
 	}
 });
 
-var AXIS_HEIGHT = 40;
 var FONT_SIZE = 14;
 var LABEL_WIDTH = 150;
 var PX_PER_CHAR = 9.25;

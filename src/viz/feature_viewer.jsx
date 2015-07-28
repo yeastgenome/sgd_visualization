@@ -50,7 +50,8 @@ var FeatureViewer = React.createClass({
 		return {
 			DOMWidth: 400,
 			offsetLeft: 0,
-			offsetTop: 0
+			offsetTop: 0,
+			computedForceData: null
 		};
 	},
 
@@ -92,6 +93,7 @@ var FeatureViewer = React.createClass({
 		this._drawCanvas();
 		if (prevState.DOMWidth !== this.state.DOMWidth) {
 			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
+			this._recalculateForceLayout();
 		}
 	},
 
@@ -111,6 +113,20 @@ var FeatureViewer = React.createClass({
 				</div>
 			</div>
 		);
+	},
+
+	_recalculateForceLayout: function () {
+		var raw = this._getRawVariants();
+		var forceFn = d3.layout.force()
+			.nodes(raw)
+			.size([this._getScale().range()[1], this._calculateHeight()])
+			.charge(-0.25)
+			.gravity(0)
+			.chargeDistance(VARIANT_DIAMETER)
+			.on("tick", () => {
+				this.setState({ computedForceData: forceFn.nodes() });
+			});
+		forceFn.start();
 	},
 
 	_renderVoronoi: function () {
@@ -306,73 +322,106 @@ var FeatureViewer = React.createClass({
 	},
 
 	_drawVariants: function (ctx) {
-		var feature = this.props.focusFeature;
-		var variantData = this.props.variantData;
+		var data = this.state.computedForceData;
+		if (!data) return;
+		ctx.globalAlpha = 0.5;
+		data.forEach( d => {
+			ctx.fillStyle = "red";
+			var path = new Path2D();
+			path.arc(d.x, d.y - VARIANT_HEIGHT, VARIANT_DIAMETER, 0, Math.PI * 2, true);
+			ctx.fill(path);
+			ctx.stroke(path);
+		});
+		ctx.globalAlpha = 1;
+	},
+
+	// _drawVariants: function (ctx) {
+	// 	var feature = this.props.focusFeature;
+	// 	var variantData = this.props.variantData;
+	// 	var scale = this._getScale();
+	// 	var colors = {
+	// 		"synonymous": SYNONYMOUS_COLOR,
+	// 		"nonsynonymous": NON_SYNONYMOUS_COLOR,
+	// 		"intron": INTRON_COLOR,
+	// 		"untranslatable": UNTRANSLATEABLE_COLOR
+	// 	};
+
+	// 	var y = 50 + TRACK_HEIGHT / 2; // TEMP
+
+	// 	ctx.strokeStyle = TEXT_COLOR;
+	// 	var avgCoord, snpType, type, x;
+	// 	variantData.forEach( d => {
+	// 		avgCoord = feature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
+	// 		x = Math.round(scale(avgCoord));
+	// 		snpType = d.snpType.toLowerCase();
+	// 		type = d.type.toLowerCase();
+	// 		ctx.lineWidth = 1;
+
+	// 		if (type !== "deletion") {
+	// 			ctx.beginPath();
+	// 			ctx.moveTo(x, y);
+	// 			ctx.lineTo(x, y - VARIANT_HEIGHT);
+	// 			ctx.stroke();
+	// 		}
+
+	// 		if (type === "snp") {
+	// 			ctx.fillStyle = colors[snpType] || "gray";
+	// 			var path = new Path2D();
+	// 			path.arc(x, y - VARIANT_HEIGHT, VARIANT_DIAMETER, 0, Math.PI * 2, true);
+	// 			ctx.fill(path);
+	// 		} else if (type === "insertion") {
+	// 			ctx.lineWidth = 2;
+	// 			ctx.beginPath();
+	// 			ctx.moveTo(x - VARIANT_DIAMETER / 2, y - VARIANT_HEIGHT);
+	// 			ctx.lineTo(x, y - VARIANT_HEIGHT - VARIANT_DIAMETER / 2);
+	// 			ctx.lineTo(x + VARIANT_DIAMETER / 2, y - VARIANT_HEIGHT);
+	// 			ctx.stroke();
+	// 		} else if (type === "deletion") {
+	// 			var startX = scale(feature.chromStart + d.coordinates[0]);
+	// 			var endX = scale(feature.chromStart + d.coordinates[1]);
+	// 			var avgX = Math.round((startX + endX) / 2);
+	// 			y = 45; // TEMP
+	// 			ctx.lineWidth = 1;
+	// 			ctx.beginPath();
+	// 			ctx.moveTo(startX, y);
+	// 			ctx.lineTo(endX, y);
+	// 			ctx.stroke();
+
+	// 			ctx.beginPath();
+	// 			ctx.moveTo(avgX, y);
+	// 			ctx.lineTo(avgX, y - 15);
+	// 			ctx.stroke();
+
+	// 			var r = VARIANT_DIAMETER / 2;
+	// 			// draw 'x'
+	// 			ctx.beginPath();
+	// 			ctx.moveTo(avgX - r, y - 15 + r);
+	// 			ctx.lineTo(avgX + r, y - 15 - r);
+	// 			ctx.stroke();
+	// 			ctx.beginPath();
+	// 			ctx.moveTo(avgX - r, y - 15 - r);
+	// 			ctx.lineTo(avgX + r, y - 15 + r);
+	// 			ctx.stroke();
+	// 		}
+	// 	});
+	// },
+
+	// input for force layout, get array of "natural" positions of variant nodes
+	_getRawVariants: function () {
+		var focusFeature = this.props.focusFeature;
 		var scale = this._getScale();
-		var colors = {
-			"synonymous": SYNONYMOUS_COLOR,
-			"nonsynonymous": NON_SYNONYMOUS_COLOR,
-			"intron": INTRON_COLOR,
-			"untranslatable": UNTRANSLATEABLE_COLOR
-		};
 
-		var y = 50 + TRACK_HEIGHT / 2; // TEMP
-
-		ctx.strokeStyle = TEXT_COLOR;
-		var avgCoord, snpType, type, x;
-		variantData.forEach( d => {
-			avgCoord = feature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
-			x = Math.round(scale(avgCoord));
+		var _y = 50 + TRACK_HEIGHT / 2; // TEMP
+		var avgCoord, snpType, type, _x;
+		return this.props.variantData.map( d => {
+			avgCoord = focusFeature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
+			_x = Math.round(scale(avgCoord));
 			snpType = d.snpType.toLowerCase();
 			type = d.type.toLowerCase();
-			ctx.lineWidth = 1;
-
-			if (type !== "deletion") {
-				ctx.beginPath();
-				ctx.moveTo(x, y);
-				ctx.lineTo(x, y - VARIANT_HEIGHT);
-				ctx.stroke();
-			}
-
-			if (type === "snp") {
-				ctx.fillStyle = colors[snpType] || "gray";
-				var path = new Path2D();
-				path.arc(x, y - VARIANT_HEIGHT, VARIANT_DIAMETER, 0, Math.PI * 2, true);
-				ctx.fill(path);
-			} else if (type === "insertion") {
-				ctx.lineWidth = 2;
-				ctx.beginPath();
-				ctx.moveTo(x - VARIANT_DIAMETER / 2, y - VARIANT_HEIGHT);
-				ctx.lineTo(x, y - VARIANT_HEIGHT - VARIANT_DIAMETER / 2);
-				ctx.lineTo(x + VARIANT_DIAMETER / 2, y - VARIANT_HEIGHT);
-				ctx.stroke();
-			} else if (type === "deletion") {
-				var startX = scale(feature.chromStart + d.coordinates[0]);
-				var endX = scale(feature.chromStart + d.coordinates[1]);
-				var avgX = Math.round((startX + endX) / 2);
-				y = 45; // TEMP
-				ctx.lineWidth = 1;
-				ctx.beginPath();
-				ctx.moveTo(startX, y);
-				ctx.lineTo(endX, y);
-				ctx.stroke();
-
-				ctx.beginPath();
-				ctx.moveTo(avgX, y);
-				ctx.lineTo(avgX, y - 15);
-				ctx.stroke();
-
-				var r = VARIANT_DIAMETER / 2;
-				// draw 'x'
-				ctx.beginPath();
-				ctx.moveTo(avgX - r, y - 15 + r);
-				ctx.lineTo(avgX + r, y - 15 - r);
-				ctx.stroke();
-				ctx.beginPath();
-				ctx.moveTo(avgX - r, y - 15 - r);
-				ctx.lineTo(avgX + r, y - 15 + r);
-				ctx.stroke();
-			}
+			return {
+				x: _x,
+				y: _y
+			};
 		});
 	},
 

@@ -189,6 +189,13 @@
       "variant_type":"SNP",
       "score":2,
       "end":130
+    },
+    {  
+      "snp_type":"Synonymous",
+      "start":130,
+      "variant_type":"SNP",
+      "score":2,
+      "end":131
     }
   ],
   "chromStart": 193707,
