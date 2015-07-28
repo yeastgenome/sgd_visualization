@@ -122,7 +122,7 @@ var FeatureViewer = React.createClass({
 			.size([this._getScale().range()[1], this._calculateHeight()])
 			.charge(-0.25)
 			.gravity(0)
-			.chargeDistance(VARIANT_DIAMETER)
+			.chargeDistance(VARIANT_DIAMETER / 2)
 			.on("tick", () => {
 				this.setState({ computedForceData: forceFn.nodes() });
 			});
@@ -130,7 +130,7 @@ var FeatureViewer = React.createClass({
 	},
 
 	_renderVoronoi: function () {
-		if (!this.props.variantData) return null;
+		if (!this.state.computedForceData) return null;
 
 		var scale = this._getScale();
 		var domainYScale = this._getDomainYScale();
@@ -140,12 +140,11 @@ var FeatureViewer = React.createClass({
 		var mouseOverFns = [];
 
 		// create array of points
-		var points = this.props.variantData.map( d => {
+		var points = [];
+		this.state.computedForceData.forEach( d => {
 			// record a mouseOver cb
 			mouseOverFns.push( () => { console.log("variant mouseover"); });
-			avgCoord = this.props.focusFeature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
-			x = Math.round(scale(avgCoord));
-			return [x, y];
+			points.push([d.x, d.y]);
 		});
 		// add points for domains
 		if (this.props.domains) {
@@ -322,29 +321,40 @@ var FeatureViewer = React.createClass({
 	},
 
 	_drawVariants: function (ctx) {
-		var data = this.state.computedForceData;
-		if (!data) return;
-		ctx.globalAlpha = 0.5;
-		data.forEach( d => {
-			ctx.fillStyle = "red";
+		var computedData = this.state.computedForceData;
+		if (!computedData) return;
+		var originalData = this._getRawVariants();
+		var colors = {
+			"synonymous": SYNONYMOUS_COLOR,
+			"nonsynonymous": NON_SYNONYMOUS_COLOR,
+			"intron": INTRON_COLOR,
+			"untranslatable": UNTRANSLATEABLE_COLOR
+		};
+		var originalD, snpType;
+		computedData.forEach( (d, i) => {
+			// draw line
+			originalD = originalData[i];
+			snpType = originalD.snpType.toLowerCase();
+			ctx.beginPath();
+			ctx.moveTo(originalD.x, originalD.y + VARIANT_DIAMETER / 2 + 1);
+			ctx.lineTo(originalD.x, originalD.y + VARIANT_HEIGHT);
+			ctx.stroke();
+			// draw circle
+			ctx.globalAlpha = 0.5;
+			ctx.fillStyle = colors[snpType];
 			var path = new Path2D();
-			path.arc(d.x, d.y - VARIANT_HEIGHT, VARIANT_DIAMETER, 0, Math.PI * 2, true);
+			path.arc(d.x, d.y, VARIANT_DIAMETER, 0, Math.PI * 2, true);
 			ctx.fill(path);
 			ctx.stroke(path);
+			ctx.globalAlpha = 1;
 		});
-		ctx.globalAlpha = 1;
+		
 	},
 
 	// _drawVariants: function (ctx) {
 	// 	var feature = this.props.focusFeature;
 	// 	var variantData = this.props.variantData;
 	// 	var scale = this._getScale();
-	// 	var colors = {
-	// 		"synonymous": SYNONYMOUS_COLOR,
-	// 		"nonsynonymous": NON_SYNONYMOUS_COLOR,
-	// 		"intron": INTRON_COLOR,
-	// 		"untranslatable": UNTRANSLATEABLE_COLOR
-	// 	};
 
 	// 	var y = 50 + TRACK_HEIGHT / 2; // TEMP
 
@@ -418,10 +428,10 @@ var FeatureViewer = React.createClass({
 			_x = Math.round(scale(avgCoord));
 			snpType = d.snpType.toLowerCase();
 			type = d.type.toLowerCase();
-			return {
+			return _.extend(d, {
 				x: _x,
-				y: _y
-			};
+				y: _y - VARIANT_HEIGHT
+			});
 		});
 	},
 

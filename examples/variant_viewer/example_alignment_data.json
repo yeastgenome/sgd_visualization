@@ -192,10 +192,10 @@
     },
     {  
       "snp_type":"Synonymous",
-      "start":130,
+      "start":129,
       "variant_type":"SNP",
       "score":2,
-      "end":131
+      "end":130
     }
   ],
   "chromStart": 193707,
