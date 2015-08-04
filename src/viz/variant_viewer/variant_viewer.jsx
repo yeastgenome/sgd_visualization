@@ -56,11 +56,10 @@ var VariantViewer = React.createClass({
 			this.setState({ x1Scale: scale });
 		};
 		var _variantData = this.props.variantDataDna.map( d => {
-			return {
+			return _.extend(d, {
 				coordinates: [d.start, d.end],
 				type: d.variant_type,
-				snpType: d.snp_type
-			}
+			});
 		});
 		var _highlightedSegment = null;
 		if (this.state.highlightedAlignedSegment) {
@@ -89,6 +88,8 @@ var VariantViewer = React.createClass({
 			variantData={_variantData}
 			onHighlightSegment={this._highlightSegment}
 			onForceUpdate={_onForceUpdate}
+			isRelative={true}
+			drawIntrons={!this.props.isProteinMode}
 		/>);
 	},
 

@@ -20,7 +20,17 @@ var FeatureViewer = React.createClass({
 		onSetScale: React.PropTypes.func,
 		variantData: React.PropTypes.array, // [{ coordinates: [0, 5], type: "Insertion" }, ...]
 		onHighlightSegment: React.PropTypes.func,
-		onForceUpdate: React.PropTypes.func
+		onForceUpdate: React.PropTypes.func,
+		isRelative: React.PropTypes.bool,
+		drawIntrons: React.PropTypes.bool
+	},
+
+	getDefaultProps: function () {
+		return {
+			canScroll: true,
+			drawIntrons: true,
+			isRelative: false
+		};
 	},
 
 	render: function () {
@@ -38,12 +48,6 @@ var FeatureViewer = React.createClass({
 				</div>
 			</div>
 		);
-	},
-
-	getDefaultProps: function () {
-		return {
-			canScroll: true
-		};
 	},
 
 	getInitialState: function () {
@@ -211,17 +215,18 @@ var FeatureViewer = React.createClass({
 	_drawFeatures: function (ctx) {
 		ctx.fillStyle = FILL_COLOR;
 		var scale = this._getScale();
+		var startOffset = this.props.isRelative ? this.props.chromStart : 0;
 		var startPos, endPos, startX, endX, y, isPlusStrand;
 		this.props.features.forEach( d => {
 			isPlusStrand = d.strand === "+";
-			startPos = isPlusStrand ? d.chromStart : d.chromEnd;
-			endPos = isPlusStrand ? d.chromEnd : d.chromStart;
+			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
+			endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
 			startX = scale(startPos);
 			endX = scale(endPos);
 			y = isPlusStrand ? 50 : 50; // TEMP
 
 			// draw exons and introns if blockStarts and blockSizes defined
-			if (d.blockStarts && d.blockSizes) {
+			if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
 				d.blockStarts.forEach( (_d, _i) => {
 					isLast = (_i === d.blockStarts.length - 1);
@@ -334,7 +339,7 @@ var FeatureViewer = React.createClass({
 		computedData.forEach( (d, i) => {
 			// draw line
 			originalD = originalData[i];
-			snpType = originalD.snpType.toLowerCase();
+			snpType = originalD.snpType ? originalD.snpType.toLowerCase() : "";
 			ctx.beginPath();
 			ctx.moveTo(originalD.x, originalD.y + VARIANT_DIAMETER / 2 + 1);
 			ctx.lineTo(originalD.x, originalD.y + VARIANT_HEIGHT);
@@ -426,7 +431,7 @@ var FeatureViewer = React.createClass({
 		return this.props.variantData.map( d => {
 			avgCoord = focusFeature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
 			_x = Math.round(scale(avgCoord));
-			snpType = d.snpType.toLowerCase();
+			snpType = d.snpType ? d.snpType.toLowerCase() : "";
 			type = d.type.toLowerCase();
 			return _.extend(d, {
 				x: _x,
@@ -474,8 +479,11 @@ var FeatureViewer = React.createClass({
 	},
 
 	_getScale: function () {
+		var _domain = this.props.isRelative ?
+			[0, Math.abs(this.props.chromEnd - this.props.chromStart)] :
+			[this.props.chromStart, this.props.chromEnd];
 		return d3.scale.linear()
-			.domain([this.props.chromStart, this.props.chromEnd])
+			.domain(_domain)
 			.range([0, this.state.DOMWidth]);
 	},
 
