@@ -124,13 +124,14 @@ var FeatureViewer = React.createClass({
 		var forceFn = d3.layout.force()
 			.nodes(raw)
 			.size([this._getScale().range()[1], this._calculateHeight()])
-			.charge(-0.25)
+			.charge(-0.5)
 			.gravity(0)
-			.chargeDistance(VARIANT_DIAMETER / 2)
+			.chargeDistance(VARIANT_DIAMETER * 2)
 			.on("tick", () => {
-				this.setState({ computedForceData: forceFn.nodes() });
+				// this.setState({ computedForceData: forceFn.nodes() });
 			});
 		forceFn.start();
+		this.setState({ computedForceData: forceFn.nodes() });
 	},
 
 	_renderVoronoi: function () {
@@ -335,101 +336,64 @@ var FeatureViewer = React.createClass({
 			"intron": INTRON_COLOR,
 			"untranslatable": UNTRANSLATEABLE_COLOR
 		};
-		var originalD, snpType;
+		var originalD, snpType, type, color, path;
 		computedData.forEach( (d, i) => {
 			// draw line
 			originalD = originalData[i];
 			snpType = originalD.snpType ? originalD.snpType.toLowerCase() : "";
+			type = originalD.type.toLowerCase();
 			ctx.beginPath();
 			ctx.moveTo(originalD.x, originalD.y + VARIANT_DIAMETER / 2 + 1);
 			ctx.lineTo(originalD.x, originalD.y + VARIANT_HEIGHT);
 			ctx.stroke();
-			// draw circle
-			ctx.globalAlpha = 0.5;
-			ctx.fillStyle = colors[snpType];
-			var path = new Path2D();
-			path.arc(d.x, d.y, VARIANT_DIAMETER, 0, Math.PI * 2, true);
-			ctx.fill(path);
-			ctx.stroke(path);
-			ctx.globalAlpha = 1;
+			
+			color = (type === "insertion" || type === "deletion") ?
+				"black" : colors[snpType];
+
+			if (type === "insertion") {
+				// caret
+				ctx.globalAlpha = 1;
+				ctx.fillColor = TEXT_COLOR;
+				ctx.lineWidth = 2;
+				ctx.beginPath();
+				ctx.moveTo(d.x - VARIANT_DIAMETER, d.y);
+				ctx.lineTo(d.x, d.y - VARIANT_DIAMETER);
+				ctx.lineTo(d.x + VARIANT_DIAMETER, d.y);
+				ctx.stroke();
+			} else if (type === "deletion") {
+				// draw x
+				ctx.lineWidth = 2;
+				ctx.beginPath();
+				ctx.moveTo(d.x - VARIANT_DIAMETER, d.y + VARIANT_DIAMETER);
+				ctx.lineTo(d.x + VARIANT_DIAMETER, d.y - VARIANT_DIAMETER);
+				ctx.stroke();
+				ctx.beginPath();
+				ctx.moveTo(d.x - VARIANT_DIAMETER, d.y - VARIANT_DIAMETER);
+				ctx.lineTo(d.x + VARIANT_DIAMETER, d.y + VARIANT_DIAMETER);
+				ctx.stroke();
+			} else {
+				// draw circle
+				ctx.globalAlpha = 0.5;
+				ctx.fillStyle = color;
+				path = new Path2D();
+				path.arc(d.x, d.y, VARIANT_DIAMETER, 0, Math.PI * 2, true);
+				ctx.fill(path);
+				ctx.stroke(path);
+				ctx.globalAlpha = 1;
+			}
 		});
 		
 	},
 
-	// _drawVariants: function (ctx) {
-	// 	var feature = this.props.focusFeature;
-	// 	var variantData = this.props.variantData;
-	// 	var scale = this._getScale();
-
-	// 	var y = 50 + TRACK_HEIGHT / 2; // TEMP
-
-	// 	ctx.strokeStyle = TEXT_COLOR;
-	// 	var avgCoord, snpType, type, x;
-	// 	variantData.forEach( d => {
-	// 		avgCoord = feature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
-	// 		x = Math.round(scale(avgCoord));
-	// 		snpType = d.snpType.toLowerCase();
-	// 		type = d.type.toLowerCase();
-	// 		ctx.lineWidth = 1;
-
-	// 		if (type !== "deletion") {
-	// 			ctx.beginPath();
-	// 			ctx.moveTo(x, y);
-	// 			ctx.lineTo(x, y - VARIANT_HEIGHT);
-	// 			ctx.stroke();
-	// 		}
-
-	// 		if (type === "snp") {
-	// 			ctx.fillStyle = colors[snpType] || "gray";
-	// 			var path = new Path2D();
-	// 			path.arc(x, y - VARIANT_HEIGHT, VARIANT_DIAMETER, 0, Math.PI * 2, true);
-	// 			ctx.fill(path);
-	// 		} else if (type === "insertion") {
-	// 			ctx.lineWidth = 2;
-	// 			ctx.beginPath();
-	// 			ctx.moveTo(x - VARIANT_DIAMETER / 2, y - VARIANT_HEIGHT);
-	// 			ctx.lineTo(x, y - VARIANT_HEIGHT - VARIANT_DIAMETER / 2);
-	// 			ctx.lineTo(x + VARIANT_DIAMETER / 2, y - VARIANT_HEIGHT);
-	// 			ctx.stroke();
-	// 		} else if (type === "deletion") {
-	// 			var startX = scale(feature.chromStart + d.coordinates[0]);
-	// 			var endX = scale(feature.chromStart + d.coordinates[1]);
-	// 			var avgX = Math.round((startX + endX) / 2);
-	// 			y = 45; // TEMP
-	// 			ctx.lineWidth = 1;
-	// 			ctx.beginPath();
-	// 			ctx.moveTo(startX, y);
-	// 			ctx.lineTo(endX, y);
-	// 			ctx.stroke();
-
-	// 			ctx.beginPath();
-	// 			ctx.moveTo(avgX, y);
-	// 			ctx.lineTo(avgX, y - 15);
-	// 			ctx.stroke();
-
-	// 			var r = VARIANT_DIAMETER / 2;
-	// 			// draw 'x'
-	// 			ctx.beginPath();
-	// 			ctx.moveTo(avgX - r, y - 15 + r);
-	// 			ctx.lineTo(avgX + r, y - 15 - r);
-	// 			ctx.stroke();
-	// 			ctx.beginPath();
-	// 			ctx.moveTo(avgX - r, y - 15 - r);
-	// 			ctx.lineTo(avgX + r, y - 15 + r);
-	// 			ctx.stroke();
-	// 		}
-	// 	});
-	// },
-
 	// input for force layout, get array of "natural" positions of variant nodes
 	_getRawVariants: function () {
-		var focusFeature = this.props.focusFeature;
 		var scale = this._getScale();
+		var positionOffset = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
 
 		var _y = 50 + TRACK_HEIGHT / 2; // TEMP
 		var avgCoord, snpType, type, _x;
 		return this.props.variantData.map( d => {
-			avgCoord = focusFeature.chromStart + (d.coordinates[0] + d.coordinates[1]) / 2;
+			avgCoord = positionOffset + (d.coordinates[0] + d.coordinates[1]) / 2;
 			_x = Math.round(scale(avgCoord));
 			snpType = d.snpType ? d.snpType.toLowerCase() : "";
 			type = d.type.toLowerCase();
@@ -450,6 +414,7 @@ var FeatureViewer = React.createClass({
 		var startX, endX, y;
 		ctx.fillStyle = TEXT_COLOR;
 		ctx.textAlign = "left";
+
 		domains.forEach( d => {
 			startX = xScale(chromStart + d.start);
 			endX = xScale(chromStart + d.end);
@@ -484,7 +449,7 @@ var FeatureViewer = React.createClass({
 			[this.props.chromStart, this.props.chromEnd];
 		return d3.scale.linear()
 			.domain(_domain)
-			.range([0, this.state.DOMWidth]);
+			.range([10, this.state.DOMWidth - 10]);
 	},
 
 	_getTrackedDomains: function () {
@@ -592,9 +557,9 @@ var VARIANT_HEIGHT = 17;
 var VARIANT_DIAMETER = 4;
 
 // fill colors for variants
-var SYNONYMOUS_COLOR = "#4D9221";  // dark yellow-green
-var NON_SYNONYMOUS_COLOR = "#C51B7D"; // dark pink
-var INTRON_COLOR = "#E6F5D0"; // pale yellow-green
+var SYNONYMOUS_COLOR = "#7b3294" // purply
+var NON_SYNONYMOUS_COLOR = "#d7191c";  // red
+var INTRON_COLOR = "#2c7bb6"; // dark blue
 var UNTRANSLATEABLE_COLOR = "gray";
 
 // CSS in JS
