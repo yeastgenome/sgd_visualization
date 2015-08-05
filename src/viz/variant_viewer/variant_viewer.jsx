@@ -66,7 +66,7 @@ var VariantViewer = React.createClass({
 			});
 		});
 		var _highlightedSegment = null;
-		var hs = this.state.highlightedAlignedSegment
+		var hs = this.state.highlightedAlignedSegment;
 		if (hs) {
 			var obj = model.getReferenceCoordinatesFromAlignedCoordinates(hs[0], hs[1], this.props.isProteinMode);
 			_highlightedSegment = [obj.start, obj.end];

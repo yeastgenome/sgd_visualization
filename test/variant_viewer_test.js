@@ -33,15 +33,15 @@ describe("VariantViewer", function(){
 		_store.addFeatureTrack(featureTrackData);
 
 		var markup = React.renderToStaticMarkup(React.createElement(VariantViewer, {
-			alignedDnaSequences: exampleData.aligned_dna_sequences,
-			alignedProteinSequences: exampleData.aligned_protein_sequences,
-			variantDataDna: exampleData.variant_data_dna,
-			variantDataProtein: exampleData.variant_data_protein,
+			alignedDnaSequences: exampleData.alignedDnaSequences,
+			alignedProteinSequences: exampleData.alignedProteinSequences,
+			variantDataDna: exampleData.variantDataDna,
+			variantDataProtein: exampleData.variantDataProtein,
 			chromStart:  exampleData.chromStart,
 			chromEnd: exampleData.chromEnd,
-			name: exampleData.display_name,
-			dnaLength: exampleData.dna_length,
-			proteinLength: exampleData.protein_length,
+			name: exampleData.displayName,
+			dnaLength: exampleData.dnaLength,
+			proteinLength: exampleData.proteinLength,
 			strand: exampleData.strand,
 			store: _store
 		}));
