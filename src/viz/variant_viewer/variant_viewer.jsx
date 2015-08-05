@@ -55,17 +55,21 @@ var VariantViewer = React.createClass({
 		var _onSetX1Scale = scale => {
 			this.setState({ x1Scale: scale });
 		};
+		var model = this._getModel();
+		var refCoordinates
 		var _variantData = this.props.variantDataDna.map( d => {
+			refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
 			return _.extend(d, {
 				coordinates: [d.start, d.end],
-				type: d.variant_type,
+				referenceCoordinates: [refCoordinates.start, refCoordinates.end],
+				type: d.variant_type
 			});
 		});
 		var _highlightedSegment = null;
-		if (this.state.highlightedAlignedSegment) {
-			_highlightedSegment = this.state.highlightedAlignedSegment.map( d => {
-				return d + _focusFeature.chromStart;
-			});
+		var hs = this.state.highlightedAlignedSegment
+		if (hs) {
+			var obj = model.getReferenceCoordinatesFromAlignedCoordinates(hs[0], hs[1], this.props.isProteinMode);
+			_highlightedSegment = [obj.start, obj.end];
 		}
 		var _onForceUpdate = () => {
 			this.forceUpdate();

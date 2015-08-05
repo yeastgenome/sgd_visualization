@@ -18,7 +18,7 @@ var FeatureViewer = React.createClass({
 		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
 		highlightedSegment: React.PropTypes.array, // []
 		onSetScale: React.PropTypes.func,
-		variantData: React.PropTypes.array, // [{ coordinates: [0, 5], type: "Insertion" }, ...]
+		variantData: React.PropTypes.array, // [{ coordinates: [0, 5], referenceCoordinates: [0, 5], type: "SNP", snpType: "intron" }, ...]
 		onHighlightSegment: React.PropTypes.func,
 		onForceUpdate: React.PropTypes.func,
 		isRelative: React.PropTypes.bool,
@@ -96,7 +96,20 @@ var FeatureViewer = React.createClass({
 	componentDidUpdate: function (prevProps, prevState) {
 		this._drawCanvas();
 		if (prevState.DOMWidth !== this.state.DOMWidth) {
-			if (this.props.onSetScale) this.props.onSetScale(this._getScale());
+			if (this.props.onSetScale) {
+				var scale = this._getScale();
+					if (this.props.isRelative) {
+						var oldDomain = scale.domain();
+						var chromStart = this.props.focusFeature.chromStart;
+						var newDomain = [oldDomain[0] + chromStart, oldDomain[1] + chromStart];
+						scale.domain(newDomain);
+
+					}
+				this.props.onSetScale(scale);
+			}
+			
+
+			
 			this._recalculateForceLayout();
 		}
 	},
@@ -104,16 +117,22 @@ var FeatureViewer = React.createClass({
 	_renderControls: function () {
 		return (
 			<div styles={[styles.uiContainer]}>
-				<div className="btn-group" styles={[styles.btnGroup]}>
-					<a className="btn btn-default" onClick={this._downloadImage}>Download</a>
+				<div>
+					{/* TEMP hardcoded text */}
+					<h3>S288C Location: <a>Chromosome II</a> 393123..394742</h3>
 				</div>
-				<div className="btn-group" styles={[styles.btnGroup]}>
-					<a className="btn btn-default">Left</a>
-					<a className="btn btn-default">Right</a>
-				</div>
-				<div className="btn-group" styles={[styles.btnGroup]}>
-					<a className="btn btn-default">In</a>
-					<a className="btn btn-default">Out</a>
+				<div styles={[styles.btnContainer]}>
+					<div className="btn-group" styles={[styles.btnGroup]}>
+						<a className="btn btn-default" onClick={this._downloadImage}>Download <span className="glyphicon glyphicon-save" /></a>
+					</div>
+					<div className="btn-group" styles={[styles.btnGroup]}>
+						<a className="btn btn-default"><span className="glyphicon glyphicon-backward" /></a>
+						<a className="btn btn-default"><span className="glyphicon glyphicon-forward" /></a>
+					</div>
+					<div className="btn-group" styles={[styles.btnGroup]}>
+						<a className="btn btn-default"><span className="glyphicon glyphicon-plus" /></a>
+						<a className="btn btn-default"><span className="glyphicon glyphicon-minus" /></a>
+					</div>
 				</div>
 			</div>
 		);
@@ -127,9 +146,9 @@ var FeatureViewer = React.createClass({
 			.charge(-0.5)
 			.gravity(0)
 			.chargeDistance(VARIANT_DIAMETER * 2)
-			.on("tick", () => {
-				// this.setState({ computedForceData: forceFn.nodes() });
-			});
+			// .on("tick", () => {
+			// 	this.setState({ computedForceData: forceFn.nodes() });
+			// });
 		forceFn.start();
 		this.setState({ computedForceData: forceFn.nodes() });
 	},
@@ -140,7 +159,7 @@ var FeatureViewer = React.createClass({
 		var scale = this._getScale();
 		var domainYScale = this._getDomainYScale();
 		var avgCoord, x;
-		var y  = 50; // TEMP
+		var y = FEATURE_Y;
 		var height = this._calculateHeight();
 		var mouseOverFns = [];
 
@@ -224,7 +243,7 @@ var FeatureViewer = React.createClass({
 			endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
 			startX = scale(startPos);
 			endX = scale(endPos);
-			y = isPlusStrand ? 50 : 50; // TEMP
+			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
 
 			// draw exons and introns if blockStarts and blockSizes defined
 			if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
@@ -307,7 +326,7 @@ var FeatureViewer = React.createClass({
 		ctx.fillStyle = TEXT_COLOR;
 		ctx.lineWidth = 1;
 		ticks.forEach( d => {
-			x = scale(d);
+			x = Math.round(scale(d)) + 0.5;
 			// tick
 			ctx.beginPath();
 			ctx.moveTo(x, 0);
@@ -376,7 +395,7 @@ var FeatureViewer = React.createClass({
 				ctx.globalAlpha = 0.5;
 				ctx.fillStyle = color;
 				path = new Path2D();
-				path.arc(d.x, d.y, VARIANT_DIAMETER, 0, Math.PI * 2, true);
+				path.arc(d.x + 0.5, d.y, VARIANT_DIAMETER, 0, Math.PI * 2, true);
 				ctx.fill(path);
 				ctx.stroke(path);
 				ctx.globalAlpha = 1;
@@ -390,10 +409,11 @@ var FeatureViewer = React.createClass({
 		var scale = this._getScale();
 		var positionOffset = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
 
-		var _y = 50 + TRACK_HEIGHT / 2; // TEMP
+		var _y = FEATURE_Y + TRACK_HEIGHT / 2; // TEMP
 		var avgCoord, snpType, type, _x;
 		return this.props.variantData.map( d => {
-			avgCoord = positionOffset + (d.coordinates[0] + d.coordinates[1]) / 2;
+			avgCoord = positionOffset + (d.referenceCoordinates[0] + d.referenceCoordinates[1]) / 2;
+
 			_x = Math.round(scale(avgCoord));
 			snpType = d.snpType ? d.snpType.toLowerCase() : "";
 			type = d.type.toLowerCase();
@@ -540,7 +560,7 @@ var FeatureViewer = React.createClass({
 module.exports = FeatureViewer;
 
 var DOMAIN_VORONOI_INTERVAL = 15; // add a new voronoi point for every n px across domain
-var HEIGHT = 100;
+var HEIGHT = 70;
 var AXIS_HEIGHT = 16;
 var DOMAIN_NODE_HEIGHT = 7;
 var HIGHLIGHT_COLOR = "#EBDD71";
@@ -555,6 +575,8 @@ var TICK_COLOR = "#b0b0b0";
 var TRACK_HEIGHT = 20;
 var VARIANT_HEIGHT = 17;
 var VARIANT_DIAMETER = 4;
+// TEMP
+var FEATURE_Y = 23;
 
 // fill colors for variants
 var SYNONYMOUS_COLOR = "#7b3294" // purply
@@ -585,6 +607,11 @@ var styles = StyleSheet.create({
 	},
 
 	uiContainer: {
+		display: "flex",
+		justifyContent: "space-between"
+	},
+
+	btnContainer: {
 		padding: "1rem 0 1rem 1rem",
 		textAlign: "right"
 	},
