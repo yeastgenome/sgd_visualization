@@ -1,15 +1,21 @@
-var assert = require("assert");
-var fs = require("fs");
+"use strict";
 var React = require("react");
-// jsx
-require("node-jsx").install({ harmony: true });
 
-var VariantViewer = require("../src/sgd_visualization.jsx").VariantViewer;
-var FeatureViewerStore = require("../src/store/feature_viewer_store.jsx");
-var exampleData = require("../src/variant_viewer_fixture_data.json");
+var VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
+var FeatureViewerStore = require("./store/feature_viewer_store.jsx");
 
-describe("VariantViewer", function(){
-	it("should render to a viz with classes 'sgd-viz' and 'variant-viewer'", function(){
+var exampleData = require("./variant_viewer_fixture_data");
+
+class _VariantViewer {
+
+	constructor (options) {
+		if (typeof options === "undefined") options = {};
+		options.el = options.el || document.body;
+
+		// TODO, make work for non fixtures
+		if (options.config !== "fixture") {
+
+		}
 
 		// init store
 		var featureTrackData = {
@@ -23,7 +29,7 @@ describe("VariantViewer", function(){
 						chrom: "chriii", // TEMP
 						chromStart:  exampleData.chromStart,
 						chromEnd: exampleData.chromEnd,
-						strand: "+",
+						strand: exampleData.strand,
 						blockSizes: exampleData.blockSizes,
 						blockStarts: exampleData.blockStarts
 					}
@@ -32,20 +38,26 @@ describe("VariantViewer", function(){
 		var _store = new FeatureViewerStore();
 		_store.addFeatureTrack(featureTrackData);
 
-		var markup = React.renderToStaticMarkup(React.createElement(VariantViewer, {
+		React.render(React.createElement(VariantViewerComponent, {
+			store: _store,
 			alignedDnaSequences: exampleData.alignedDnaSequences,
 			alignedProteinSequences: exampleData.alignedProteinSequences,
 			variantDataDna: exampleData.variantDataDna,
 			variantDataProtein: exampleData.variantDataProtein,
-			chromStart:  exampleData.chromStart,
+			chromStart: exampleData.chromStart,
 			chromEnd: exampleData.chromEnd,
-			name: exampleData.displayName,
+			blockStarts: exampleData.blockStarts,
+			blockSizes: exampleData.blockSizes,
+			name: exampleData.name,
 			dnaLength: exampleData.dnaLength,
 			proteinLength: exampleData.proteinLength,
 			strand: exampleData.strand,
-			store: _store
-		}));
-		assert.equal(markup.match('class="sgd-viz variant-viewer') !== null, true);
-		assert.equal(markup.match(/<div/).index, 0);
-	});
-});
+			domains: exampleData.domains,
+			isProteinMode: false
+		}), options.el);
+	}
+};
+
+module.exports = {
+	VariantViewer: _VariantViewer
+};
