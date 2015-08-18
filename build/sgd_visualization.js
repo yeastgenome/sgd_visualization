@@ -31691,7 +31691,7 @@ return FeatureViewerStore;})();
 
 
 },{"d3":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/d3/d3.js","underscore":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/underscore/underscore.js"}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/variant_viewer_fixture_data.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name":"ECM33",
   "chromStart": 393123,
   "chromEnd": 394742,

@@ -2,6 +2,6 @@
 var VariantViewer = require("sgd_visualization").VariantViewer;
 
 var vv = new VariantViewer({
-	el: yourDiv,
+	el: document.getElementById("j-main"),
 	config: "fixture"
 });

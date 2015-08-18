@@ -6,7 +6,7 @@ This is a set of react components used for genomic data visualization by [SGD](h
 
 ## See Examples
 
-Clone the repo, make sure [grunt](http://gruntjs.com) is installed.
+Clone the repo, make sure [sniper](https://github.com/biojs/sniperm) is installed.
 
 Install dependencies
 
@@ -14,9 +14,9 @@ Install dependencies
 
 Run example server
 
-    $ grunt
+    $ sniper
 
-Go to http://localhost:3000/protein_viewer
+Go to http://localhost:9090/examples/variant_viewer
 
 Look at examples/protein_viewer/index.html to see how the protein viewer is configured.
 
