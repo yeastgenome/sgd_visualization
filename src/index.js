@@ -1,13 +1,13 @@
 "use strict";
 var React = require("react");
 
+var ProteinViewerComponent = require("./viz/protein_viewer.jsx");
 var VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
 var FeatureViewerStore = require("./store/feature_viewer_store.jsx");
 
 var exampleData = require("./variant_viewer_fixture_data");
 
 class _VariantViewer {
-
 	constructor (options) {
 		if (typeof options === "undefined") options = {};
 		options.el = options.el || document.body;
@@ -58,6 +58,19 @@ class _VariantViewer {
 	}
 };
 
+class _ProteinViewer {
+	constructor (options) {
+		if (typeof options === "undefined") options = {};
+		options.el = options.el || document.body;
+
+		React.render(React.createElement(ProteinViewerComponent, {
+			data: options.config.domains,
+			locusData: options.config.locus
+		}), options.el);
+	}
+}
+
 module.exports = {
+	ProteinViewer: _ProteinViewer,
 	VariantViewer: _VariantViewer
 };

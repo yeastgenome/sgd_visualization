@@ -31561,6 +31561,29 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
+},{}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/mixins/calc_width_on_resize.jsx":[function(require,module,exports){
+/** @jsx React.DOM */
+
+/*
+	Assumes that DOMWidth is in state, and that there is an internal method called _calculateWidth, which sets the width.
+	This mixin simply calls that method on resize
+*/
+
+var CalcWidthOnRisize = {
+	componentDidMount: function() {
+		window.addEventListener('resize', this._handleResize);
+	},
+
+	_handleResize: function () {
+		if (this.isMounted()) {
+			this._calculateWidth();
+		}
+	}
+};
+
+module.exports = CalcWidthOnRisize;
+
+
 },{}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/store/feature_viewer_store.jsx":[function(require,module,exports){
 /** @jsx React.DOM */
 "use strict";
@@ -31691,7 +31714,7 @@ return FeatureViewerStore;})();
 
 
 },{"d3":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/d3/d3.js","underscore":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/underscore/underscore.js"}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/variant_viewer_fixture_data.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name":"ECM33",
   "chromStart": 393123,
   "chromEnd": 394742,
@@ -32773,7 +32796,549 @@ var styles = StyleSheet.create({
 });
 
 
-},{"./assign_tracks_to_domains":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/assign_tracks_to_domains.js","d3":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/d3/d3.js","react":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react/react.js","react-style":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react-style/lib/index.js","underscore":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/underscore/underscore.js"}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/variant_viewer/alignment_model.jsx":[function(require,module,exports){
+},{"./assign_tracks_to_domains":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/assign_tracks_to_domains.js","d3":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/d3/d3.js","react":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react/react.js","react-style":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react-style/lib/index.js","underscore":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/underscore/underscore.js"}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/flexible_tooltip.jsx":[function(require,module,exports){
+/** @jsx React.DOM */
+"use strict";
+
+var React = require("react");
+var _ = require("underscore");
+
+var FlexibleTooltip = React.createClass({displayName: "FlexibleTooltip",
+	propTypes: {
+		visible: React.PropTypes.bool,
+		text: React.PropTypes.string,
+		title: React.PropTypes.string,
+		href: React.PropTypes.string,
+		left: React.PropTypes.number,
+		top: React.PropTypes.number
+		// data, null or object
+	},
+
+	getDefaultProps: function () {
+		return {
+			visible: false,
+			text: "",
+			left: 0,
+			top: 0,
+			title: "",
+			data: null,
+		};
+	},
+
+	render: function () {
+		var props = this.props;
+		var _isComplex = this._isComplex();
+		var _complexWidth = 350;
+		var _style = {
+			position: "absolute",
+			display: (props.visible ? "block" : "none"),
+			top: props.top,
+			left: props.left,
+			marginLeft: _isComplex ? -(_complexWidth * 4/5) : -50,
+			marginTop: _isComplex ? 30 : -60,
+			minHeight: _isComplex ? 100 : 35,
+			padding: _isComplex ? "1em" : 0,
+			width: _isComplex ? _complexWidth: "auto"
+		};
+
+		var innerContentNode = this._getInnerContentNode();
+		var arrowKlass = _isComplex ? "flexible-tooltip-arrow complex" : "flexible-tooltip-arrow";
+		return (
+			React.createElement("div", {className: "flexible-tooltip", style: _style}, 
+				innerContentNode, 
+				React.createElement("div", {className: arrowKlass, style: { position: "absolute"}})
+			)
+		);
+	},
+
+	_getInnerContentNode: function () {
+		if (this._isComplex()) {
+			return this._getComplexContent();
+		} else {
+			return this._getTextNode();
+		}
+	},
+
+	// false if just has text, true means has title and data object
+	_isComplex: function () {
+		return (this.props.title && this.props.data);
+	},
+
+	_getComplexContent: function () {
+		// init the title node
+		var titleNode = null;
+		if (this.props.title) {
+			var _innerText = this.props.href ? (React.createElement("a", {href: this.props.href}, this.props.title)) : this.props.title;
+			titleNode = React.createElement("h3", null, _innerText);
+		}
+
+		var dataNode = null;
+		if (this.props.data) {
+			var _keys = _.keys(this.props.data);
+			var _innerNodes = _.reduce(_keys, function(memo, k, i)  {
+				memo.push(React.createElement("dt", {key: "flexToolTipT" + i}, k));
+				memo.push(React.createElement("dd", {key: "flexToolTipD" + i}, this.props.data[k]));
+				return memo;
+			}.bind(this), []);
+			dataNode = React.createElement("dl", {className: "key-value"}, _innerNodes);
+		}
+
+		return (
+			React.createElement("div", null, 
+				titleNode, 
+				dataNode
+			)
+		);
+	},
+
+	_getTextNode: function () {
+		var _innerText = this.props.href ? (React.createElement("a", {href: this.props.href}, this.props.text)) : this.props.text;
+		return (React.createElement("span", {className: "flexible-tooltip-text", style: { display: "block"}}, 
+			_innerText
+		));
+	}
+});
+
+module.exports = FlexibleTooltip;
+
+
+},{"react":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react/react.js","underscore":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/underscore/underscore.js"}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/generate_trapezoid_path.js":[function(require,module,exports){
+"use strict";
+var d3 = require("d3");
+
+var HEIGHT = 17;
+var POINT_WIDTH = 10;
+
+// generates an SVG path string to draw 
+var generateTrapezoidPath = function (width, orientation) {
+	orientation = orientation || "right"; // points to the right, can also be left
+
+	var startX = 0;
+	var endX = width;
+	var points;
+	if (orientation === "right") {
+		points = [
+			{ x: startX, y: 0 },
+			{ x: endX - POINT_WIDTH, y: 0 },
+			{ x: endX, y: HEIGHT / 2 },
+			{ x: endX - POINT_WIDTH, y: HEIGHT },
+			{ x: startX, y: HEIGHT },
+			{ x: startX, y: 0 }
+		];
+	} else {
+		points = [
+			{ x: startX + POINT_WIDTH, y: 0 },
+			{ x: endX, y: 0 },
+			{ x: endX, y: HEIGHT },
+			{ x: startX + POINT_WIDTH, y: HEIGHT },
+			{ x: startX, y: HEIGHT / 2 }
+		];
+	}
+
+	var areaFn = d3.svg.line()
+		.x(function (d) { return d.x; })
+		.y(function (d) { return d.y; });
+
+	return areaFn(points) + "Z";
+};
+
+module.exports = generateTrapezoidPath;
+
+
+},{"d3":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/d3/d3.js"}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/protein_viewer.jsx":[function(require,module,exports){
+/** @jsx React.DOM */
+"use strict";
+var d3 = require("d3");
+var React = require("react");
+var _ = require("underscore");
+
+var AssignTracksToDomains = require("./assign_tracks_to_domains");
+var CalcWidthOnResize = require("../mixins/calc_width_on_resize.jsx");
+var FlexibleTooltip = require("./flexible_tooltip.jsx");
+var GenerateTrapezoidPath = require("./generate_trapezoid_path");
+var StandaloneAxis = require("./standalone_axis.jsx");
+
+var DOMAIN_NODE_HEIGHT = 10;
+var DOMAIN_TEXT_FONT_SIZE = 14;
+var LOCUS_HEIGHT = 40;
+var MOUSE_LEAVE_DELAY = 250;
+var PX_PER_DOMAIN = 24;
+var PX_PER_CHAR = 7;
+var LOCUS_FILL = "#696599";
+
+var ProteinViewer = React.createClass({displayName: "ProteinViewer",
+	mixins: [CalcWidthOnResize],
+
+	propTypes: {
+		data: React.PropTypes.array.isRequired,
+		locusData: React.PropTypes.object.isRequired,
+		colorScale: React.PropTypes.func // optional d3-ish scale
+	},
+
+	getInitialState: function () {
+		return {
+			DOMWidth: 400,
+			mouseOverDomainId: null
+		};
+	},
+	
+	render: function () {
+		return (
+			React.createElement("div", {className: "sgd-viz protein-viewer"}, 
+				this._renderLabels(), 
+				this._renderViz()
+			)
+		);
+	},
+
+	componentDidMount: function () {
+		this._calculateWidth();
+	},
+
+	_calculateWidth: function () {
+		var vizNodeWidth = this.refs.vizNode.getDOMNode().getBoundingClientRect().width;
+		this.setState({ DOMWidth: vizNodeWidth });
+	},
+
+	_renderLabels: function () {
+		var sources = this._getSources();
+		var yScale = this._getYScale();
+
+		var trackedDomains = this._getTrackedDomains();
+		var node;
+		var labelNodes = sources.map( function(d, i)  {
+			node = (
+				React.createElement("div", {key: "proteinViewerLabel" + i, style: { position: "absolute", top: yScale(d.id) + 3, right: "1rem"}}, 
+					React.createElement("label", null, d.name)
+				)
+			);
+			return node;
+		});
+		return (
+			React.createElement("div", {className: "protein-viewer-label-container", style: { position: "relative", width: "20%"}}, 
+				labelNodes
+			)
+		);
+	},
+
+	_renderViz: function () {
+		var domain = this._getXScale().domain();
+		var height = this._getHeight();
+
+		return (
+			React.createElement("div", {onMouseLeave: this._onDomainMouseLeave, className: "protein-viewer-viz-container", style: { position: "relative", width: "100%", height: height + 24}}, 
+				React.createElement(StandaloneAxis, {
+					domain: domain, 
+					leftRatio: 0.20, 
+					gridTicks: true, 
+					orientation: "bottom"}
+				), 
+				React.createElement("div", {ref: "vizNode", style: { width: "80%", height: height, left: "20%", position: "absolute", top: 0, border: "1px solid #ddd"}}, 
+					this._getSVGNode(), 
+					this._getTooltipNode()
+				)
+			)
+		);
+	},
+
+	_getSVGNode: function () {
+		var xScale = this._getXScale();
+		var yScale = this._getYScale();
+		var colorScale = this._getColorScale();
+		var domainNodeY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT;
+		var domainNodeLineY = PX_PER_DOMAIN - DOMAIN_NODE_HEIGHT + DOMAIN_NODE_HEIGHT / 2;
+
+		var transform, length, strokeColor, text, textCanFit, textNode, y;
+		var trackedDomains = this._getTrackedDomains();
+		var domainNodes = trackedDomains.map( function(d, i)  {
+			y = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
+			transform = ("translate(" + xScale(d.start) + ", " + y + ")");
+			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
+			strokeColor = colorScale(d.source.name);
+			var _onMouseOver = function(e)  { this._onDomainMouseOver(e, d); }.bind(this);
+			text = d.domain.name;
+			textCanFit = text.length * PX_PER_CHAR < length;
+			textNode = null;
+			if (textCanFit) {
+				textNode = React.createElement("text", {x: "3", y: DOMAIN_TEXT_FONT_SIZE, fontSize: DOMAIN_TEXT_FONT_SIZE}, text);
+			}
+			var backFill = (d.domain.id === this.state.mouseOverDomainId) ? "gray" : "none";
+
+			return (
+				React.createElement("g", {onMouseOver: _onMouseOver, key: "proteinDomain" + i, transform: transform}, 
+					React.createElement("rect", {x: "0", y: "0", width: length, height: PX_PER_DOMAIN, fill: backFill, opacity: 0.10}), 
+					textNode, 
+					React.createElement("line", {strokeWidth: "2", stroke: strokeColor, x1: "0", x2: length, y1: domainNodeLineY, y2: domainNodeLineY}), 
+					React.createElement("line", {strokeWidth: "2", stroke: strokeColor, x1: "0", x2: "0", y1: domainNodeY, y2: PX_PER_DOMAIN}), 
+					React.createElement("line", {strokeWidth: "2", stroke: strokeColor, x1: length, x2: length, y1: domainNodeY, y2: PX_PER_DOMAIN})
+				)
+			);
+		}.bind(this));
+
+		return (
+			React.createElement("svg", {width: this.state.DOMWidth, height: this._getHeight()}, 
+				this._getLocusNode(), 
+				domainNodes
+			)
+		);
+	},
+
+	_getLocusNode: function () {
+		if (!this.props.locusData) return null;
+		var width = this._getXScale()(this.props.locusData.end);
+		var pathString = GenerateTrapezoidPath(width);
+		var lineY = LOCUS_HEIGHT - 13;
+		var endX = this._getXScale().range()[1] - 2;
+
+		return (
+			React.createElement("g", {transform: "translate(0, 7)"}, 
+				React.createElement("line", {x1: "0", x2: endX, y1: lineY, y2: lineY, stroke: "#ddd", strokeDasharray: "5 3"}), 
+				React.createElement("path", {d: pathString, fill: LOCUS_FILL}), 
+				React.createElement("text", {x: width/2, y: DOMAIN_TEXT_FONT_SIZE, fontSize: DOMAIN_TEXT_FONT_SIZE, fill: "white", anchor: "middle"}, 
+					this.props.locusData.name
+				)
+			)
+		);
+	},
+
+	_getTooltipNode: function () {
+		if (!this.state.mouseOverDomainId) return null;
+
+		var d = _.find(this.props.data, function(d)  { return d.domain.id === this.state.mouseOverDomainId; }.bind(this));
+		var xScale = this._getXScale();
+		var yScale = this._getYScale();
+		var left = xScale(d.start);
+		var top = yScale(d.source.id) + (d._track + 1) * PX_PER_DOMAIN;
+		var _coordString = (d.start + ".." + d.end);
+		var tooltipData = {
+			Coords: _coordString,
+		};
+		if (d.domain.description) tooltipData.Description = d.domain.description;
+		return (React.createElement(FlexibleTooltip, {
+			visible: true, 
+			left: left, 
+			top: top, 
+			title: d.domain.name, 
+			href: d.domain.href, 
+			data: tooltipData}
+		));
+	},
+
+	_onDomainMouseOver: function (e, d) {
+		if (this._mouseLeaveTimeout) clearTimeout(this._mouseLeaveTimeout)
+		this.setState({ mouseOverDomainId: d.domain.id });
+	},
+
+	_onDomainMouseLeave: function () {
+		this._mouseLeaveTimeout = setTimeout( function()  {
+			if (this.isMounted()) {
+				this.setState({ mouseOverDomainId: null });
+			}
+		}.bind(this), MOUSE_LEAVE_DELAY);
+	},
+
+	_getSources: function () {
+		var _groupedData = _.groupBy(this.props.data, function(d)  {
+			return d.source.name;
+		});
+		var _keys = _.keys(_groupedData);
+		var _dataAsArray = _keys.map( function(d)  {
+			var _baseData = _groupedData[d][0].source;
+			// add data length
+			var _length =  _groupedData[d].length;
+			return _.extend(_baseData, { numberDomains: _length });
+		});
+		return _dataAsArray;
+	},
+
+	_getTrackedDomains: function () {
+		// cache to this._trackedDomains
+		if (!this._trackedDomains) {
+			this._trackedDomains = AssignTracksToDomains(this.props.data);
+		}
+		return this._trackedDomains;
+	},
+
+	_getXScale: function () {
+		var locusData = this.props.locusData;
+		return d3.scale.linear()
+			.domain([locusData.start, locusData.end])
+			.range([-2, this.state.DOMWidth - 2]);
+	},
+
+	_getYScale: function () {
+		var startY = this.props.locusData ? LOCUS_HEIGHT : 0;
+		var domain = [];
+		var range = [];
+		var sources = this._getSources();
+		var trackedDomains = this._getTrackedDomains();
+		var sourceY = startY;
+		var groupedDomains, maxTracks;
+		sources.forEach( function(d)  {
+			groupedDomains = _.filter(trackedDomains, function(_d)  { return d.id === _d.source.id; });
+			maxTracks = d3.max(groupedDomains, function(_d)  { return _d._track; });
+			domain.push(d.id);
+			range.push(sourceY);
+			sourceY += (maxTracks + 1) * PX_PER_DOMAIN;
+		});
+		range.push(sourceY);
+
+		return d3.scale.ordinal()
+			.domain(domain)
+			.range(range);
+	},
+
+	_getColorScale: function () {
+		if (this.props.colorScale) return this.props.colorScale;
+		var sources = this._getSources()
+			.map( function(d)  { return d.name; });
+		return d3.scale.category10()
+			.domain(sources);
+	},
+
+	_getHeight: function () {
+		return d3.max(this._getYScale().range()) + PX_PER_DOMAIN / 2;
+	}
+});
+
+module.exports = ProteinViewer;
+
+
+},{"../mixins/calc_width_on_resize.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/mixins/calc_width_on_resize.jsx","./assign_tracks_to_domains":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/assign_tracks_to_domains.js","./flexible_tooltip.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/flexible_tooltip.jsx","./generate_trapezoid_path":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/generate_trapezoid_path.js","./standalone_axis.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/standalone_axis.jsx","d3":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/d3/d3.js","react":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react/react.js","underscore":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/underscore/underscore.js"}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/standalone_axis.jsx":[function(require,module,exports){
+/** @jsx React.DOM */
+"use strict";
+
+var d3 = require("d3");
+var React = require("react");
+
+var CalcWidthOnResize = require("../mixins/calc_width_on_resize.jsx");
+
+var StandaloneAxis = React.createClass({displayName: "StandaloneAxis",
+	mixins: [CalcWidthOnResize],
+
+	propTypes: {
+		domain: React.PropTypes.array.isRequired, // * d3 style i.e. [0, 100]
+		gridTicks: React.PropTypes.bool,
+		labelText: React.PropTypes.string,
+		leftRatio: React.PropTypes.number,
+		orientation: React.PropTypes.string, // *
+		scaleType: React.PropTypes.string, // ["linear", "sqrt"]
+		ticks: React.PropTypes.number,
+		tickFormat: React.PropTypes.func, // d3 style
+		transitionDuration: React.PropTypes.number // millis
+	},
+
+	getDefaultProps: function () {
+		return {
+			gridTicks: false,
+			leftRatio: 0,
+			orientation: "top", // [top, right, bottom, left]
+			scaleType: "linear",
+			ticks: 3,
+			transitionDuration: 0
+		};
+	},
+
+	getInitialState: function () {
+		return {
+			scale: null
+		};
+	},
+
+	render: function () {
+		var labelNode = this.props.labelText ?
+			React.createElement("p", {className: "axis-label", style: { marginLeft: ((this.props.leftRatio * 100) + "%"), position: "relative"}}, this.props.labelText) :
+			null;
+
+		var _height = this.props.height || (this.props.gridTicks ? "100%" : 32);
+		var _klass = ("standalone-axis " + (this.props.gridTicks ? "grid-ticks" : ""));
+		var _containerStyle = { position: "relative" };
+		if (this.props.gridTicks) _containerStyle.height = "100%";
+		return (React.createElement("div", {className: _klass, style: _containerStyle}, 
+			labelNode, 
+			React.createElement("svg", {ref: "svg", style: { width: "100%", height: _height}})
+		));
+	},
+
+	// After initial render, calculate the scale (based on width), which will then trigger update, which eventually
+	// renders d3 SVG axis.
+	componentDidMount: function () {
+		this._calculateScale();
+	},
+
+	componentWillReceiveProps: function (nextProps) {
+		this._calculateScale(nextProps);
+	},
+
+	componentDidUpdate: function () {
+		this._renderSVG();
+	},
+
+	// called by mixin
+	_calculateWidth: function () {
+		this._calculateScale();
+	},
+
+	_calculateScale: function (nextProps) {
+		var props = nextProps || this.props;
+		
+		// maxValue can't be null
+		if (props.maxValue === null) return;
+
+		// list of possible scale types
+		var scaleTypes = {
+			linear: d3.scale.linear(),
+			sqrt: d3.scale.sqrt()
+		};
+		var _baseScale = scaleTypes[this.props.scaleType];
+		
+		var _width = this.getDOMNode().getBoundingClientRect().width - 1;
+		var _xOffset = _width * props.leftRatio;
+		var _scale = _baseScale.domain(props.domain).range([0, _width - _xOffset]);
+
+		this.setState({
+			scale: _scale
+		});
+	},
+
+	// render d3 axis 
+	_renderSVG: function () {
+		// must have scale calculated
+		if (!this.state.scale) return;
+
+		var _tickSize = this.props.gridTicks ? (-this.getDOMNode().offsetHeight) : 6;
+		var axisFn = d3.svg.axis()
+			.orient(this.props.orientation)
+			.ticks(this.props.ticks)
+			.tickFormat(this.props.tickFormat)
+			.tickSize(_tickSize)
+			.scale(this.state.scale);
+
+		var svg = d3.select(this.refs["svg"].getDOMNode());
+		
+		var _xTranslate = (this.getDOMNode().getBoundingClientRect().width * this.props.leftRatio)
+		var _yTranslate = (this.props.orientation === "top") ? 30 : 0;
+		if (this.props.gridTicks && this.props.orientation === "bottom") {
+			_yTranslate += this.getDOMNode().getBoundingClientRect().height - 24;
+		}
+		var _translate = ("translate(" + _xTranslate + ", " + _yTranslate + ")");
+		var axis = svg.selectAll("g.axis").data([null]);
+		axis.enter().append("g")
+			.attr({
+				class: "axis",
+				transform: _translate
+			});
+		axis.transition().duration(this.props.transitionDuration)
+			.attr({ transform: _translate })
+			.call(axisFn);
+	}
+
+});
+
+module.exports = StandaloneAxis;
+
+
+},{"../mixins/calc_width_on_resize.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/mixins/calc_width_on_resize.jsx","d3":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/d3/d3.js","react":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react/react.js"}],"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/variant_viewer/alignment_model.jsx":[function(require,module,exports){
 /** @jsx React.DOM */
 "use strict";
 
@@ -33609,11 +34174,11 @@ module.exports = VariantViewer;
 "use strict";
 var React = require("react");
 
+var ProteinViewerComponent = require("./viz/protein_viewer.jsx");
 var VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
 var FeatureViewerStore = require("./store/feature_viewer_store.jsx");
 
 var exampleData = require("./variant_viewer_fixture_data");
-
 
 
 	function _VariantViewer(options) {
@@ -33666,9 +34231,22 @@ var exampleData = require("./variant_viewer_fixture_data");
 	}
 ;
 
+
+	function _ProteinViewer(options) {
+		if (typeof options === "undefined") options = {};
+		options.el = options.el || document.body;
+
+		React.render(React.createElement(ProteinViewerComponent, {
+			data: options.config.domains,
+			locusData: options.config.locus
+		}), options.el);
+	}
+
+
 module.exports = {
+	ProteinViewer: _ProteinViewer,
 	VariantViewer: _VariantViewer
 };
 
 
-},{"./store/feature_viewer_store.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/store/feature_viewer_store.jsx","./variant_viewer_fixture_data":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/variant_viewer_fixture_data.json","./viz/variant_viewer/variant_viewer.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/variant_viewer/variant_viewer.jsx","react":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react/react.js"}]},{},[]);
+},{"./store/feature_viewer_store.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/store/feature_viewer_store.jsx","./variant_viewer_fixture_data":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/variant_viewer_fixture_data.json","./viz/protein_viewer.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/protein_viewer.jsx","./viz/variant_viewer/variant_viewer.jsx":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/src/viz/variant_viewer/variant_viewer.jsx","react":"/Users/travissheppard/Documents/work/sgd_src2/sgd_visualization/node_modules/react/react.js"}]},{},[]);
