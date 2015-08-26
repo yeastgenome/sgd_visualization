@@ -13,7 +13,7 @@ var FeatureViewer = React.createClass({
 		canScroll: React.PropTypes.bool,
 		chromStart: React.PropTypes.number,
 		chromEnd: React.PropTypes.number,
-		domains: React.PropTypes.array,
+		domains: React.PropTypes.array, // [{ name, id, start, end, sourceName, sourceId }, ...]
 		features: React.PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
 		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
 		highlightedSegment: React.PropTypes.array, // []
