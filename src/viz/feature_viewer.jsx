@@ -122,6 +122,7 @@ var FeatureViewer = React.createClass({
 					<h3>S288C Location: <a>Chromosome II</a> 393123..394742</h3>
 				</div>
 				<div styles={[styles.btnContainer]}>
+					<a className="btn btn-default dropdown-toggle">Legend <span className="caret" /></a>
 					<div className="btn-group" styles={[styles.btnGroup]}>
 						<a className="btn btn-default" onClick={this._downloadImage}>Download <span className="glyphicon glyphicon-save" /></a>
 					</div>
