@@ -12,10 +12,21 @@ class _VariantViewer {
 		if (typeof options === "undefined") options = {};
 		options.el = options.el || document.body;
 
-		// TODO, make work for non fixtures
-		if (options.config !== "fixture") {
-
-		}
+		var conf = (options.config === "fixture") ? exampleData : options.config;
+		var _alignedDnaSequences = conf.alignedDnaSequences;
+		var _alignedProteinSequences = conf.alignedProteinSequences;
+		var _variantDataDna = conf.variantDataDna;
+		var _variantDataProtein = conf.variantDataProtein;
+		var _chromStart = conf.chromStart;
+		var _chromEnd = conf.chromEnd;
+		var _blockStarts = conf.blockStarts;
+		var _blockSizes = conf.blockSizes;
+		var _name = conf.name;
+		var _dnaLength = conf.dnaLength;
+		var _proteinLength = conf.proteinLength;
+		var _strand = conf.strand;
+		var _domains = conf.domains;
+		var _isProteinMode = conf.isProteinMode;
 
 		// init store
 		var featureTrackData = {
@@ -40,19 +51,19 @@ class _VariantViewer {
 
 		React.render(React.createElement(VariantViewerComponent, {
 			store: _store,
-			alignedDnaSequences: exampleData.alignedDnaSequences,
-			alignedProteinSequences: exampleData.alignedProteinSequences,
-			variantDataDna: exampleData.variantDataDna,
-			variantDataProtein: exampleData.variantDataProtein,
-			chromStart: exampleData.chromStart,
-			chromEnd: exampleData.chromEnd,
-			blockStarts: exampleData.blockStarts,
-			blockSizes: exampleData.blockSizes,
-			name: exampleData.name,
-			dnaLength: exampleData.dnaLength,
-			proteinLength: exampleData.proteinLength,
-			strand: exampleData.strand,
-			domains: exampleData.domains,
+			alignedDnaSequences: _alignedDnaSequences,
+			alignedProteinSequences: _alignedProteinSequences,
+			variantDataDna: _variantDataDna,
+			variantDataProtein: _variantDataProtein,
+			chromStart: _chromStart,
+			chromEnd: _chromEnd,
+			blockStarts: _blockStarts,
+			blockSizes: _blockSizes,
+			name: _name,
+			dnaLength: _dnaLength,
+			proteinLength: _proteinLength,
+			strand: _strand,
+			domains: _domains,
 			isProteinMode: false
 		}), options.el);
 	}
