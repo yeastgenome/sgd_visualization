@@ -64,7 +64,7 @@ class _VariantViewer {
 			proteinLength: _proteinLength,
 			strand: _strand,
 			domains: _domains,
-			isProteinMode: false
+			isProteinMode: _isProteinMode
 		}), options.el);
 	}
 };

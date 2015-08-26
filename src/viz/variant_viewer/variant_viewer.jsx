@@ -57,7 +57,8 @@ var VariantViewer = React.createClass({
 		};
 		var model = this._getModel();
 		var refCoordinates
-		var _variantData = this.props.variantDataDna.map( d => {
+		var baseArr = this.props.isProteinMode ? this.props.variantDataProtein : this.props.variantDataDna;
+		var _variantData = baseArr.map( d => {
 			refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
 			return _.extend(d, {
 				coordinates: [d.start, d.end],
@@ -102,7 +103,7 @@ var VariantViewer = React.createClass({
 		
 		// get ref highlighted coord
 		var model = this._getModel();
-		var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], false);
+		var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode);
 		_refCoord = [_refCoord.start, _refCoord.end];
 
 		var parsetX1Coord = _refCoord
@@ -153,7 +154,7 @@ var VariantViewer = React.createClass({
 	_getModel: function () {
 		return new AlignmentModel({
 			alignedDnaSequences: this.props.alignedDnaSequences,
-			alignedProteinSequences: this.props.alignedDnaSequences,
+			alignedProteinSequences: this.props.alignedProteinSequences,
 			variantDataDna: this.props.variantDataDna,
 			variantDataProtein: this.props.variantDataProtein
 		});
