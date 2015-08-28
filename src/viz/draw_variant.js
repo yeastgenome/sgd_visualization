@@ -51,7 +51,6 @@ module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY
 		ctx.stroke(path);
 		ctx.globalAlpha = 1;
 	}
-
 };
 
 var VARIANT_DIAMETER = 4;
@@ -60,4 +59,5 @@ var VARIANT_HEIGHT = 17;
 var SYNONYMOUS_COLOR = "#7b3294" // purply
 var NON_SYNONYMOUS_COLOR = "#d7191c";  // red
 var INTRON_COLOR = "#2c7bb6"; // dark blue
+var TEXT_COLOR = "black";
 var UNTRANSLATEABLE_COLOR = "gray";

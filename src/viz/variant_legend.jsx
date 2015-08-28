@@ -31,29 +31,45 @@ var VariantLegend = React.createClass({
 	_renderPanel: function () {
 		return (
 			<div styles={[styles.panel]}>
-				<canvas ref="canvas" width={WIDTH} height={HEIGHT} />
+				<canvas ref="canvas" width={25} height={HEIGHT} />
+				<div>
+					<p styles={[styles.label]}>Insertion</p>
+					<p styles={[styles.label]}>Deletion</p>
+					<p styles={[styles.label]}>Synonymous SNP</p>
+					<p styles={[styles.label]}>Nonsynonymous SNP</p>
+					<p styles={[styles.label]}>Intron SNP</p>
+					<p styles={[styles.label]}>Untranslatable SNP</p>
+				</div>
 			</div>
 		);
 	},
 
 	_drawLegend: function () {
-		var inDels = ["insertion", "deletion"];
+		var exampleInDels = ["insertion", "deletion"];
 		var exampleSnps = ["synonymous", "nonsynonymous", "intron", "untranslatable"];
-		var yDelta = 25;
+		var yDelta = LABEL_HEIGHT + LABEL_BOTTOM + 1;
 		var canvas = this.refs.canvas.getDOMNode();
 		var ctx = canvas.getContext("2d");
-		exampleSnps.forEach( (d, i) => {
-			DrawVariant(ctx, "snp", d, 14, i * yDelta + 14);
+		var i = 0;
+		exampleInDels.forEach( d => {
+			DrawVariant(ctx, d, "", 14, i * yDelta + 8);
+			i += 1;
+		});
+		exampleSnps.forEach( d => {
+			DrawVariant(ctx, "snp", d, 14, i * yDelta + 8);
+			i += 1;
 		});
 	}
 });
 
 module.exports = VariantLegend;
 
-var WIDTH = 150;
-var HEIGHT = 300;
+var WIDTH = 180;
+var HEIGHT = 190;
 var BACKGROUND_COLOR = "#fff";
-var BORDER_COLOR = "#ccc"
+var BORDER_COLOR = "#ccc";
+var LABEL_HEIGHT = 20;
+var LABEL_BOTTOM = 10;
 
 // CSS in JS
 var styles = StyleSheet.create({
@@ -70,8 +86,14 @@ var styles = StyleSheet.create({
 		background: BACKGROUND_COLOR,
 		borderRadius: 4,
 		border: "1px solid #ccc",
-		zIndex: 1
+		zIndex: 1,
+		display: "flex",
+		textAlign: "left",
+		paddingTop: "1rem"
+	},
+
+	label: {
+		height: LABEL_HEIGHT,
+		marginBottom: LABEL_BOTTOM
 	}
 });
-
-
