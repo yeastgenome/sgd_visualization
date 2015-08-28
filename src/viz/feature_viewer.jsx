@@ -6,6 +6,8 @@ var StyleSheet = require("react-style");
 var _ = require("underscore");
 
 var AssignTracksToDomains = require("./assign_tracks_to_domains");
+var DrawVariant = require("./draw_variant");
+var VariantLegend = require("./variant_legend.jsx");
 
 var FeatureViewer = React.createClass({
 	propTypes: {
@@ -107,9 +109,6 @@ var FeatureViewer = React.createClass({
 					}
 				this.props.onSetScale(scale);
 			}
-			
-
-			
 			this._recalculateForceLayout();
 		}
 	},
@@ -122,17 +121,11 @@ var FeatureViewer = React.createClass({
 					<h3>S288C Location: <a>Chromosome II</a> 393123..394742</h3>
 				</div>
 				<div styles={[styles.btnContainer]}>
-					<a className="btn btn-default dropdown-toggle">Legend <span className="caret" /></a>
+					<div styles={[styles.btnGroup]}>
+						<VariantLegend />
+					</div>
 					<div className="btn-group" styles={[styles.btnGroup]}>
 						<a className="btn btn-default" onClick={this._downloadImage}>Download <span className="glyphicon glyphicon-save" /></a>
-					</div>
-					<div className="btn-group" styles={[styles.btnGroup]}>
-						<a className="btn btn-default"><span className="glyphicon glyphicon-backward" /></a>
-						<a className="btn btn-default"><span className="glyphicon glyphicon-forward" /></a>
-					</div>
-					<div className="btn-group" styles={[styles.btnGroup]}>
-						<a className="btn btn-default"><span className="glyphicon glyphicon-plus" /></a>
-						<a className="btn btn-default"><span className="glyphicon glyphicon-minus" /></a>
 					</div>
 				</div>
 			</div>
@@ -356,51 +349,11 @@ var FeatureViewer = React.createClass({
 			"intron": INTRON_COLOR,
 			"untranslatable": UNTRANSLATEABLE_COLOR
 		};
-		var originalD, snpType, type, color, path;
+		var originalDatum, snpType, type, color, path;
 		computedData.forEach( (d, i) => {
-			// draw line
-			originalD = originalData[i];
-			snpType = originalD.snpType ? originalD.snpType.toLowerCase() : "";
-			type = originalD.type.toLowerCase();
-			ctx.beginPath();
-			ctx.moveTo(originalD.x, originalD.y + VARIANT_DIAMETER / 2 + 1);
-			ctx.lineTo(originalD.x, originalD.y + VARIANT_HEIGHT);
-			ctx.stroke();
-			
-			color = (type === "insertion" || type === "deletion") ?
-				"black" : colors[snpType];
-
-			if (type === "insertion") {
-				// caret
-				ctx.globalAlpha = 1;
-				ctx.fillColor = TEXT_COLOR;
-				ctx.lineWidth = 2;
-				ctx.beginPath();
-				ctx.moveTo(d.x - VARIANT_DIAMETER, d.y);
-				ctx.lineTo(d.x, d.y - VARIANT_DIAMETER);
-				ctx.lineTo(d.x + VARIANT_DIAMETER, d.y);
-				ctx.stroke();
-			} else if (type === "deletion") {
-				// draw x
-				ctx.lineWidth = 2;
-				ctx.beginPath();
-				ctx.moveTo(d.x - VARIANT_DIAMETER, d.y + VARIANT_DIAMETER);
-				ctx.lineTo(d.x + VARIANT_DIAMETER, d.y - VARIANT_DIAMETER);
-				ctx.stroke();
-				ctx.beginPath();
-				ctx.moveTo(d.x - VARIANT_DIAMETER, d.y - VARIANT_DIAMETER);
-				ctx.lineTo(d.x + VARIANT_DIAMETER, d.y + VARIANT_DIAMETER);
-				ctx.stroke();
-			} else {
-				// draw circle
-				ctx.globalAlpha = 0.5;
-				ctx.fillStyle = color;
-				path = new Path2D();
-				path.arc(d.x + 0.5, d.y, VARIANT_DIAMETER, 0, Math.PI * 2, true);
-				ctx.fill(path);
-				ctx.stroke(path);
-				ctx.globalAlpha = 1;
-			}
+			snpType = (typeof d.snpType === "undefined") ? "" : d.snpType;
+			originalDatum = originalData[i];
+			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), d.x, d.y, originalDatum.x, originalDatum.y);
 		});
 		
 	},
