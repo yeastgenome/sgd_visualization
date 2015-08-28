@@ -4,8 +4,10 @@ var React = require("react");
 var StyleSheet = require("react-style");
 
 var DrawVariant = require("./draw_variant");
+var DidClickOutside = require("../mixins/did_click_outside.jsx");
 
 var VariantLegend = React.createClass({
+	mixins: [DidClickOutside],
 
 	getInitialState: function () {
 		return {
@@ -16,7 +18,7 @@ var VariantLegend = React.createClass({
 	render: function () {
 		return (
 			<div styles={[styles.container]}>
-				<a className="btn btn-default">
+				<a className="btn btn-default" onClick={this._toggleActive}>
 					Legend <span className="caret" />
 				</a>
 				{this._renderPanel()}
@@ -24,11 +26,16 @@ var VariantLegend = React.createClass({
 		);
 	},
 
-	componentDidMount: function () {
-		this._drawLegend();
+	componentDidUpdate: function (prevProps, prevState) {
+		if (this.state.isActive) this._drawLegend();
+	},
+
+	didClickOutside: function () {
+		if (this.isMounted() && this.state.isActive) this.setState({ isActive: false });
 	},
 
 	_renderPanel: function () {
+		if (!this.state.isActive) return null;
 		return (
 			<div styles={[styles.panel]}>
 				<canvas ref="canvas" width={25} height={HEIGHT} />
@@ -42,6 +49,14 @@ var VariantLegend = React.createClass({
 				</div>
 			</div>
 		);
+	},
+
+	_toggleActive: function (e) {
+		if (e) {
+			e.preventDefault();
+			e.nativeEvent.stopImmediatePropagation();
+		}
+		this.setState({ isActive: !this.state.isActive });
 	},
 
 	_drawLegend: function () {
