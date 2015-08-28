@@ -15,18 +15,21 @@ var LABEL_WIDTH = 150;
 var VariantViewer = React.createClass({
 	propTypes: {
 		store: React.PropTypes.object.isRequired,
+		name: React.PropTypes.string,
 		chromStart: React.PropTypes.number,
 		chromEnd: React.PropTypes.number,
+		contigName: React.PropTypes.string,
+		contigHref: React.PropTypes.string,
 		alignedDnaSequences: React.PropTypes.array,
 		alignedProteinSequences: React.PropTypes.array,
 		variantDataDna: React.PropTypes.array,
 		variantDataProtein: React.PropTypes.array,
-		name: React.PropTypes.string,
 		dnaLength: React.PropTypes.number,
 		proteinLength: React.PropTypes.number,
 		strand: React.PropTypes.string, // "+" or "-"
 		isProteinMode: React.PropTypes.bool,
-		domains: React.PropTypes.array
+		domains: React.PropTypes.array,
+		downloadCaption: React.PropTypes.string
 	},
 
 	getInitialState: function () {
@@ -86,6 +89,9 @@ var VariantViewer = React.createClass({
 			canScroll={true}
 			chromStart={_chromStart}
 			chromEnd={_chromEnd}
+			contigName={this.props.contigName}
+			contigHref={this.props.contigHref}
+			downloadCaption={this.props.downloadCaption}
 			features={_features}
 			focusFeature={_focusFeature}
 			highlightedSegment={_highlightedSegment}

@@ -11,6 +11,8 @@ var vv = new VariantViewer({
 		blockStarts: [0, 320],
 		blockSizes: [10, 1117],
 		dnaLength: 1437,
+		contigName: "Chromosome VI",
+		contigHref: "http://yeastgenome.org/contig/Chromosome_VI/overview",
 		alignedDnaSequences: [
 			{
 				strain_id: 1,
@@ -57,6 +59,7 @@ var vv = new VariantViewer({
 		proteinLength: null,
 		alignedProteinSequences: null,
 		domains: null,
-		isProteinMode: false
+		isProteinMode: false,
+		downloadCaption: "SGD 2015 Stanford University"
 	}
 });

@@ -22,11 +22,14 @@ class _VariantViewer {
 		var _blockStarts = conf.blockStarts;
 		var _blockSizes = conf.blockSizes;
 		var _name = conf.name;
+		var _contigName = conf.contigName;
+		var _contigHref = conf.contigHref;
 		var _dnaLength = conf.dnaLength;
 		var _proteinLength = conf.proteinLength;
 		var _strand = conf.strand;
 		var _domains = conf.domains;
 		var _isProteinMode = conf.isProteinMode;
+		var _downloadCaption = conf.downloadCaption;
 
 		// init store
 		var featureTrackData = {
@@ -37,7 +40,7 @@ class _VariantViewer {
 				},
 				features: [
 					{
-						chrom: "chriii", // TEMP
+						chrom: ((typeof _contigName === "undefined") ? "contig" : _contigName),
 						chromStart:  exampleData.chromStart,
 						chromEnd: exampleData.chromEnd,
 						strand: exampleData.strand,
@@ -51,6 +54,7 @@ class _VariantViewer {
 
 		React.render(React.createElement(VariantViewerComponent, {
 			store: _store,
+			name: _name,
 			alignedDnaSequences: _alignedDnaSequences,
 			alignedProteinSequences: _alignedProteinSequences,
 			variantDataDna: _variantDataDna,
@@ -59,12 +63,14 @@ class _VariantViewer {
 			chromEnd: _chromEnd,
 			blockStarts: _blockStarts,
 			blockSizes: _blockSizes,
-			name: _name,
+			contigName: _contigName,
+			contigHref: _contigHref,
 			dnaLength: _dnaLength,
 			proteinLength: _proteinLength,
 			strand: _strand,
 			domains: _domains,
-			isProteinMode: _isProteinMode
+			isProteinMode: _isProteinMode,
+			downloadCaption: _downloadCaption
 		}), options.el);
 	}
 };

@@ -24,7 +24,8 @@ var FeatureViewer = React.createClass({
 		onHighlightSegment: React.PropTypes.func,
 		onForceUpdate: React.PropTypes.func,
 		isRelative: React.PropTypes.bool,
-		drawIntrons: React.PropTypes.bool
+		drawIntrons: React.PropTypes.bool,
+		downloadCaption: React.PropTypes.string
 	},
 
 	getDefaultProps: function () {
