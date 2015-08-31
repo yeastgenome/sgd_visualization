@@ -35,17 +35,17 @@ class _VariantViewer {
 		var featureTrackData = {
 				id: "variantViewer",
 				position: {
-					chromStart: exampleData.chromStart,
-					chromEnd: exampleData.chromEnd
+					chromStart: _chromStart,
+					chromEnd: _chromEnd
 				},
 				features: [
 					{
 						chrom: ((typeof _contigName === "undefined") ? "contig" : _contigName),
-						chromStart:  exampleData.chromStart,
-						chromEnd: exampleData.chromEnd,
-						strand: exampleData.strand,
-						blockSizes: exampleData.blockSizes,
-						blockStarts: exampleData.blockStarts
+						chromStart: _chromStart,
+						chromEnd: _chromEnd,
+						strand: _strand,
+						blockSizes: _blockSizes,
+						blockStarts: _blockStarts
 					}
 				]
 			};

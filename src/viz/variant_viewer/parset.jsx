@@ -47,7 +47,6 @@ var Parset = React.createClass({
 	_getX1LineNode: function () {
 		return null;
 		if (!this.props.isVisible) return null;
-
 		var _x1C = this.props.x1Coordinates;
 		return (<g>
 			<line x1={_x1C[0]} x2={_x1C[0]} y1={0} y2={LINE_HEIGHT} stroke="black" />

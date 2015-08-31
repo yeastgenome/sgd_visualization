@@ -34,7 +34,7 @@
     "js": ["/build/sgd_visualization.js"],
     "css": ["http://fonts.googleapis.com/css?family=Lato", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"],
     "snippets": ["examples"],
-    "first": "variant_viewer"
+    "first": "variant_viewer_dna"
   },
   "keywords": ["biojs","react","d3", "genetic", "biology", "variation"]
 }

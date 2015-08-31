@@ -59,7 +59,7 @@ var VariantViewer = React.createClass({
 			this.setState({ x1Scale: scale });
 		};
 		var model = this._getModel();
-		var refCoordinates
+		var refCoordinates;
 		var baseArr = this.props.isProteinMode ? this.props.variantDataProtein : this.props.variantDataDna;
 		var _variantData = baseArr.map( d => {
 			refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
@@ -106,7 +106,7 @@ var VariantViewer = React.createClass({
 
 	_renderParset: function () {
 		var _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
-		
+
 		// get ref highlighted coord
 		var model = this._getModel();
 		var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode);
@@ -121,12 +121,9 @@ var VariantViewer = React.createClass({
 				return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
-		var text = "FOO"
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
-			text = _coord.toString();
 		}
-
 		return (<Parset 
 			isVisible={true}
 			x1Coordinates={parsetX1Coord}
