@@ -50,6 +50,10 @@ var VariantViewer = React.createClass({
 			</div>
 		);
 	},
+
+	componentDidUpdate: function (prevProps, prevState) {
+		this._saveSVGData();
+	},
 	
 	_renderFeatureViewer: function () {
 		var featureData = this.props.store.getFeatureTrackData("variantViewer");
@@ -124,7 +128,7 @@ var VariantViewer = React.createClass({
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
 		}
-		return (<Parset 
+		return (<Parset ref="parset"
 			isVisible={true}
 			x1Coordinates={parsetX1Coord}
 			x2Coordinates={parsetX2Coord}
@@ -141,7 +145,7 @@ var VariantViewer = React.createClass({
 
 		return (
 			<div>
-				<MultiAlignmentViewer
+				<MultiAlignmentViewer ref="multiAlignmentViewer"
 					segments={_segments} sequences={_sequences}
 					onSetScale={_onSetX2Scale} onHighlightSegment={this._highlightSegment}
 					highlightedSegmentDomain={this.state.highlightedAlignedSegment}
@@ -161,6 +165,14 @@ var VariantViewer = React.createClass({
 			variantDataDna: this.props.variantDataDna,
 			variantDataProtein: this.props.variantDataProtein
 		});
+	},
+
+	// gets SVG data from parset and multi alignment viewer, then saves to store
+	_saveSVGData: function () {
+		if (this.refs.parset && this.refs.multiAlignmentViewer) {
+			// this.refs.parset.getDOMNode().querySelector('svg')
+			// this.refs.multiAlignmentViewer.getDOMNode().querySelector('svg')
+		}
 	}
 });
 
