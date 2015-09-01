@@ -1,8 +1,8 @@
 "use strict";
 var React = require("react");
 
-var ProteinViewerComponent = require("./viz/protein_viewer.jsx");
-var VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
+var _ProteinViewerComponent = require("./viz/protein_viewer.jsx");
+var _VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
 var FeatureViewerStore = require("./store/feature_viewer_store.jsx");
 
 var exampleData = require("./variant_viewer_fixture_data");
@@ -52,7 +52,7 @@ class _VariantViewer {
 		var _store = new FeatureViewerStore();
 		_store.addFeatureTrack(featureTrackData);
 
-		React.render(React.createElement(VariantViewerComponent, {
+		React.render(React.createElement(_VariantViewerComponent, {
 			store: _store,
 			name: _name,
 			alignedDnaSequences: _alignedDnaSequences,
@@ -80,7 +80,7 @@ class _ProteinViewer {
 		if (typeof options === "undefined") options = {};
 		options.el = options.el || document.body;
 
-		React.render(React.createElement(ProteinViewerComponent, {
+		React.render(React.createElement(_ProteinViewerComponent, {
 			data: options.config.domains,
 			locusData: options.config.locus
 		}), options.el);
@@ -89,5 +89,7 @@ class _ProteinViewer {
 
 module.exports = {
 	ProteinViewer: _ProteinViewer,
-	VariantViewer: _VariantViewer
+	VariantViewer: _VariantViewer,
+	ProteinViewerComponent: _ProteinViewerComponent,
+	VariantViewerComponent: _VariantViewerComponent
 };
