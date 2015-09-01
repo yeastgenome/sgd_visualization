@@ -2,7 +2,28 @@
 
 [![Build Status](https://travis-ci.org/yeastgenome/sgd_visualization.svg)](https://travis-ci.org/yeastgenome/sgd_visualization)
 
-This is a set of react components used for genomic data visualization by [SGD](http://yeastgenome.org).  The word "set" isn't technically correct, because currently there is only one component, the protein viewer.  In the future, more components will be added.
+This is a set of react components used for genomic data visualization by [SGD](http://yeastgenome.org).
+
+## Usage
+
+See examples directory for example configuration values.
+
+as a React plugin
+
+```javascript
+React.render(React.createElement(_VariantViewerComponent, {
+});
+```
+
+or as a standalone library
+
+```javascript
+var VariantViewer = require("sgd_visualization").VariantViewer;
+var vv = new VariantViewer({
+	el: document.getElementById("target"),
+	config: {}
+});
+```
 
 ## See Examples
 
