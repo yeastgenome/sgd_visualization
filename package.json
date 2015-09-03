@@ -1,6 +1,6 @@
 {
   "name": "sgd_visualization",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "src/index.js",
   "repository": "https://github.com/yeastgenome/sgd_visualization",
   "homepage": "http://www.yeastgenome.org",
@@ -11,10 +11,10 @@
     "react": "^0.13.3",
     "d3": "^3.5.6",
     "underscore": "^1.8.3",
-    "react-style": "*"
+    "react-style": "*",
+    "reactify": "~1.1.0"
   },
   "devDependencies": {
-    "reactify": "~1.1.0",
     "node-jsx": "~0.12.4",
     "mkdirp": "^0.5.0",
     "sniper": "0.x",
@@ -32,7 +32,6 @@
   },
   "sniper": {
     "js": ["/build/sgd_visualization.js"],
-    "buildJS": "https://s3-us-west-2.amazonaws.com/viz-assets/sgd_visualization.js",
     "css": ["http://fonts.googleapis.com/css?family=Lato", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"],
     "snippets": ["examples"],
     "first": "variant_viewer_dna"
