@@ -125,9 +125,6 @@ var FeatureViewer = React.createClass({
 					<div styles={[styles.btnGroup]}>
 						<VariantLegend />
 					</div>
-					<div className="btn-group" styles={[styles.btnGroup]}>
-						<a className="btn btn-default" onClick={this._downloadImage}>Download <span className="glyphicon glyphicon-save" /></a>
-					</div>
 				</div>
 			</div>
 		);
@@ -497,18 +494,6 @@ var FeatureViewer = React.createClass({
 
 		this.setState({ offsetLeft: left, offsetTop: top });
 		if (typeof this.props.onForceUpdate === "function") this.props.onForceUpdate();
-	},
-
-	_downloadImage: function (e) {
-		if (e) e.preventDefault();
-		var canvas = this.refs.canvas.getDOMNode();
-		var image = new Image();
-		var a = document.createElement('a');
-		a.download = "image.png";
-		a.href = canvas.toDataURL("image/png");
-		document.body.appendChild(a);
-		a.click();
-		a.remove();
 	}
 });
 
