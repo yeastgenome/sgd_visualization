@@ -25,7 +25,9 @@ var FeatureViewer = React.createClass({
 		onForceUpdate: React.PropTypes.func,
 		isRelative: React.PropTypes.bool,
 		drawIntrons: React.PropTypes.bool,
-		downloadCaption: React.PropTypes.string
+		downloadCaption: React.PropTypes.string,
+		contigName: React.PropTypes.string,
+		contigHref: React.PropTypes.string
 	},
 
 	getDefaultProps: function () {
@@ -115,11 +117,11 @@ var FeatureViewer = React.createClass({
 	},
 
 	_renderControls: function () {
+		var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
 		return (
 			<div styles={[styles.uiContainer]}>
 				<div>
-					{/* TEMP hardcoded text */}
-					<h3>S288C Location: <a>Chromosome II</a> 393123..394742</h3>
+					<h3>Location: {contigTextNode} {this.props.chromStart}..{this.props.chromEnd}</h3>
 				</div>
 				<div styles={[styles.btnContainer]}>
 					<div styles={[styles.btnGroup]}>
