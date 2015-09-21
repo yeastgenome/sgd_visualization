@@ -18,57 +18,24 @@ module.exports = class AlignmentModel {
 
 	parse (response) {
 		response.strand = "+"; // force to render as crick strand
-		response.aligned_protein_sequences = this._sortSequencesByStrain(response.aligned_protein_sequences);
-		response.aligned_dna_sequences = this._sortSequencesByStrain(response.aligned_dna_sequences);
+		response.alignedProteinSequences = this._sortSequencesByStrain(response.alignedProteinSequences);
+		response.alignedDnaSequences = this._sortSequencesByStrain(response.alignedDnaSequences);
 		return response;
 	}
 
 	canShowSequence (isProtein) {
 		var attr = this.attributes;
 		if (isProtein) {
-			return attr.aligned_protein_sequences.length > 1 && attr.variant_data_protein.length > 0;
+			return attr.alignedProteinSequences.length > 1 && attr.variantDataProtein.length > 0;
 		} else {
-			return attr.aligned_dna_sequences.length > 1 && attr.variant_data_dna.length > 0;
+			return attr.alignedDnaSequences.length > 1 && attr.variantDataDna.length > 0;
 		}
 	}
 
 	_sortSequencesByStrain (sequences) {
 		return _.sortBy(sequences, d => {
-			return (d.strain_display_name === REFERENCE_DISPLAY_NAME) ? 1 : 2;
+			return (d.name === DEFAULT_REFERENCE_NAME) ? 1 : 2;
 		});
-	}
-
-	getLocusDiagramData (isProtein) {
-		var attr = this.attributes;
-		var _start = Math.min(attr.coordinates.start, attr.coordinates.end);
-		var _end = isProtein ?
-			_start + attr.protein_length * 3 :
-			Math.max(attr.coordinates.start, attr.coordinates.end);
-
-		// expand domain by 10% on each end to give some space around locus
-		var _padding = Math.abs(_end - _start) * 0.1;
-		var _domainBounds = [_start - _padding, _end + _padding];
-		var _loci = [
-			{
-				start: _start,
-				end: _end,
-				track: (attr.strand === "+") ? 1 : -1,
-				locus: {
-					display_name: attr.display_name,
-					link: attr.link
-				}
-			}
-		];
-		var _contigData = attr.contig;
-		_contigData.centromerePosition = (_contigData.centromere_start + _contigData.centromere_end) / 2;
-
-		return {
-			data: { locci: _loci } ,
-			domainBounds: _domainBounds,
-			contigData: _contigData,
-			start: _start,
-			end: _end
-		};
 	}
 
 	// pure function that returns true or false if two segments overlap
@@ -103,23 +70,6 @@ module.exports = class AlignmentModel {
 			refDomain.end = refDomain.end * 3;
 		}
 		return refDomain;
-	}
-
-	// format variant data for locus diagram
-	getVariantData (isProtein) {
-		var _rawVariantData = isProtein ? this.attributes.variant_data_protein : this.attributes.variant_data_dna;
-		var _start = this.attributes.coordinates.start;
-		var _end = this.attributes.coordinates.end;
-		var _offset = isProtein ? 3 : 1;
-		return _.map(_rawVariantData, d => {
-			var _refCoord = this.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, isProtein);
-			if (this.attributes.strand === "+") {
-				d.coordinateDomain = [_refCoord.start + _start - _offset, _refCoord.end + _start - _offset];
-			} else {
-				d.coordinateDomain = [_end - _refCoord.end + _offset, _end - _refCoord.start + _offset];
-			}
-			return d;
-		});
 	}
 
 	_mergeOrAddSegment (existingSegments, newSegment) {
@@ -208,7 +158,7 @@ module.exports = class AlignmentModel {
 		return _.map(_baseArray, d => {
 			return {
 				name: d.name,
-				href: d.strain_link,
+				href: d.href,
 				sequence: d.sequence
 			};
 		});
