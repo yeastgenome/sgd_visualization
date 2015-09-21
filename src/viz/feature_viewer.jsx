@@ -174,10 +174,10 @@ var FeatureViewer = React.createClass({
 				steps = Math.abs(endX - startX) / DOMAIN_VORONOI_INTERVAL;
 				for (var i = steps - 1; i >= 0; i--) {
 					// record a mouseOver cb
-					mouseOverFns.push( () => { console.log("domain mouseover ", d.source.id); });
+					mouseOverFns.push( () => { console.log("domain mouseover ", d.sourceId); });
 
 					pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
-					pointY = domainYScale(d.source.id) + d._track * PX_PER_DOMAIN;
+					pointY = domainYScale(d.sourceId) + d._track * PX_PER_DOMAIN;
 					points.push([pointX, pointY]);
 				};
 			});
@@ -384,7 +384,7 @@ var FeatureViewer = React.createClass({
 		var xScale = this._getScale();
 		var yScale = this._getDomainYScale();
 		var colorScale = d3.scale.category10();
-		var chromStart = this.props.focusFeature.chromStart;
+		var chromStart = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
 		var startX, endX, y;
 		ctx.fillStyle = TEXT_COLOR;
 		ctx.textAlign = "left";
@@ -392,9 +392,9 @@ var FeatureViewer = React.createClass({
 		domains.forEach( d => {
 			startX = xScale(chromStart + d.start);
 			endX = xScale(chromStart + d.end);
-			y = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
+			y = yScale(d.sourceId) + d._track * PX_PER_DOMAIN;
 
-			ctx.strokeStyle = colorScale(d.source.id);
+			ctx.strokeStyle = colorScale(d.sourceId);
 			ctx.strokeWidth = 2;
 			// left tick
 			ctx.beginPath();
@@ -413,7 +413,7 @@ var FeatureViewer = React.createClass({
 			ctx.stroke();
 
 			// label
-			ctx.fillText(d.domain.name, startX + 3, y - 3);
+			ctx.fillText(d.name, startX + 3, y - 3);
 		});
 	},
 
@@ -437,14 +437,16 @@ var FeatureViewer = React.createClass({
 		var startY = HEIGHT + 35;
 		var domain = [];
 		var range = [];
-		var sources = this._getDomainSources();
+		var sourceIds = _.uniq(this.props.domains, (a, b) => {
+			return a.sourceId === b.sourceId;
+		}).map( d => { return d.sourceId; });
 		var trackedDomains = this._getTrackedDomains();
 		var sourceY = startY;
 		var groupedDomains, maxTracks;
-		sources.forEach( d => {
-			groupedDomains = _.filter(trackedDomains, _d => { return d.id === _d.source.id; });
+		sourceIds.forEach( d => {
+			groupedDomains = _.filter(trackedDomains, _d => { return d === _d.sourceId; });
 			maxTracks = d3.max(groupedDomains, _d => { return _d._track; });
-			domain.push(d.id);
+			domain.push(d);
 			range.push(sourceY);
 			sourceY += (maxTracks + 1) * PX_PER_DOMAIN;
 		});
@@ -454,21 +456,6 @@ var FeatureViewer = React.createClass({
 			.domain(domain)
 			.range(range);
 	},
-
-	_getDomainSources: function () {
-		var _groupedData = _.groupBy(this.props.domains, d => {
-			return d.source.name;
-		});
-		var _keys = _.keys(_groupedData);
-		var _dataAsArray = _keys.map( d => {
-			var _baseData = _groupedData[d][0].source;
-			// add data length
-			var _length =  _groupedData[d].length;
-			return _.extend(_baseData, { numberDomains: _length });
-		});
-		return _dataAsArray;
-	},
-
 
 	_onScroll: function (e) {
 		return // TEMP

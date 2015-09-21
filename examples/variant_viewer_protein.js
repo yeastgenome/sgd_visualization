@@ -55,7 +55,7 @@ var vv = new VariantViewer({
 		],
 		domains: [
 			{
-				name: "G3DSA:2.30.38.10"
+				name: "G3DSA:2.30.38.10",
 				id: null,
 				start: 40,
 				end: 63,
@@ -63,7 +63,7 @@ var vv = new VariantViewer({
 				sourceId: 112
 			},
 			{
-				name: "G3DSA:2.30.38.10"
+				name: "G3DSA:2.30.38.10",
 				id: null,
 				start: 479,
 				end: 554,
@@ -71,7 +71,7 @@ var vv = new VariantViewer({
 				sourceId: 112
 			},
 			{
-				name: "G3DSA:2.30.38.10"
+				name: "G3DSA:2.30.38.10",
 				id: null,
 				start: 98,
 				end: 196,
@@ -79,7 +79,7 @@ var vv = new VariantViewer({
 				sourceId: 112
 			},
 			{
-				name: "G3DSA:2.30.38.10"
+				name: "G3DSA:2.30.38.10",
 				id: null,
 				start: 240,
 				end: 273,
@@ -87,7 +87,7 @@ var vv = new VariantViewer({
 				sourceId: 112
 			},
 			{
-				name: "G3DSA:2.30.38.10"
+				name: "G3DSA:2.30.38.10",
 				id: null,
 				start: 274,
 				end: 373,
@@ -95,7 +95,7 @@ var vv = new VariantViewer({
 				sourceId: 112
 			},
 			{
-				name: "G3DSA:2.30.38.10"
+				name: "G3DSA:2.30.38.10",
 				id: null,
 				start: 416,
 				end: 470,

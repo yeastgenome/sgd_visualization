@@ -3,7 +3,6 @@ var React = require("react");
 
 var _ProteinViewerComponent = require("./viz/protein_viewer.jsx");
 var _VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
-var FeatureViewerStore = require("./store/feature_viewer_store.jsx");
 
 var exampleData = require("./variant_viewer_fixture_data");
 
@@ -31,29 +30,7 @@ class _VariantViewer {
 		var _isProteinMode = conf.isProteinMode;
 		var _downloadCaption = conf.downloadCaption;
 
-		// init store
-		var featureTrackData = {
-				id: "variantViewer",
-				position: {
-					chromStart: _chromStart,
-					chromEnd: _chromEnd
-				},
-				features: [
-					{
-						chrom: ((typeof _contigName === "undefined") ? "contig" : _contigName),
-						chromStart: _chromStart,
-						chromEnd: _chromEnd,
-						strand: _strand,
-						blockSizes: _blockSizes,
-						blockStarts: _blockStarts
-					}
-				]
-			};
-		var _store = new FeatureViewerStore();
-		_store.addFeatureTrack(featureTrackData);
-
 		React.render(React.createElement(_VariantViewerComponent, {
-			store: _store,
 			name: _name,
 			alignedDnaSequences: _alignedDnaSequences,
 			alignedProteinSequences: _alignedProteinSequences,
