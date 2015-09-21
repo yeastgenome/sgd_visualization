@@ -10,28 +10,6 @@ var exampleData = require("../src/variant_viewer_fixture_data.json");
 
 describe("VariantViewer", function(){
 	it("should render to a viz with classes 'sgd-viz' and 'variant-viewer'", function(){
-
-		// init store
-		var featureTrackData = {
-				id: "variantViewer",
-				position: {
-					chromStart: exampleData.chromStart,
-					chromEnd: exampleData.chromEnd
-				},
-				features: [
-					{
-						chrom: "chriii", // TEMP
-						chromStart:  exampleData.chromStart,
-						chromEnd: exampleData.chromEnd,
-						strand: "+",
-						blockSizes: exampleData.blockSizes,
-						blockStarts: exampleData.blockStarts
-					}
-				]
-			};
-		var _store = new FeatureViewerStore();
-		_store.addFeatureTrack(featureTrackData);
-
 		var markup = React.renderToStaticMarkup(React.createElement(VariantViewer, {
 			alignedDnaSequences: exampleData.alignedDnaSequences,
 			alignedProteinSequences: exampleData.alignedProteinSequences,
@@ -43,7 +21,6 @@ describe("VariantViewer", function(){
 			dnaLength: exampleData.dnaLength,
 			proteinLength: exampleData.proteinLength,
 			strand: exampleData.strand,
-			store: _store
 		}));
 		assert.equal(markup.match('class="sgd-viz variant-viewer') !== null, true);
 		assert.equal(markup.match(/<div/).index, 0);

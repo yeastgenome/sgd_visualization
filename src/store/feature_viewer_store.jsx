@@ -119,8 +119,4 @@ module.exports = class FeatureViewerStore {
 		position.chromStart = newDomain[0];
 		position.chromEnd = newDomain[1];
 	}
-
-	addInteractionData () {
-		interactionData = [1,2,3];
-	}
 };

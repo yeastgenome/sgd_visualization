@@ -12,7 +12,7 @@ var isOverlap = function (a, b) {
 var AssignTracksToDomains = function (domains) {
 	// split by groups
 	var groupedDomains = _.groupBy(domains, function (d) {
-		return d.source.id;
+		return d.sourceId;
 	});
 
 	// in each group, assign tracks
@@ -33,7 +33,7 @@ var AssignTracksToDomains = function (domains) {
 	var merged = [];
 	merged = merged.concat.apply(merged, _.values(groupedDomains));
 	merged = _.sortBy(merged, function (d) {
-		return d.source.id;
+		return d.sourceId;
 	});
 	return merged;
 };

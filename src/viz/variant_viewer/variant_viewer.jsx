@@ -6,6 +6,7 @@ var _ = require("underscore");
 
 var AlignmentModel = require("./alignment_model.jsx");
 var FeatureViewer = require("../feature_viewer.jsx");
+var FeatureViewerStore = require("../../store/feature_viewer_store.jsx");
 var MultiAlignmentViewer = require("./multi_alignment_viewer.jsx");
 var Parset = require("./parset.jsx");
 var VariantPop = require("./variant_pop.jsx");
@@ -14,10 +15,9 @@ var LABEL_WIDTH = 150;
 
 var VariantViewer = React.createClass({
 	propTypes: {
-		store: React.PropTypes.object.isRequired,
 		name: React.PropTypes.string,
-		chromStart: React.PropTypes.number,
-		chromEnd: React.PropTypes.number,
+		chromStart: React.PropTypes.number.isRequired,
+		chromEnd: React.PropTypes.number.isRequired,
 		contigName: React.PropTypes.string,
 		contigHref: React.PropTypes.string,
 		alignedDnaSequences: React.PropTypes.array,
@@ -33,11 +33,40 @@ var VariantViewer = React.createClass({
 	},
 
 	getInitialState: function () {
+		var _chromStart = this.props.chromStart;
+		var _chromEnd = this.props.chromEnd;
+		var _strand = this.props.strand || "+";
+		var _blockSizes = this.props.blockSizes || [Math.abs(_chromEnd - _chromStart)];
+		var _blockStarts = this.props.blockStarts || [0];
+		var _chrom = this.props.contigName || "";
+		
+		// make default feature viewer store
+		var featureTrackData = {
+				id: "variantViewer",
+				position: {
+					chromStart: _chromStart,
+					chromEnd: _chromEnd
+				},
+				features: [
+					{
+						chrom: _chrom,
+						chromStart: _chromStart,
+						chromEnd: _chromEnd,
+						strand: _strand,
+						blockSizes: _blockSizes,
+						blockStarts: _blockStarts
+					}
+				]
+			};
+		var _store = new FeatureViewerStore();
+		_store.addFeatureTrack(featureTrackData);
+
 		return {
 			highlightedAlignedSegment: null, // [0, 100] relative coord to aligned sequence
 			parsetVisible: false,
 			x1Scale: function () { return 0; },
-			x2Scale: function () { return 0; }
+			x2Scale: function () { return 0; },
+			store: _store
 		};
 	},
 
@@ -52,7 +81,7 @@ var VariantViewer = React.createClass({
 	},
 	
 	_renderFeatureViewer: function () {
-		var featureData = this.props.store.getFeatureTrackData("variantViewer");
+		var featureData = this.state.store.getFeatureTrackData("variantViewer");
 		var _features = featureData.features;
 		var _focusFeature = _features[0];
 		var _onSetX1Scale = scale => {
@@ -84,7 +113,7 @@ var VariantViewer = React.createClass({
 
 		return (<FeatureViewer
 			featureTrackId={"variantViewer"}
-			store={this.props.store}
+			store={this.state.store}
 			domains={_domains}
 			canScroll={true}
 			chromStart={_chromStart}
