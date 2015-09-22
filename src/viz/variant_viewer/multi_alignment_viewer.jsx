@@ -2,7 +2,7 @@
 var d3 = require("d3");
 var React = require("react");
 var _ = require("underscore");
-var StyleSheet = require("react-style");
+var Radium = require("radium");
 
 var getJaggedScale = require("./get_jagged_scale.jsx");
 var MultiScaleAxis = require("./multi_scale_axis.jsx");
@@ -35,7 +35,7 @@ var MultiAlignmentViewer = React.createClass({
 
 		return (<div>
 			{this._getLabelsNode()}
-			<div ref="scroller" styles={[styles.scroller]}>
+			<div ref="scroller" style={[style.scroller]}>
 				<div style={{ width: maxX + FONT_SIZE }}>
 					<MultiScaleAxis segments={this.props.segments} scale={xScale} />
 					<svg ref="svg" style={{ width: maxX + FONT_SIZE, height: svgHeight }}>
@@ -86,11 +86,11 @@ var MultiAlignmentViewer = React.createClass({
 	_getLabelsNode: function () {
 		var yScale = this._getYScale();
 		var labelNodes = _.map(this.props.sequences, (s, i) => {
-			var _styles = [styles.sequenceLabel, { top: yScale(s.name) + 28 }];
+			var _style = [style.sequenceLabel, { top: yScale(s.name) + 28 }];
 			var indicatorNode = (this.state.activeSequenceName === s.name) ? <i className="fa fa-chevron-right"></i> : null;
-			return <a href={s.href} key={"sequenceAlignLabel" + i} target="_new" styles={_styles}>{indicatorNode} {s.name}</a>
+			return <a href={s.href} key={"sequenceAlignLabel" + i} target="_new" style={_style}>{indicatorNode} {s.name}</a>
 		});
-		return (<div styles={[styles.sequenceLabelContainer]}>
+		return (<div style={[style.sequenceLabelContainer]}>
 			{labelNodes}
 		</div>);
 	},
@@ -154,7 +154,7 @@ var PX_PER_CHAR = 9.25;
 var TICK_HEIGHT = 6;
 
 // CSS in JS
-var styles = StyleSheet.create({
+var style = {
 	scroller: {
 		marginLeft: LABEL_WIDTH,
 		overflow: "scroll"
@@ -171,6 +171,6 @@ var styles = StyleSheet.create({
 		position: "absolute",
 		right: "1rem"
 	}
-});
+};
 
-module.exports = MultiAlignmentViewer;
+module.exports = Radium(MultiAlignmentViewer);

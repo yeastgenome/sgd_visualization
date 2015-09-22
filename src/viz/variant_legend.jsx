@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 "use strict";
 var React = require("react");
-var StyleSheet = require("react-style");
+var Radium = require("radium");
 
 var DrawVariant = require("./draw_variant");
 var DidClickOutside = require("../mixins/did_click_outside.jsx");
@@ -17,7 +17,7 @@ var VariantLegend = React.createClass({
 
 	render: function () {
 		return (
-			<div styles={[styles.container]}>
+			<div style={[style.container]}>
 				<a className="btn btn-default" onClick={this._toggleActive}>
 					Legend <span className="caret" />
 				</a>
@@ -37,15 +37,15 @@ var VariantLegend = React.createClass({
 	_renderPanel: function () {
 		if (!this.state.isActive) return null;
 		return (
-			<div styles={[styles.panel]}>
+			<div style={[style.panel]}>
 				<canvas ref="canvas" width={25} height={HEIGHT} />
 				<div>
-					<p styles={[styles.label]}>Insertion</p>
-					<p styles={[styles.label]}>Deletion</p>
-					<p styles={[styles.label]}>Synonymous SNP</p>
-					<p styles={[styles.label]}>Nonsynonymous SNP</p>
-					<p styles={[styles.label]}>Intron SNP</p>
-					<p styles={[styles.label]}>Untranslatable SNP</p>
+					<p style={[style.label]}>Insertion</p>
+					<p style={[style.label]}>Deletion</p>
+					<p style={[style.label]}>Synonymous SNP</p>
+					<p style={[style.label]}>Nonsynonymous SNP</p>
+					<p style={[style.label]}>Intron SNP</p>
+					<p style={[style.label]}>Untranslatable SNP</p>
 				</div>
 			</div>
 		);
@@ -77,7 +77,7 @@ var VariantLegend = React.createClass({
 	}
 });
 
-module.exports = VariantLegend;
+module.exports = Radium(VariantLegend);
 
 var WIDTH = 180;
 var HEIGHT = 190;
@@ -87,7 +87,7 @@ var LABEL_HEIGHT = 20;
 var LABEL_BOTTOM = 10;
 
 // CSS in JS
-var styles = StyleSheet.create({
+var style = {
 	container: {
 		position: "relative"
 	},
@@ -111,4 +111,4 @@ var styles = StyleSheet.create({
 		height: LABEL_HEIGHT,
 		marginBottom: LABEL_BOTTOM
 	}
-});
+};

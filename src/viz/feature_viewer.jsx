@@ -2,7 +2,7 @@
 "use strict";
 var d3 = require("d3");
 var React = require("react");
-var StyleSheet = require("react-style");
+var Radium = require("radium");
 var _ = require("underscore");
 
 var AssignTracksToDomains = require("./assign_tracks_to_domains");
@@ -40,13 +40,13 @@ var FeatureViewer = React.createClass({
 
 	render: function () {
 		var _height = this._calculateHeight();
-		var scrollerNode = null// {this.props.canScroll ? <div ref="scroller" styles={[styles.scroller]} /> : null} // TEMP
+		var scrollerNode = null// {this.props.canScroll ? <div ref="scroller" style={[style.scroller]} /> : null} // TEMP
 		return (
 			<div className="feature-viewer">
 				{this._renderControls()}
-				<div styles={[styles.container]}>
-					<canvas ref="canvas" width={this.state.DOMWidth} height={_height} styles={[styles.canvas]} />
-					<div ref="frame" styles={[styles.frame, { height: _height }]}>
+				<div style={[style.container]}>
+					<canvas ref="canvas" width={this.state.DOMWidth} height={_height} style={[style.canvas]} />
+					<div ref="frame" style={[style.frame, { height: _height }]}>
 						{this._renderVoronoi()}
 						{scrollerNode}
 					</div>
@@ -119,12 +119,12 @@ var FeatureViewer = React.createClass({
 	_renderControls: function () {
 		var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
 		return (
-			<div styles={[styles.uiContainer]}>
+			<div style={[style.uiContainer]}>
 				<div>
 					<h3>Location: {contigTextNode} {this.props.chromStart}..{this.props.chromEnd}</h3>
 				</div>
-				<div styles={[styles.btnContainer]}>
-					<div styles={[styles.btnGroup]}>
+				<div style={[style.btnContainer]}>
+					<div style={[style.btnGroup]}>
 						<VariantLegend />
 					</div>
 				</div>
@@ -486,7 +486,7 @@ var FeatureViewer = React.createClass({
 	}
 });
 
-module.exports = FeatureViewer;
+module.exports = Radium(FeatureViewer);
 
 var DOMAIN_VORONOI_INTERVAL = 15; // add a new voronoi point for every n px across domain
 var HEIGHT = 70;
@@ -514,7 +514,7 @@ var INTRON_COLOR = "#2c7bb6"; // dark blue
 var UNTRANSLATEABLE_COLOR = "gray";
 
 // CSS in JS
-var styles = StyleSheet.create({
+var style = {
 	container: {
 		position: "relative",
 		minHeight: HEIGHT
@@ -549,4 +549,4 @@ var styles = StyleSheet.create({
 		display: "inline-block",
 		marginLeft: "1rem"
 	}
-});
+};
