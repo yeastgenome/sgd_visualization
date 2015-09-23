@@ -61,6 +61,7 @@ var FeatureViewer = React.createClass({
 			offsetLeft: 0,
 			offsetTop: 0,
 			computedForceData: null,
+			trackedDomains: null,
 			canvasRatio: 1
 		};
 	},
@@ -74,6 +75,7 @@ var FeatureViewer = React.createClass({
 		this._calculateWidth();
 		this._drawCanvas();
 		if (this.props.canScroll) frame.addEventListener("scroll", this._onScroll);
+		if (this.props.domains) this._updateTrackedDomains();
 
 		// if (isMobile) this._setupZoomEvents();
 	},
@@ -94,7 +96,7 @@ var FeatureViewer = React.createClass({
 			.on("zoom", () => {
 				var dm = scale.domain();
 				this.props.store.setPositionByFeatureTrack(this.props.featureTrackId, dm[0], dm[1]);
-				this.props.onSetScale(scale)
+				this.props.onSetScale(scale);
 			});
 		d3.select(scroller).call(zoomFn);
 	},
@@ -115,6 +117,8 @@ var FeatureViewer = React.createClass({
 			}
 			this._recalculateForceLayout();
 		}
+		// maybe update tracked domains
+		if (prevProps.domains !== this.props.domains) this._updateTrackedDomains();
 	},
 
 	_renderControls: function () {
@@ -168,8 +172,10 @@ var FeatureViewer = React.createClass({
 			points.push([d.x, d.y]);
 		});
 		// add points for domains
+		// TEMP
 		if (this.props.domains) {
-			var chromStart = this.props.focusFeature.chromStart;
+		// if (false) {
+			var chromStart = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
 			var startX, endX, steps, pointX, pointY;
 			this.props.domains.forEach( d => {
 				startX = scale(chromStart + d.start);
@@ -197,7 +203,7 @@ var FeatureViewer = React.createClass({
 			if (d.length === 0) return null;
 			pathString = "M" + d.join("L") + "Z";
 			var _onMouseOver = mouseOverFns[i];
-			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" fillOpacity="0" strokeWidth="1"/>;
+			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" stroke="none" fillOpacity="0" strokeWidth="1"/>;
 		});
 
 		return (
@@ -386,8 +392,8 @@ var FeatureViewer = React.createClass({
 	},
 
 	_drawDomains: function (ctx) {
-		if (!this.props.domains) return;
-		var domains = this._getTrackedDomains();
+		var domains = this.state.trackedDomains;
+		if (!domains) return;
 		var xScale = this._getScale();
 		var yScale = this._getDomainYScale();
 		var colorScale = d3.scale.category10();
@@ -433,11 +439,9 @@ var FeatureViewer = React.createClass({
 			.range([10, (this.state.DOMWidth - 10) * this.state.canvasRatio]);
 	},
 
-	_getTrackedDomains: function () {
-		if (typeof this._trackedDomains === "undefined") {
-			this._trackedDomains = AssignTracksToDomains(this.props.domains);
-		}
-		return this._trackedDomains;
+	_updateTrackedDomains: function () {
+		var _trackedDomains = AssignTracksToDomains(this.props.domains);
+		this.setState({ trackedDomains: _trackedDomains });
 	},
 
 	_getDomainYScale: function () {
@@ -447,7 +451,7 @@ var FeatureViewer = React.createClass({
 		var sourceIds = _.uniq(this.props.domains, (a, b) => {
 			return a.sourceId === b.sourceId;
 		}).map( d => { return d.sourceId; });
-		var trackedDomains = this._getTrackedDomains();
+		var trackedDomains = this.state.trackedDomains;
 		var sourceY = startY;
 		var groupedDomains, maxTracks;
 		sourceIds.forEach( d => {
