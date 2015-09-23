@@ -115,6 +115,7 @@ var FeatureViewer = React.createClass({
 			}
 			this._recalculateForceLayout();
 		}
+		
 	},
 
 	_renderControls: function () {
@@ -342,7 +343,8 @@ var FeatureViewer = React.createClass({
 
 	_drawVariants: function (ctx) {
 		var computedData = this.state.computedForceData;
-		if (!computedData) return;
+		// TEMP
+		// if (!computedData) return;
 		var originalData = this._getRawVariants();
 		var colors = {
 			"synonymous": SYNONYMOUS_COLOR,
@@ -351,7 +353,10 @@ var FeatureViewer = React.createClass({
 			"untranslatable": UNTRANSLATEABLE_COLOR
 		};
 		var originalDatum, snpType, type, color, path;
-		computedData.forEach( (d, i) => {
+
+		// TEMP, just use raw, don't recalc
+		// old computedData.forEach( (d, i) => {
+		originalData.forEach( (d, i) => {
 			snpType = (typeof d.snpType === "undefined") ? "" : d.snpType;
 			originalDatum = originalData[i];
 			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), d.x, d.y, originalDatum.x, originalDatum.y);
