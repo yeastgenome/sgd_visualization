@@ -104,7 +104,10 @@ var FeatureViewer = React.createClass({
 
 	componentDidUpdate: function (prevProps, prevState) {
 		this._drawCanvas();
-		if (prevState.DOMWidth !== this.state.DOMWidth) {
+		var isNewDomain = (prevProps.forceLength !== this.props.forceLength) ||
+			(prevProps.chromStart !== this.props.chromStart) ||
+			(prevProps.chromEnd !== this.props.chromEnd);
+		if (prevState.DOMWidth !== this.state.DOMWidth || isNewDomain) {
 			if (this.props.onSetScale) {
 				var scale = this._getScale();
 					if (this.props.isRelative) {
