@@ -115,7 +115,6 @@ var FeatureViewer = React.createClass({
 			}
 			this._recalculateForceLayout();
 		}
-		
 	},
 
 	_renderControls: function () {

@@ -34,7 +34,13 @@ module.exports = class FeatureViewerStore {
 		featureDatum.originalPosition = _.clone(featureDatum.position);
 		featureDatum.zoomLevel = 0;
 		if (typeof featureDatum.id === "undefined") featureDatum.id = "featureTrack" + featureTracks.length.toString();
-		featureTracks.push(featureDatum);
+		// replace if exists, or push
+		var indexOf = _.findIndex(featureTracks, d => { return d.id === featureDatum.id; });
+		if (indexOf < 0) {
+			featureTracks.push(featureDatum);
+		} else {
+			featureTracks[indexOf] = featureDatum;
+		}
 	}
 
 	addVizTrack () {
