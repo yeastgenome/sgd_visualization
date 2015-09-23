@@ -162,7 +162,9 @@ var FeatureViewer = React.createClass({
 		var points = [];
 		this.state.computedForceData.forEach( d => {
 			// record a mouseOver cb
-			mouseOverFns.push( () => { console.log("variant mouseover"); });
+			if (typeof this.props.onHighlightSegment === "function") {
+				mouseOverFns.push( () => { this.props.onHighlightSegment(d.start - 1, d.end - 1); });
+			}
 			points.push([d.x, d.y]);
 		});
 		// add points for domains
