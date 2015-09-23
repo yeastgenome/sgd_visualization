@@ -5,21 +5,23 @@ var Radium = require("radium");
 
 var DrawVariant = require("./draw_variant");
 var DidClickOutside = require("../mixins/did_click_outside.jsx");
+var CalculateCanvasRatio = require("../mixins/calculate_canvas_ratio.jsx");
 
 var VariantLegend = React.createClass({
-	mixins: [DidClickOutside],
+	mixins: [DidClickOutside, CalculateCanvasRatio],
 
 	getInitialState: function () {
 		return {
-			isActive: false
+			isActive: false,
+			canvasRatio: 1
 		}
 	},
 
 	render: function () {
 		return (
 			<div style={[style.container]}>
-				<a className="btn btn-default" onClick={this._toggleActive}>
-					Legend <span className="caret" />
+				<a style={[style.button]} onClick={this._toggleActive}>
+					Legend <i className="fa fa-sort-desc" />
 				</a>
 				{this._renderPanel()}
 			</div>
@@ -28,6 +30,7 @@ var VariantLegend = React.createClass({
 
 	componentDidUpdate: function (prevProps, prevState) {
 		if (this.state.isActive) this._drawLegend();
+		if (this.state.isActive !== prevState.isActive && this.state.isActive) this.calculateCanvasRatio();
 	},
 
 	didClickOutside: function () {
@@ -36,9 +39,15 @@ var VariantLegend = React.createClass({
 
 	_renderPanel: function () {
 		if (!this.state.isActive) return null;
+		var _width = this._getWidth();
+		var _height = this._getHeight();
+		var canvasRatio = this.state.canvasRatio;
 		return (
 			<div style={[style.panel]}>
-				<canvas ref="canvas" width={25} height={HEIGHT} />
+				<canvas ref="canvas"
+					width={_width * canvasRatio} height={_height * canvasRatio}
+					style={{ width: _width, height: _height }}
+				/>
 				<div>
 					<p style={[style.label]}>Insertion</p>
 					<p style={[style.label]}>Deletion</p>
@@ -59,19 +68,35 @@ var VariantLegend = React.createClass({
 		this.setState({ isActive: !this.state.isActive });
 	},
 
+	_getWidth: function () {
+		return 28;
+	},
+
+	_getHeight: function () {
+		return HEIGHT;
+	},
+
 	_drawLegend: function () {
 		var exampleInDels = ["insertion", "deletion"];
 		var exampleSnps = ["synonymous", "nonsynonymous", "intron", "untranslatable"];
-		var yDelta = LABEL_HEIGHT + LABEL_BOTTOM + 1;
+		var canvasRatio = this.state.canvasRatio;
+		var yDelta = (LABEL_HEIGHT + LABEL_BOTTOM + 1);
+		var width = this._getWidth() * canvasRatio;
+		var height = this._getHeight() * canvasRatio;
 		var canvas = this.refs.canvas.getDOMNode();
 		var ctx = canvas.getContext("2d");
+		ctx.clearRect(0, 0, width, height);
 		var i = 0;
+		var x = 16;
+		var y;
 		exampleInDels.forEach( d => {
-			DrawVariant(ctx, d, "", 14, i * yDelta + 8);
+			y = (i * yDelta + 8);
+			DrawVariant(ctx, d, "", x, y, x, y, canvasRatio);
 			i += 1;
 		});
 		exampleSnps.forEach( d => {
-			DrawVariant(ctx, "snp", d, 14, i * yDelta + 8);
+			y = (i * yDelta + 8);
+			DrawVariant(ctx, "snp", d, x, y, x, y, canvasRatio);
 			i += 1;
 		});
 	}
@@ -79,7 +104,7 @@ var VariantLegend = React.createClass({
 
 module.exports = Radium(VariantLegend);
 
-var WIDTH = 180;
+var WIDTH = 200;
 var HEIGHT = 190;
 var BACKGROUND_COLOR = "#fff";
 var BORDER_COLOR = "#ccc";
@@ -94,7 +119,7 @@ var style = {
 
 	panel: {
 		position: "absolute",
-		top: "3.5rem",
+		top: 45,
 		right: 0,
 		width: WIDTH,
 		height: HEIGHT,
@@ -104,11 +129,37 @@ var style = {
 		zIndex: 1,
 		display: "flex",
 		textAlign: "left",
-		paddingTop: "1rem"
+		paddingTop: 15,
+		boxSizing: "content-box"
+	},
+
+	button: {
+	    display: "inline-block",
+	    padding: "6px 12px",
+	    marginBottom: 0,
+	    fontSize: 14,
+	    fontWeight: 400,
+	    lineHeight: 1.42857143,
+	    textAlign: "center",
+	    whiteSpace: "nowrap",
+	    verticalAlign: "middle",
+	    touchAction: "manipulation",
+	    cursor: "pointer",
+	    userSelect: "none",
+	    backgroundImage: "none",
+	    border: "1px solid #ccc",
+	    borderRadius: 4,
+        color: "#333",
+	    backgroundColor: "#fff",
+	    textDecoration: "none",
+	    ":hover": {
+	    	backgroundColor: "#efefef"
+	    }
 	},
 
 	label: {
 		height: LABEL_HEIGHT,
-		marginBottom: LABEL_BOTTOM
+		marginTop: 5,
+		marginBottom: LABEL_BOTTOM + 1
 	}
 };

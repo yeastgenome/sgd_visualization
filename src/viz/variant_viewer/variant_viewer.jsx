@@ -9,7 +9,6 @@ var FeatureViewer = require("../feature_viewer.jsx");
 var FeatureViewerStore = require("../../store/feature_viewer_store.jsx");
 var MultiAlignmentViewer = require("./multi_alignment_viewer.jsx");
 var Parset = require("./parset.jsx");
-var VariantPop = require("./variant_pop.jsx");
 
 var LABEL_WIDTH = 150;
 

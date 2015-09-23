@@ -60,7 +60,8 @@ var FeatureViewer = React.createClass({
 			DOMWidth: 400,
 			offsetLeft: 0,
 			offsetTop: 0,
-			computedForceData: null
+			computedForceData: null,
+			canvasRatio: 1
 		};
 	},
 
@@ -78,10 +79,10 @@ var FeatureViewer = React.createClass({
 	},
 
 	_calculateHeight: function () {
-		if (!this.props.domains) return HEIGHT;
+		if (!this.props.domains) return HEIGHT * this.state.canvasRatio;
 
 		// TEMP
-		return HEIGHT + 200;
+		return (HEIGHT + 200)  * this.state.canvasRatio;
 	},
 
 	_setupZoomEvents: function () {
@@ -214,7 +215,7 @@ var FeatureViewer = React.createClass({
 	_drawCanvas: function () {
 		var canvas = this.refs.canvas.getDOMNode();
 		var ctx = canvas.getContext("2d");
-		ctx.font = FONT_SIZE + "px 'Lato' sans-serif";
+		ctx.font = FONT_SIZE * this.state.canvasRatio + "px 'Lato' sans-serif";
 		ctx.textAlign = "center";
 		var height = this._calculateHeight();
 		ctx.clearRect(0, 0, this.state.DOMWidth, height);
@@ -423,7 +424,7 @@ var FeatureViewer = React.createClass({
 			[this.props.chromStart, this.props.chromEnd];
 		return d3.scale.linear()
 			.domain(_domain)
-			.range([10, this.state.DOMWidth - 10]);
+			.range([10, (this.state.DOMWidth - 10) * this.state.canvasRatio]);
 	},
 
 	_getTrackedDomains: function () {

@@ -1,6 +1,8 @@
 "use strict";
 
-module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY) {
+module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY, ratio) {
+	ratio = ratio || 1;
+	ctx.lineWidth = ratio;
 	if (typeof originalX === "undefined") originalX = x;
 	if (typeof originalY === "undefined") originalY = y;
 
@@ -13,8 +15,8 @@ module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY
 
 	// draw line
 	ctx.beginPath();
-	ctx.moveTo(originalX, originalY + VARIANT_DIAMETER / 2 + 1);
-	ctx.lineTo(originalX, originalY + VARIANT_HEIGHT);
+	ctx.moveTo(originalX * ratio, (originalY + VARIANT_DIAMETER / 2 + 1) * ratio);
+	ctx.lineTo(originalX * ratio, (originalY + VARIANT_HEIGHT) * ratio);
 	ctx.stroke();
 	
 	var color = (variantType === "insertion" || variantType === "deletion") ?
@@ -26,27 +28,27 @@ module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY
 		ctx.fillColor = TEXT_COLOR;
 		ctx.lineWidth = 2;
 		ctx.beginPath();
-		ctx.moveTo(x - VARIANT_DIAMETER, y);
-		ctx.lineTo(x, y - VARIANT_DIAMETER);
-		ctx.lineTo(x + VARIANT_DIAMETER, y);
+		ctx.moveTo((x - VARIANT_DIAMETER) * ratio, y * ratio);
+		ctx.lineTo(x * ratio, (y - VARIANT_DIAMETER) * ratio);
+		ctx.lineTo((x + VARIANT_DIAMETER) * ratio, y * ratio);
 		ctx.stroke();
 	} else if (variantType === "deletion") {
 		// draw x
-		ctx.lineWidth = 2;
+		
 		ctx.beginPath();
-		ctx.moveTo(x - VARIANT_DIAMETER, y + VARIANT_DIAMETER);
-		ctx.lineTo(x + VARIANT_DIAMETER, y - VARIANT_DIAMETER);
+		ctx.moveTo((x - VARIANT_DIAMETER) * ratio, (y + VARIANT_DIAMETER) * ratio);
+		ctx.lineTo((x + VARIANT_DIAMETER) * ratio, (y - VARIANT_DIAMETER) * ratio);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.moveTo(x - VARIANT_DIAMETER, y - VARIANT_DIAMETER);
-		ctx.lineTo(x + VARIANT_DIAMETER, y + VARIANT_DIAMETER);
+		ctx.moveTo((x - VARIANT_DIAMETER) * ratio, (y - VARIANT_DIAMETER) * ratio);
+		ctx.lineTo((x + VARIANT_DIAMETER) * ratio, (y + VARIANT_DIAMETER) * ratio);
 		ctx.stroke();
 	} else {
 		// draw circle
 		ctx.globalAlpha = 0.5;
 		ctx.fillStyle = color;
 		var path = new Path2D();
-		path.arc(x + 0.5, y, VARIANT_DIAMETER, 0, Math.PI * 2, true);
+		path.arc((x + 0.25) * ratio, y * ratio, VARIANT_DIAMETER * ratio, 0, Math.PI * 2, true);
 		ctx.fill(path);
 		ctx.stroke(path);
 		ctx.globalAlpha = 1;

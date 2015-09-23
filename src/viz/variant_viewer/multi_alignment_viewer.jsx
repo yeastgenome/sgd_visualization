@@ -163,7 +163,7 @@ var style = {
 	sequenceLabelContainer: {
 		position: "absolute",
 		height: "100%",
-		background: "white",
+		background: "inherit",
 		width: LABEL_WIDTH
 	},
 
