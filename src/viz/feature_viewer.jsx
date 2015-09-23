@@ -27,7 +27,8 @@ var FeatureViewer = React.createClass({
 		drawIntrons: React.PropTypes.bool,
 		downloadCaption: React.PropTypes.string,
 		contigName: React.PropTypes.string,
-		contigHref: React.PropTypes.string
+		contigHref: React.PropTypes.string,
+		forceLength: React.PropTypes.number
 	},
 
 	getDefaultProps: function () {
@@ -172,19 +173,16 @@ var FeatureViewer = React.createClass({
 			points.push([d.x, d.y]);
 		});
 		// add points for domains
-		// TEMP
-		if (this.props.domains) {
-		// if (false) {
+		if (this.state.trackedDomains) {
 			var chromStart = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
 			var startX, endX, steps, pointX, pointY;
-			this.props.domains.forEach( d => {
+			this.state.trackedDomains.forEach( d => {
 				startX = scale(chromStart + d.start);
 				endX = scale(chromStart + d.end);
 				steps = Math.abs(endX - startX) / DOMAIN_VORONOI_INTERVAL;
 				for (var i = steps - 1; i >= 0; i--) {
 					// record a mouseOver cb
 					mouseOverFns.push( () => { console.log("domain mouseover ", d.sourceId); });
-
 					pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
 					pointY = domainYScale(d.sourceId) + d._track * PX_PER_DOMAIN;
 					points.push([pointX, pointY]);
@@ -244,6 +242,7 @@ var FeatureViewer = React.createClass({
 			isPlusStrand = d.strand === "+";
 			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
 			endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
+			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
@@ -380,7 +379,6 @@ var FeatureViewer = React.createClass({
 		var avgCoord, snpType, type, _x;
 		return this.props.variantData.map( d => {
 			avgCoord = positionOffset + (d.referenceCoordinates[0] + d.referenceCoordinates[1]) / 2;
-
 			_x = Math.round(scale(avgCoord));
 			snpType = d.snpType ? d.snpType.toLowerCase() : "";
 			type = d.type.toLowerCase();
@@ -431,9 +429,11 @@ var FeatureViewer = React.createClass({
 	},
 
 	_getScale: function () {
+		var chromLength = Math.abs(this.props.chromEnd - this.props.chromStart);
+		var length = (typeof this.props.forceLength === "undefined") ? chromLength : this.props.forceLength;
 		var _domain = this.props.isRelative ?
-			[0, Math.abs(this.props.chromEnd - this.props.chromStart)] :
-			[this.props.chromStart, this.props.chromEnd];
+			[0, length] :
+			[this.props.chromStart, this.props.chromStart + length];
 		return d3.scale.linear()
 			.domain(_domain)
 			.range([10, (this.state.DOMWidth - 10) * this.state.canvasRatio]);

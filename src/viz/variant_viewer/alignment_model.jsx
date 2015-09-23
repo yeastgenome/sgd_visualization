@@ -65,10 +65,6 @@ module.exports = class AlignmentModel {
 				}
 				return memo;
 			}, { start: 0, end: 0 });
-		if (isProtein) {
-			refDomain.start = refDomain.start * 3;
-			refDomain.end = refDomain.end * 3;
-		}
 		return refDomain;
 	}
 

@@ -28,37 +28,11 @@ var VariantViewer = React.createClass({
 		strand: React.PropTypes.string, // "+" or "-"
 		isProteinMode: React.PropTypes.bool,
 		domains: React.PropTypes.array,
-		downloadCaption: React.PropTypes.string
+		downloadCaption: React.PropTypes.string,
 	},
 
 	getInitialState: function () {
-		var _chromStart = this.props.chromStart;
-		var _chromEnd = this.props.chromEnd;
-		var _strand = this.props.strand || "+";
-		var _blockSizes = this.props.blockSizes || [Math.abs(_chromEnd - _chromStart)];
-		var _blockStarts = this.props.blockStarts || [0];
-		var _chrom = this.props.contigName || "";
-		
-		// make default feature viewer store
-		var featureTrackData = {
-				id: "variantViewer",
-				position: {
-					chromStart: _chromStart,
-					chromEnd: _chromEnd
-				},
-				features: [
-					{
-						chrom: _chrom,
-						chromStart: _chromStart,
-						chromEnd: _chromEnd,
-						strand: _strand,
-						blockSizes: _blockSizes,
-						blockStarts: _blockStarts
-					}
-				]
-			};
-		var _store = new FeatureViewerStore();
-		_store.addFeatureTrack(featureTrackData);
+		var _store = this._getNewStore();
 
 		return {
 			highlightedAlignedSegment: null, // [0, 100] relative coord to aligned sequence
@@ -78,7 +52,7 @@ var VariantViewer = React.createClass({
 			</div>
 		);
 	},
-	
+
 	_renderFeatureViewer: function () {
 		var featureData = this.state.store.getFeatureTrackData("variantViewer");
 		var _features = featureData.features;
@@ -110,6 +84,9 @@ var VariantViewer = React.createClass({
 		var _chromStart = Math.min(featureData.position.chromStart, featureData.position.chromEnd);
 		var _chromEnd = Math.max(featureData.position.chromStart, featureData.position.chromEnd);
 
+		var forceLength;
+		if (this.props.isProteinMode && this.props.proteinLength) forceLength = this.props.proteinLength;
+
 		return (<FeatureViewer
 			featureTrackId={"variantViewer"}
 			store={this.state.store}
@@ -129,6 +106,7 @@ var VariantViewer = React.createClass({
 			onForceUpdate={_onForceUpdate}
 			isRelative={true}
 			drawIntrons={!this.props.isProteinMode}
+			forceLength={forceLength}
 		/>);
 	},
 
@@ -189,6 +167,37 @@ var VariantViewer = React.createClass({
 			variantDataDna: this.props.variantDataDna,
 			variantDataProtein: this.props.variantDataProtein
 		});
+	},
+
+	_getNewStore: function () {
+		var _chromStart = this.props.chromStart;
+		var _chromEnd = this.props.chromEnd;
+		var _strand = this.props.strand || "+";
+		var _blockSizes = this.props.blockSizes || [Math.abs(_chromEnd - _chromStart)];
+		var _blockStarts = this.props.blockStarts || [0];
+		var _chrom = this.props.contigName || "";
+		
+		// make default feature viewer store
+		var featureTrackData = {
+				id: "variantViewer",
+				position: {
+					chromStart: _chromStart,
+					chromEnd: _chromEnd
+				},
+				features: [
+					{
+						chrom: _chrom,
+						chromStart: _chromStart,
+						chromEnd: _chromEnd,
+						strand: _strand,
+						blockSizes: _blockSizes,
+						blockStarts: _blockStarts
+					}
+				]
+			};
+		var store = new FeatureViewerStore();
+		store.addFeatureTrack(featureTrackData);
+		return store;
 	}
 });
 
