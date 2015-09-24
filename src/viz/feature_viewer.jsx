@@ -355,13 +355,7 @@ var FeatureViewer = React.createClass({
 		// TEMP
 		// if (!computedData) return;
 		var originalData = this._getRawVariants();
-		var colors = {
-			"synonymous": SYNONYMOUS_COLOR,
-			"nonsynonymous": NON_SYNONYMOUS_COLOR,
-			"intron": INTRON_COLOR,
-			"untranslatable": UNTRANSLATEABLE_COLOR
-		};
-		var originalDatum, snpType, type, color, path;
+		var originalDatum, snpType, type, path;
 
 		// TEMP, just use raw, don't recalc
 		// old computedData.forEach( (d, i) => {
