@@ -91,8 +91,8 @@ var vv = new VariantViewer({
 				id: null,
 				start: 274,
 				end: 373,
-				sourceName: "Gene3D",
-				sourceId: 112
+				sourceName: "Gene4D",
+				sourceId: 114
 			},
 			{
 				name: "G3DSA:2.30.38.10",

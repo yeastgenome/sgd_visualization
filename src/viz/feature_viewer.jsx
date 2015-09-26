@@ -160,7 +160,6 @@ var FeatureViewer = React.createClass({
 		if (!this.state.computedForceData) return null;
 
 		var scale = this._getScale();
-		var domainYScale = this._getDomainYScale();
 		var avgCoord, x;
 		var y = FEATURE_Y;
 		var height = this._calculateHeight();
@@ -177,6 +176,7 @@ var FeatureViewer = React.createClass({
 		});
 		// add points for domains
 		if (this.state.trackedDomains) {
+			var domainYScale = this._getDomainYScale();
 			var chromStart = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
 			var startX, endX, steps, pointX, pointY;
 			this.state.trackedDomains.forEach( d => {
@@ -449,17 +449,13 @@ var FeatureViewer = React.createClass({
 	_getDomainYScale: function () {
 		var trackedDomains = this.state.trackedDomains;
 		var trackAttr = "_track";
-		var uniqTracks = _.uniq(trackedDomains, (a, b) => {
-				return (a[trackAttr] === b[trackAttr]);
-			})
-			.map( d => {
-				return d[trackAttr];
-			});
+		var allTracks = trackedDomains.map( d => { return d[trackAttr]; });
+		var uniqTracks = _.uniq(allTracks);
 		var startTrack = d3.min(uniqTracks);
-		var topTrack = d3.min(uniqTracks);
+		var topTrack = d3.max(uniqTracks);
 		var numTracks = topTrack - startTrack;
 		var startY = HEIGHT + 35;
-		var stopY = numTracks * DOMAIN_NODE_HEIGHT * 2 * this.state.canvasRatio;
+		var stopY = (numTracks * DOMAIN_NODE_HEIGHT * 3 + startY) * this.state.canvasRatio;
 		
 		return d3.scale.linear()
 			.domain([startTrack, topTrack])

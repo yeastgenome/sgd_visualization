@@ -15,8 +15,8 @@ var AssignTracksToDomains = function (domains) {
 		return d.sourceId;
 	});
 
-
-	// in each group, assign tracks
+	// in each group, assign tracks, push to merged
+	var merged = [];
 	var gDomains, trackedGDomains, groupOverlaps;
 	var maxTrack = 0;
 	for (var key in groupedDomains) {
@@ -31,14 +31,9 @@ var AssignTracksToDomains = function (domains) {
 		});
 		var maxTrackInGroup = _.max(trackedGDomains, d => { return d._track; })._track;
 		maxTrack = maxTrackInGroup + 1;
+		// concat tracked domains in this group with merged
+		merged = merged.concat(trackedGDomains);
 	}
-
-	// combine again
-	var merged = [];
-	merged = merged.concat.apply(merged, _.values(groupedDomains));
-	merged = _.sortBy(merged, function (d) {
-		return d.sourceId;
-	});
 	return merged;
 };
 
