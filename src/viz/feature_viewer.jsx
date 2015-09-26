@@ -393,10 +393,13 @@ var FeatureViewer = React.createClass({
 		var yScale = this._getDomainYScale();
 		var colorScale = d3.scale.category10();
 		var chromStart = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
-		var startX, endX, textX, y, topY, bottomY, textY, width;
 		ctx.fillStyle = TEXT_COLOR;
 		ctx.textAlign = "left";
 
+		// label
+		ctx.fillText("Protein Domains", FONT_SIZE, yScale.range()[0] - FONT_SIZE * 2);
+
+		var startX, endX, textX, y, topY, bottomY, textY, width;
 		domains.forEach( d => {
 			startX = xScale(chromStart + d.start);
 			endX = xScale(chromStart + d.end);
@@ -454,7 +457,7 @@ var FeatureViewer = React.createClass({
 		var startTrack = d3.min(uniqTracks);
 		var topTrack = d3.max(uniqTracks);
 		var numTracks = topTrack - startTrack;
-		var startY = HEIGHT + 35;
+		var startY = (HEIGHT + FONT_SIZE + 35) * this.state.canvasRatio;
 		var stopY = (numTracks * DOMAIN_NODE_HEIGHT * 3 + startY) * this.state.canvasRatio;
 		
 		return d3.scale.linear()
