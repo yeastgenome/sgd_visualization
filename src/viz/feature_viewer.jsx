@@ -187,7 +187,7 @@ var FeatureViewer = React.createClass({
 					// record a mouseOver cb
 					mouseOverFns.push( () => {});
 					pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
-					pointY = domainYScale(d.sourceId) + d._track * PX_PER_DOMAIN;
+					pointY = domainYScale(d._track);
 					points.push([pointX, pointY]);
 				};
 			});
@@ -400,7 +400,7 @@ var FeatureViewer = React.createClass({
 		domains.forEach( d => {
 			startX = xScale(chromStart + d.start);
 			endX = xScale(chromStart + d.end);
-			y = yScale(d.sourceId) + d._track * PX_PER_DOMAIN;
+			y = yScale(d._track);
 			topY = y - DOMAIN_NODE_HEIGHT / 2;
 			bottomY = y + DOMAIN_NODE_HEIGHT / 2;
 			textX = startX + 3;
@@ -447,27 +447,23 @@ var FeatureViewer = React.createClass({
 	},
 
 	_getDomainYScale: function () {
-		var startY = HEIGHT + 35;
-		var domain = [];
-		var range = [];
-		var sourceIds = _.uniq(this.props.domains, (a, b) => {
-			return a.sourceId === b.sourceId;
-		}).map( d => { return d.sourceId; });
 		var trackedDomains = this.state.trackedDomains;
-		var sourceY = startY;
-		var groupedDomains, maxTracks;
-		sourceIds.forEach( d => {
-			groupedDomains = _.filter(trackedDomains, _d => { return d === _d.sourceId; });
-			maxTracks = d3.max(groupedDomains, _d => { return _d._track; });
-			domain.push(d);
-			range.push(sourceY);
-			sourceY += (maxTracks + 1) * PX_PER_DOMAIN;
-		});
-		range.push(sourceY);
-
-		return d3.scale.ordinal()
-			.domain(domain)
-			.range(range);
+		var trackAttr = "_track";
+		var uniqTracks = _.uniq(trackedDomains, (a, b) => {
+				return (a[trackAttr] === b[trackAttr]);
+			})
+			.map( d => {
+				return d[trackAttr];
+			});
+		var startTrack = d3.min(uniqTracks);
+		var topTrack = d3.min(uniqTracks);
+		var numTracks = topTrack - startTrack;
+		var startY = HEIGHT + 35;
+		var stopY = numTracks * DOMAIN_NODE_HEIGHT * 2 * this.state.canvasRatio;
+		
+		return d3.scale.linear()
+			.domain([startTrack, topTrack])
+			.range([startY, stopY]);
 	},
 
 	_onScroll: function (e) {
