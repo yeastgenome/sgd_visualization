@@ -185,7 +185,7 @@ var FeatureViewer = React.createClass({
 				steps = Math.abs(endX - startX) / DOMAIN_VORONOI_INTERVAL;
 				for (var i = steps - 1; i >= 0; i--) {
 					// record a mouseOver cb
-					mouseOverFns.push( () => { console.log("domain mouseover ", d.sourceId); });
+					mouseOverFns.push( () => {});
 					pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
 					pointY = domainYScale(d.sourceId) + d._track * PX_PER_DOMAIN;
 					points.push([pointX, pointY]);
@@ -393,7 +393,7 @@ var FeatureViewer = React.createClass({
 		var yScale = this._getDomainYScale();
 		var colorScale = d3.scale.category10();
 		var chromStart = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
-		var startX, endX, y;
+		var startX, endX, textX, y, topY, bottomY, textY, width;
 		ctx.fillStyle = TEXT_COLOR;
 		ctx.textAlign = "left";
 
@@ -401,13 +401,18 @@ var FeatureViewer = React.createClass({
 			startX = xScale(chromStart + d.start);
 			endX = xScale(chromStart + d.end);
 			y = yScale(d.sourceId) + d._track * PX_PER_DOMAIN;
+			topY = y - DOMAIN_NODE_HEIGHT / 2;
+			bottomY = y + DOMAIN_NODE_HEIGHT / 2;
+			textX = startX + 3;
+			textY = y - 3;
+			width = endX - startX;
 
 			ctx.strokeStyle = colorScale(d.sourceId);
 			ctx.strokeWidth = 2;
 			// left tick
 			ctx.beginPath();
-			ctx.moveTo(startX, y - DOMAIN_NODE_HEIGHT / 2);
-			ctx.lineTo(startX, y + DOMAIN_NODE_HEIGHT / 2);
+			ctx.moveTo(startX, topY);
+			ctx.lineTo(startX, bottomY);
 			ctx.stroke();
 			// line
 			ctx.beginPath();
@@ -416,12 +421,12 @@ var FeatureViewer = React.createClass({
 			ctx.stroke();
 			// left tick
 			ctx.beginPath();
-			ctx.moveTo(endX, y - DOMAIN_NODE_HEIGHT / 2);
-			ctx.lineTo(endX, y + DOMAIN_NODE_HEIGHT / 2);
+			ctx.moveTo(endX, topY);
+			ctx.lineTo(endX, bottomY);
 			ctx.stroke();
 
-			// label
-			ctx.fillText(d.name, startX + 3, y - 3);
+			// label if there's size
+			if (ctx.measureText(d.name).width < width) ctx.fillText(d.name, textX, textY);;
 		});
 	},
 

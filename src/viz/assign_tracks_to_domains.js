@@ -15,8 +15,10 @@ var AssignTracksToDomains = function (domains) {
 		return d.sourceId;
 	});
 
+
 	// in each group, assign tracks
 	var gDomains, trackedGDomains, groupOverlaps;
+	var maxTrack = 0;
 	for (var key in groupedDomains) {
 		gDomains = _.sortBy(groupedDomains[key], function (d) { return d.start; });
 		trackedGDomains = gDomains.map( function (d, i) {
@@ -24,9 +26,11 @@ var AssignTracksToDomains = function (domains) {
 				return isOverlap(d, _d);
 			});
 			groupOverlaps = _.sortBy(groupOverlaps, function (d) { return d.start; });
-			d._track = groupOverlaps.indexOf(d);
+			d._track = groupOverlaps.indexOf(d) + maxTrack;
 			return d;
 		});
+		var maxTrackInGroup = _.max(trackedGDomains, d => { return d._track; })._track;
+		maxTrack = maxTrackInGroup + 1;
 	}
 
 	// combine again
