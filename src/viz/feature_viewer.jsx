@@ -46,7 +46,7 @@ var FeatureViewer = React.createClass({
 		return (
 			<div className="feature-viewer">
 				{this._renderControls()}
-				<div style={[style.container]}>
+				<div onMouseLeave={this._clearToolTip} style={[style.container]}>
 					{this._renderTooltip()}
 					<canvas ref="canvas" width={this.state.DOMWidth} height={_height} style={[style.canvas]} />
 					<div ref="frame" style={[style.frame, { height: _height }]}>
@@ -140,7 +140,10 @@ var FeatureViewer = React.createClass({
 			this._recalculateForceLayout();
 		}
 		// maybe update tracked domains
-		if (prevProps.domains !== this.props.domains) this._updateTrackedDomains();
+		if (prevProps.domains !== this.props.domains) {
+			this._updateTrackedDomains();
+			this._clearToolTip();
+		}
 	},
 
 	_renderControls: function () {
@@ -471,6 +474,7 @@ var FeatureViewer = React.createClass({
 
 	_updateTrackedDomains: function () {
 		var _trackedDomains = AssignTracksToDomains(this.props.domains);
+		if (!this.props.domains) _trackedDomains = null;
 		this.setState({ trackedDomains: _trackedDomains });
 	},
 
@@ -516,6 +520,10 @@ var FeatureViewer = React.createClass({
 
 		this.setState({ offsetLeft: left, offsetTop: top });
 		if (typeof this.props.onForceUpdate === "function") this.props.onForceUpdate();
+	},
+
+	_clearToolTip: function () {
+		this.setState({ toolTipVisible: false });
 	}
 });
 
