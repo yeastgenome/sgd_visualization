@@ -84,7 +84,7 @@ var FeatureViewer = React.createClass({
 		frame.scrollLeft = SCROLL_START;
 		frame.scrollTop = MAX_Y_SCROLL;
 
-		this.calculateCanvasRatio()
+		this.calculateCanvasRatio();
 		this._calculateWidth();
 		this._drawCanvas();
 		if (this.props.canScroll) frame.addEventListener("scroll", this._onScroll);
@@ -305,31 +305,33 @@ var FeatureViewer = React.createClass({
 					if (isLast) {
 						ctx.beginPath();
 						if (isPlusStrand) {
-							ctx.moveTo(_startX, y);
-							ctx.lineTo(_endX - TRACK_HEIGHT, y);
+							ctx.moveTo(_startX, topY);
+							ctx.lineTo(_endX - TRACK_HEIGHT, topY);
 							ctx.lineTo(_endX, midY);
-							ctx.lineTo(_endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
-							ctx.lineTo(_startX, y + TRACK_HEIGHT);
+							ctx.lineTo(_endX - TRACK_HEIGHT, bottomY);
+							ctx.lineTo(_startX, bottomY);
 						} else {
-							ctx.moveTo(_startX + TRACK_HEIGHT, y);
-							ctx.lineTo(_endX, y);
-							ctx.lineTo(_endX, y + TRACK_HEIGHT);
-							ctx.lineTo(_startX + TRACK_HEIGHT, y + TRACK_HEIGHT);
+							ctx.moveTo(_startX + TRACK_HEIGHT, topY);
+							ctx.lineTo(_endX, topY);
+							ctx.lineTo(_endX, bottomY);
+							ctx.lineTo(_startX + TRACK_HEIGHT, bottomY);
 							ctx.lineTo(_startX, midY);
 						}
 						ctx.closePath();
 						ctx.fill();
 					} else {
 						_width = Math.abs(_endX - _startX);
-						ctx.fillRect(_startX, y , _width, TRACK_HEIGHT);
+						ctx.fillRect(_startX, topY, _width, bottomY - topY);
 						// intron to next exon
 						_nextRelStart = d.blockStarts[_i + 1];
 						_nextStartX = isPlusStrand ? Math.round(scale(startPos + _nextRelStart)) : Math.round(scale(endPos - d.blockStarts[_i + 1] - d.blockSizes[_i + 1]));
 						_nextEndX = isPlusStrand ? _endX : _startX;
 						ctx.strokeStyle = TEXT_COLOR;
+
 						ctx.beginPath();
 						ctx.moveTo(_nextEndX, midY);
 						ctx.lineTo(_nextStartX, midY);
+						ctx.lineWidth = 1 * canvasRatio;
 						ctx.stroke();
 					}
 				});
@@ -456,17 +458,20 @@ var FeatureViewer = React.createClass({
 			width = endX - startX;
 
 			ctx.strokeStyle = colorScale(d.sourceId);
-			ctx.strokeWidth = 2;
-			// left tick
-			ctx.beginPath();
-			ctx.moveTo(startX, topY);
-			ctx.lineTo(startX, bottomY);
-			ctx.stroke();
+			ctx.lineWidth = 1 * this.state.canvasRatio;
 			// line
 			ctx.beginPath();
 			ctx.moveTo(startX, y);
 			ctx.lineTo(endX, y);
 			ctx.stroke();
+			// ticks
+			ctx.lineWidth = 2 * this.state.canvasRatio;
+			// left tick
+			ctx.beginPath();
+			ctx.moveTo(startX, topY);
+			ctx.lineTo(startX, bottomY);
+			ctx.stroke();
+			
 			// left tick
 			ctx.beginPath();
 			ctx.moveTo(endX, topY);
