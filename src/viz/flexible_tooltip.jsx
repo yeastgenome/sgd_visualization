@@ -42,9 +42,9 @@ var FlexibleTooltip = React.createClass({
 		var innerContentNode = this._getInnerContentNode();
 		var arrowKlass = _isComplex ? "flexible-tooltip-arrow complex" : "flexible-tooltip-arrow";
 		return (
-			<div className="flexible-tooltip" style={[style.wrapper, _style]}>
+			<div style={[style.wrapper, _style]}>
 				{innerContentNode}
-				<div className={arrowKlass} style={[style.triangle]}></div>
+				<div style={[style.triangle]}></div>
 			</div>
 		);
 	},
@@ -97,11 +97,12 @@ var FlexibleTooltip = React.createClass({
 	}
 });
 
+var ARROW_OFFSET = 20;
 var style = {
 	wrapper: {
 		position: "absolute",
-		marginLeft: -5,
-		marginTop: -55,
+		marginLeft: -ARROW_OFFSET,
+		marginTop: -65,
 		minHeight: 35,
 		padding: "0.5rem 0.5rem 0 0.5rem",
 		width: "auto",
@@ -113,7 +114,7 @@ var style = {
 	triangle: {
 	    position: "absolute",
 	    bottom: -10,
-	    left: 20,
+	    left: ARROW_OFFSET - 2,
 	    width: 0,
 	    height: 0,
 	    marginLeft: -7,
