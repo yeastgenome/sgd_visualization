@@ -67,7 +67,7 @@ var FeatureViewer = React.createClass({
 			offsetTop: 0,
 			computedForceData: null,
 			trackedDomains: null,
-			canvasRatio: 1,
+			canvasRatio: 2,
 			toolTipVisible: false,
 			toolTipTop: 0,
 			toolTipLeft: 0,
@@ -180,9 +180,7 @@ var FeatureViewer = React.createClass({
 	},
 
 	_renderVoronoi: function () {
-		// TEMP
 		return null;
-
 		if (!this.state.computedForceData) return null;
 		var scale = this._getScale();
 		var avgCoord, x;
@@ -273,7 +271,8 @@ var FeatureViewer = React.createClass({
 		ctx.fillStyle = FILL_COLOR;
 		var scale = this._getScale();
 		var startOffset = this.props.isRelative ? this.props.chromStart : 0;
-		var startPos, endPos, startX, endX, y, topY, midY, bottomY, isPlusStrand;
+		var canvasRatio = this.state.canvasRatio;
+		var startPos, endPos, startX, endX, arrowX, y, topY, midY, bottomY, isPlusStrand;
 		this.props.features.forEach( d => {
 			isPlusStrand = d.strand === "+";
 			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
@@ -281,7 +280,11 @@ var FeatureViewer = React.createClass({
 			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
+			arrowX = endX - TRACK_HEIGHT * canvasRatio;
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
+			topY = y * canvasRatio;
+			midY =( y + TRACK_HEIGHT / 2) * canvasRatio;
+			bottomY = (y + TRACK_HEIGHT) * canvasRatio;
 
 			// draw exons and introns if blockStarts and blockSizes defined
 			if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
@@ -296,9 +299,6 @@ var FeatureViewer = React.createClass({
 						_endX = Math.round(scale(endPos - _d));
 					}
 					
-					// draw arrow shape
-					midY = y + TRACK_HEIGHT / 2;
-					bottomY = y + TRACK_HEIGHT;
 					if (isLast) {
 						ctx.beginPath();
 						if (isPlusStrand) {
@@ -334,11 +334,11 @@ var FeatureViewer = React.createClass({
 			// or just draw simple "blocky" feature
 			} else {
 				ctx.beginPath();
-				ctx.moveTo(startX, y);
-				ctx.lineTo(endX - TRACK_HEIGHT, y);
-				ctx.lineTo(endX, y + TRACK_HEIGHT / 2);
-				ctx.lineTo(endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
-				ctx.lineTo(startX, y + TRACK_HEIGHT);
+				ctx.moveTo(startX, topY);
+				ctx.lineTo(arrowX, topY);
+				ctx.lineTo(endX, midY);
+				ctx.lineTo(arrowX, bottomY);
+				ctx.lineTo(startX, bottomY);
 				ctx.closePath();
 				ctx.fill();
 			}
@@ -359,7 +359,8 @@ var FeatureViewer = React.createClass({
 	_drawAxis: function (ctx) {
 		var scale = this._getScale();
 		var ticks = scale.ticks();
-		var featureZoneHeight = HEIGHT;
+		var canvasRatio = this.state.canvasRatio;
+		var featureZoneHeight = HEIGHT * canvasRatio;
 		var totalHeight = this._calculateHeight();
 		var x;
 		ctx.strokeStyle = TICK_COLOR;
@@ -370,7 +371,7 @@ var FeatureViewer = React.createClass({
 			// tick
 			ctx.beginPath();
 			ctx.moveTo(x, 0);
-			ctx.lineTo(x, featureZoneHeight - AXIS_HEIGHT);
+			ctx.lineTo(x, featureZoneHeight - AXIS_HEIGHT * canvasRatio);
 			ctx.stroke();
 			// tick label
 			ctx.fillText(d.toString(), x, featureZoneHeight);
@@ -378,7 +379,7 @@ var FeatureViewer = React.createClass({
 			// draw extended axis
 			if (this.props.domains) {
 				ctx.beginPath();
-				ctx.moveTo(x, featureZoneHeight + 3);
+				ctx.moveTo(x, featureZoneHeight + 3 * canvasRatio);
 				ctx.lineTo(x, totalHeight);
 				ctx.stroke();
 			}
