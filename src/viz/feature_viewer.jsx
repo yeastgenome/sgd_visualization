@@ -41,14 +41,16 @@ var FeatureViewer = React.createClass({
 	},
 
 	render: function () {
+		var _width = this.state.DOMWidth;
 		var _height = this._calculateHeight();
+		var canvasRatio = this.state.canvasRatio;
 		var scrollerNode = null// {this.props.canScroll ? <div ref="scroller" style={[style.scroller]} /> : null} // TEMP
 		return (
 			<div className="feature-viewer">
 				{this._renderControls()}
 				<div onMouseLeave={this._clearToolTip} style={[style.container]}>
 					{this._renderTooltip()}
-					<canvas ref="canvas" width={this.state.DOMWidth} height={_height} style={[style.canvas]} />
+					<canvas ref="canvas" width={_width * canvasRatio} height={_height} style={[style.canvas, { width: _width, height: _height / canvasRatio }]} />
 					<div ref="frame" style={[style.frame, { height: _height }]}>
 						{this._renderVoronoi()}
 						{scrollerNode}
@@ -178,6 +180,9 @@ var FeatureViewer = React.createClass({
 	},
 
 	_renderVoronoi: function () {
+		// TEMP
+		return null;
+
 		if (!this.state.computedForceData) return null;
 		var scale = this._getScale();
 		var avgCoord, x;
@@ -268,7 +273,7 @@ var FeatureViewer = React.createClass({
 		ctx.fillStyle = FILL_COLOR;
 		var scale = this._getScale();
 		var startOffset = this.props.isRelative ? this.props.chromStart : 0;
-		var startPos, endPos, startX, endX, y, isPlusStrand;
+		var startPos, endPos, startX, endX, y, topY, midY, bottomY, isPlusStrand;
 		this.props.features.forEach( d => {
 			isPlusStrand = d.strand === "+";
 			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
@@ -292,12 +297,14 @@ var FeatureViewer = React.createClass({
 					}
 					
 					// draw arrow shape
+					midY = y + TRACK_HEIGHT / 2;
+					bottomY = y + TRACK_HEIGHT;
 					if (isLast) {
 						ctx.beginPath();
 						if (isPlusStrand) {
 							ctx.moveTo(_startX, y);
 							ctx.lineTo(_endX - TRACK_HEIGHT, y);
-							ctx.lineTo(_endX, y + TRACK_HEIGHT / 2);
+							ctx.lineTo(_endX, midY);
 							ctx.lineTo(_endX - TRACK_HEIGHT, y + TRACK_HEIGHT);
 							ctx.lineTo(_startX, y + TRACK_HEIGHT);
 						} else {
@@ -305,7 +312,7 @@ var FeatureViewer = React.createClass({
 							ctx.lineTo(_endX, y);
 							ctx.lineTo(_endX, y + TRACK_HEIGHT);
 							ctx.lineTo(_startX + TRACK_HEIGHT, y + TRACK_HEIGHT);
-							ctx.lineTo(_startX, y + TRACK_HEIGHT / 2);
+							ctx.lineTo(_startX, midY);
 						}
 						ctx.closePath();
 						ctx.fill();
@@ -318,8 +325,8 @@ var FeatureViewer = React.createClass({
 						_nextEndX = isPlusStrand ? _endX : _startX;
 						ctx.strokeStyle = TEXT_COLOR;
 						ctx.beginPath();
-						ctx.moveTo(_nextEndX, y + TRACK_HEIGHT / 2);
-						ctx.lineTo(_nextStartX, y + TRACK_HEIGHT / 2);
+						ctx.moveTo(_nextEndX, midY);
+						ctx.lineTo(_nextStartX, midY);
 						ctx.stroke();
 					}
 				});
@@ -423,9 +430,10 @@ var FeatureViewer = React.createClass({
 		var chromStart = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
 		ctx.fillStyle = TEXT_COLOR;
 		ctx.textAlign = "left";
+		var fontSize = FONT_SIZE * this.state.canvasRatio;
 
 		// label
-		ctx.fillText("Protein Domains", FONT_SIZE, yScale.range()[0] - FONT_SIZE * 2);
+		ctx.fillText("Protein Domains", fontSize, yScale.range()[0] - fontSize * 2);
 
 		var startX, endX, textX, y, topY, bottomY, textY, width;
 		domains.forEach( d => {
@@ -486,12 +494,12 @@ var FeatureViewer = React.createClass({
 		var startTrack = d3.min(uniqTracks);
 		var topTrack = d3.max(uniqTracks);
 		var numTracks = topTrack - startTrack;
-		var startY = (HEIGHT + FONT_SIZE + 35) * this.state.canvasRatio;
-		var stopY = (numTracks * DOMAIN_NODE_HEIGHT * 3 + startY) * this.state.canvasRatio;
+		var startY = (HEIGHT + FONT_SIZE + 35);
+		var stopY = (numTracks * DOMAIN_NODE_HEIGHT * 3 + startY);
 		
 		return d3.scale.linear()
 			.domain([startTrack, topTrack])
-			.range([startY, stopY]);
+			.range([startY * this.state.canvasRatio, stopY * this.state.canvasRatio]);
 	},
 
 	_onScroll: function (e) {
