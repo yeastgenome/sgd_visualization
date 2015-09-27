@@ -2,7 +2,7 @@
 
 module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY, ratio) {
 	ratio = ratio || 1;
-	ctx.lineWidth = ratio;
+	ctx.lineWidth = 1 * ratio;
 	if (typeof originalX === "undefined") originalX = x;
 	if (typeof originalY === "undefined") originalY = y;
 
@@ -14,6 +14,7 @@ module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY
 	};
 
 	// draw line
+	ctx.strokeStyle = TEXT_COLOR;
 	ctx.beginPath();
 	ctx.moveTo(originalX * ratio, (originalY + VARIANT_DIAMETER / 2 + 1) * ratio);
 	ctx.lineTo(originalX * ratio, (originalY + VARIANT_HEIGHT) * ratio);
@@ -26,7 +27,7 @@ module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY
 		// caret
 		ctx.globalAlpha = 1;
 		ctx.fillColor = TEXT_COLOR;
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 3 * ratio;
 		ctx.beginPath();
 		ctx.moveTo((x - VARIANT_DIAMETER) * ratio, y * ratio);
 		ctx.lineTo(x * ratio, (y - VARIANT_DIAMETER) * ratio);
@@ -34,7 +35,7 @@ module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY
 		ctx.stroke();
 	} else if (variantType === "deletion") {
 		// draw x
-		
+		ctx.lineWidth = 2 * ratio;
 		ctx.beginPath();
 		ctx.moveTo((x - VARIANT_DIAMETER) * ratio, (y + VARIANT_DIAMETER) * ratio);
 		ctx.lineTo((x + VARIANT_DIAMETER) * ratio, (y - VARIANT_DIAMETER) * ratio);
