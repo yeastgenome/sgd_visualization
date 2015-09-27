@@ -7,6 +7,7 @@ var _ = require("underscore");
 
 var AssignTracksToDomains = require("./assign_tracks_to_domains");
 var DrawVariant = require("./draw_variant");
+var FlexibleTooltip = require("./flexible_tooltip.jsx");
 var VariantLegend = require("./variant_legend.jsx");
 
 var FeatureViewer = React.createClass({
@@ -46,6 +47,7 @@ var FeatureViewer = React.createClass({
 			<div className="feature-viewer">
 				{this._renderControls()}
 				<div style={[style.container]}>
+					{this._renderTooltip()}
 					<canvas ref="canvas" width={this.state.DOMWidth} height={_height} style={[style.canvas]} />
 					<div ref="frame" style={[style.frame, { height: _height }]}>
 						{this._renderVoronoi()}
@@ -63,7 +65,12 @@ var FeatureViewer = React.createClass({
 			offsetTop: 0,
 			computedForceData: null,
 			trackedDomains: null,
-			canvasRatio: 1
+			canvasRatio: 1,
+			toolTipVisible: false,
+			toolTipTop: 0,
+			toolTipLeft: 0,
+			toolTipText: "",
+			toolTipHref: null
 		};
 	},
 
@@ -81,11 +88,22 @@ var FeatureViewer = React.createClass({
 		// if (isMobile) this._setupZoomEvents();
 	},
 
-	_calculateHeight: function () {
-		if (!this.props.domains) return HEIGHT * this.state.canvasRatio;
+	_renderTooltip: function () {
+		var toolTipProps = {
+			visible: this.state.toolTipVisible,
+			top: this.state.toolTipTop,
+			left: this.state.toolTipLeft,
+			text: this.state.toolTipText,
+			href: this.state.toolTipHref
+		};
+		return <FlexibleTooltip {...toolTipProps} />;
+	},
 
-		// TEMP
-		return (HEIGHT + 200)  * this.state.canvasRatio;
+	_calculateHeight: function () {
+		if (!this.state.trackedDomains) return HEIGHT * this.state.canvasRatio;
+		var yScaleRange = this._getDomainYScale().range();
+		var domainHeight = yScaleRange[1] - yScaleRange[0] + HEIGHT + FONT_SIZE * 3 + 35;
+		return domainHeight * this.state.canvasRatio;
 	},
 
 	_setupZoomEvents: function () {
@@ -158,7 +176,6 @@ var FeatureViewer = React.createClass({
 
 	_renderVoronoi: function () {
 		if (!this.state.computedForceData) return null;
-
 		var scale = this._getScale();
 		var avgCoord, x;
 		var y = FEATURE_Y;
@@ -178,16 +195,24 @@ var FeatureViewer = React.createClass({
 		if (this.state.trackedDomains) {
 			var domainYScale = this._getDomainYScale();
 			var chromStart = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
-			var startX, endX, steps, pointX, pointY;
+			var startX, endX, steps;
 			this.state.trackedDomains.forEach( d => {
 				startX = scale(chromStart + d.start);
 				endX = scale(chromStart + d.end);
 				steps = Math.abs(endX - startX) / DOMAIN_VORONOI_INTERVAL;
 				for (var i = steps - 1; i >= 0; i--) {
+					var pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
+					var pointY = domainYScale(d._track);
 					// record a mouseOver cb
-					mouseOverFns.push( () => {});
-					pointX = startX + i * DOMAIN_VORONOI_INTERVAL;
-					pointY = domainYScale(d._track);
+					mouseOverFns.push( () => {
+						this.setState({
+							toolTipVisible: true,
+							toolTipTop: pointY,
+							toolTipLeft: pointX,
+							toolTipText: d.name,
+							toolTipHref: d.href
+						})
+					});
 					points.push([pointX, pointY]);
 				};
 			});
