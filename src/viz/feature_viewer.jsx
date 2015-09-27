@@ -10,6 +10,7 @@ var CalculateCanvasRatio = require("../mixins/calculate_canvas_ratio.jsx");
 var DrawVariant = require("./draw_variant");
 var FlexibleTooltip = require("./flexible_tooltip.jsx");
 var VariantLegend = require("./variant_legend.jsx");
+var appStyle = require("./style");
 
 var FeatureViewer = React.createClass({
 	mixins: [CalculateCanvasRatio],
@@ -163,6 +164,7 @@ var FeatureViewer = React.createClass({
 				<div style={[style.btnContainer]}>
 					<div style={[style.btnGroup]}>
 						<VariantLegend />
+						<a onClick={this._download} style={[appStyle.button, style.button]}>Download <i className="fa fa-download" /></a>
 					</div>
 				</div>
 			</div>
@@ -317,9 +319,9 @@ var FeatureViewer = React.createClass({
 						ctx.beginPath();
 						if (isPlusStrand) {
 							ctx.moveTo(_startX, topY);
-							ctx.lineTo(_endX - TRACK_HEIGHT, topY);
+							ctx.lineTo(arrowX, topY);
 							ctx.lineTo(_endX, midY);
-							ctx.lineTo(_endX - TRACK_HEIGHT, bottomY);
+							ctx.lineTo(arrowX, bottomY);
 							ctx.lineTo(_startX, bottomY);
 						} else {
 							ctx.moveTo(_startX + TRACK_HEIGHT, topY);
@@ -471,7 +473,6 @@ var FeatureViewer = React.createClass({
 			textX = startX + 3 * canvasRatio;
 			textY = y - 3 * canvasRatio;
 			width = endX - startX;
-
 			ctx.strokeStyle = colorScale(d.sourceId);
 			ctx.lineWidth = 2 * this.state.canvasRatio;
 			// line
@@ -572,6 +573,14 @@ var FeatureViewer = React.createClass({
 
 	_clearToolTip: function () {
 		this.setState({ toolTipVisible: false });
+	},
+
+	// convert canvas to png, download to user's browser downloads
+	_download: function () {
+		var canvas = this.refs.canvas.getDOMNode();
+	    var img = canvas.toDataURL("image/png")
+	   	img = img.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+	    window.location.href = img;
 	}
 });
 
@@ -629,13 +638,18 @@ var style = {
 		justifyContent: "space-between"
 	},
 
+	button: {
+		marginRight: "0.5rem"
+	},
+
 	btnContainer: {
 		padding: "1rem 0 1rem 1rem",
 		textAlign: "right"
 	},
 
 	btnGroup: {
-		display: "inline-block",
-		marginLeft: "1rem"
+		marginLeft: "1rem",
+		display: "flex",
+		flexDirection: "row-reverse"
 	}
 };

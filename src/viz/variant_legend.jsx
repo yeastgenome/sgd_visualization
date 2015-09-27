@@ -6,6 +6,7 @@ var Radium = require("radium");
 var DrawVariant = require("./draw_variant");
 var DidClickOutside = require("../mixins/did_click_outside.jsx");
 var CalculateCanvasRatio = require("../mixins/calculate_canvas_ratio.jsx");
+var appStyle = require("./style");
 
 var VariantLegend = React.createClass({
 	mixins: [DidClickOutside, CalculateCanvasRatio],
@@ -20,7 +21,7 @@ var VariantLegend = React.createClass({
 	render: function () {
 		return (
 			<div style={[style.container]}>
-				<a style={[style.button]} onClick={this._toggleActive}>
+				<a style={[appStyle.button]} onClick={this._toggleActive}>
 					Legend <i className="fa fa-sort-desc" />
 				</a>
 				{this._renderPanel()}
@@ -132,31 +133,6 @@ var style = {
 		paddingTop: 15,
 		boxSizing: "content-box"
 	},
-
-	button: {
-	    display: "inline-block",
-	    padding: "6px 12px",
-	    marginBottom: 0,
-	    fontSize: 14,
-	    fontWeight: 400,
-	    lineHeight: 1.42857143,
-	    textAlign: "center",
-	    whiteSpace: "nowrap",
-	    verticalAlign: "middle",
-	    touchAction: "manipulation",
-	    cursor: "pointer",
-	    userSelect: "none",
-	    backgroundImage: "none",
-	    border: "1px solid #ccc",
-	    borderRadius: 4,
-        color: "#333",
-	    backgroundColor: "#fff",
-	    textDecoration: "none",
-	    ":hover": {
-	    	backgroundColor: "#efefef"
-	    }
-	},
-
 	label: {
 		height: LABEL_HEIGHT,
 		marginTop: 5,
