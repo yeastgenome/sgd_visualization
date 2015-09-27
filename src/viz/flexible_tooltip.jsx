@@ -3,6 +3,7 @@
 
 var React = require("react");
 var _ = require("underscore");
+var Radium = require("radium");
 
 var FlexibleTooltip = React.createClass({
 	propTypes: {
@@ -31,23 +32,19 @@ var FlexibleTooltip = React.createClass({
 		var _isComplex = this._isComplex();
 		var _complexWidth = 350;
 		var _style = {
-			position: "absolute",
 			display: (props.visible ? "block" : "none"),
 			top: props.top,
 			left: props.left,
-			marginLeft: _isComplex ? -(_complexWidth * 4/5) : -50,
-			marginTop: _isComplex ? 30 : -60,
-			minHeight: _isComplex ? 100 : 35,
-			padding: _isComplex ? "1em" : 0,
+			// padding: _isComplex ? "1em" : 0,
 			width: _isComplex ? _complexWidth: "auto"
 		};
 
 		var innerContentNode = this._getInnerContentNode();
 		var arrowKlass = _isComplex ? "flexible-tooltip-arrow complex" : "flexible-tooltip-arrow";
 		return (
-			<div className="flexible-tooltip" style={_style} >
+			<div className="flexible-tooltip" style={[style.wrapper, _style]}>
 				{innerContentNode}
-				<div className={arrowKlass} style={{ position: "absolute" }}></div>
+				<div className={arrowKlass} style={[style.triangle]}></div>
 			</div>
 		);
 	},
@@ -94,10 +91,36 @@ var FlexibleTooltip = React.createClass({
 
 	_getTextNode: function () {
 		var _innerText = this.props.href ? (<a href={this.props.href}>{this.props.text}</a>) : this.props.text;
-		return (<span className="flexible-tooltip-text" style={{ display: "block" }}>
+		return (<span className="flexible-tooltip-text">
 			{_innerText}
 		</span>);
 	}
 });
 
-module.exports = FlexibleTooltip;
+var style = {
+	wrapper: {
+		position: "absolute",
+		marginLeft: -5,
+		marginTop: -55,
+		minHeight: 35,
+		padding: "0.5rem 0.5rem 0 0.5rem",
+		width: "auto",
+	    backgroundColor: "#e7e7e7",
+	    borderRadius: 5,
+	    fontSize: 16,
+	    zIndex: 100
+	},
+	triangle: {
+	    position: "absolute",
+	    bottom: -10,
+	    left: 20,
+	    width: 0,
+	    height: 0,
+	    marginLeft: -7,
+	    borderLeft: "8px solid transparent",
+	    borderRight: "8px solid transparent",
+	    borderTop: "15px solid #e7e7e7"
+	}
+};
+
+module.exports = Radium(FlexibleTooltip);
