@@ -6,11 +6,13 @@ var Radium = require("radium");
 var _ = require("underscore");
 
 var AssignTracksToDomains = require("./assign_tracks_to_domains");
+var CalculateCanvasRatio = require("../mixins/calculate_canvas_ratio.jsx");
 var DrawVariant = require("./draw_variant");
 var FlexibleTooltip = require("./flexible_tooltip.jsx");
 var VariantLegend = require("./variant_legend.jsx");
 
 var FeatureViewer = React.createClass({
+	mixins: [CalculateCanvasRatio],
 	propTypes: {
 		featureTrackId: React.PropTypes.string,
 		canScroll: React.PropTypes.bool,
@@ -67,7 +69,7 @@ var FeatureViewer = React.createClass({
 			offsetTop: 0,
 			computedForceData: null,
 			trackedDomains: null,
-			canvasRatio: 2,
+			canvasRatio: 1,
 			toolTipVisible: false,
 			toolTipTop: 0,
 			toolTipLeft: 0,
@@ -82,6 +84,7 @@ var FeatureViewer = React.createClass({
 		frame.scrollLeft = SCROLL_START;
 		frame.scrollTop = MAX_Y_SCROLL;
 
+		this.calculateCanvasRatio()
 		this._calculateWidth();
 		this._drawCanvas();
 		if (this.props.canScroll) frame.addEventListener("scroll", this._onScroll);
@@ -388,6 +391,7 @@ var FeatureViewer = React.createClass({
 
 	_drawVariants: function (ctx) {
 		var computedData = this.state.computedForceData;
+		var canvasRatio = this.state.canvasRatio;
 		// TEMP
 		// if (!computedData) return;
 		var originalData = this._getRawVariants();
@@ -395,10 +399,15 @@ var FeatureViewer = React.createClass({
 
 		// TEMP, just use raw, don't recalc
 		// old computedData.forEach( (d, i) => {
+		var x, y, stemX, stemY;
 		originalData.forEach( (d, i) => {
 			snpType = (typeof d.snpType === "undefined") ? "" : d.snpType;
 			originalDatum = originalData[i];
-			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), d.x, d.y, originalDatum.x, originalDatum.y);
+			x = d.x / canvasRatio;
+			y = d.y / canvasRatio;
+			stemX = originalDatum.x / canvasRatio;
+			stemY = originalDatum.y / canvasRatio;
+			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), x, y, stemX, stemY, canvasRatio);
 		});
 		
 	},
@@ -407,8 +416,7 @@ var FeatureViewer = React.createClass({
 	_getRawVariants: function () {
 		var scale = this._getScale();
 		var positionOffset = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
-
-		var _y = FEATURE_Y + TRACK_HEIGHT / 2; // TEMP
+		var _y = (FEATURE_Y + TRACK_HEIGHT / 2  - VARIANT_HEIGHT) * this.state.canvasRatio;
 		var avgCoord, snpType, type, _x;
 		return this.props.variantData.map( d => {
 			avgCoord = positionOffset + (d.referenceCoordinates[0] + d.referenceCoordinates[1]) / 2;
@@ -417,7 +425,7 @@ var FeatureViewer = React.createClass({
 			type = d.type.toLowerCase();
 			return _.extend(d, {
 				x: _x,
-				y: _y - VARIANT_HEIGHT
+				y: _y
 			});
 		});
 	},
