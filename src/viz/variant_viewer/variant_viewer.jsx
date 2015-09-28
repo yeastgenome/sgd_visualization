@@ -112,14 +112,11 @@ var VariantViewer = React.createClass({
 
 	_renderParset: function () {
 		var _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
-
 		// get ref highlighted coord
 		var model = this._getModel();
 		var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode);
 		_refCoord = [_refCoord.start, _refCoord.end];
 		var offset = this.props.isRelative ? 0 : this.props.chromStart;
-		console.log(this.props.isRelative)
-
 		var parsetX1Coord = _refCoord
 			.map( d => {
 				return this.state.x1Scale(d + offset);
