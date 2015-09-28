@@ -13,6 +13,7 @@ var vv = new VariantViewer({
 		dnaLength: 1437,
 		contigName: "Chromosome VI",
 		contigHref: "http://yeastgenome.org/contig/Chromosome_VI/overview",
+		isRelative: true,
 		alignedDnaSequences: [
 			{
 				id: 1,

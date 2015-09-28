@@ -117,10 +117,12 @@ var VariantViewer = React.createClass({
 		var model = this._getModel();
 		var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode);
 		_refCoord = [_refCoord.start, _refCoord.end];
+		var offset = this.props.isRelative ? 0 : this.props.chromStart;
+		console.log(this.props.isRelative)
 
 		var parsetX1Coord = _refCoord
 			.map( d => {
-				return this.state.x1Scale(d + this.props.chromStart);
+				return this.state.x1Scale(d + offset);
 			});
 		var parsetX2Coord = _alignedCoord
 			.map( d => {
@@ -130,6 +132,7 @@ var VariantViewer = React.createClass({
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
 		}
+
 		return (<Parset ref="parset"
 			isVisible={true}
 			x1Coordinates={parsetX1Coord}

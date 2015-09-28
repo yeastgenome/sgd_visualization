@@ -251,7 +251,7 @@ var FeatureViewer = React.createClass({
 			if (d.length === 0) return null;
 			pathString = "M" + d.join("L") + "Z";
 			var _onMouseOver = mouseOverFns[i];
-			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" stroke="black" fillOpacity="0" strokeWidth="1"/>;
+			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" stroke="none" fillOpacity="0" strokeWidth="1"/>;
 		});
 
 		return (

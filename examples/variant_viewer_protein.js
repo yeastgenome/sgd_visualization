@@ -10,6 +10,7 @@ var vv = new VariantViewer({
 		chromEnd: 911445,
 		isProteinMode: true,
 		proteinLength: 701,
+		isRelative: true,
 		variantDataProtein: [
 			{
 				snpType: "",

@@ -29,6 +29,7 @@ class _VariantViewer {
 		var _domains = conf.domains;
 		var _isProteinMode = conf.isProteinMode;
 		var _downloadCaption = conf.downloadCaption;
+		var _isRelative = conf.isRelative;
 
 		React.render(React.createElement(_VariantViewerComponent, {
 			name: _name,
@@ -47,7 +48,8 @@ class _VariantViewer {
 			strand: _strand,
 			domains: _domains,
 			isProteinMode: _isProteinMode,
-			downloadCaption: _downloadCaption
+			downloadCaption: _downloadCaption,
+			isRelative: _isRelative,
 		}), options.el);
 	}
 };
