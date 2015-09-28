@@ -109,8 +109,8 @@ var FeatureViewer = React.createClass({
 	_calculateHeight: function () {
 		if (!this.state.trackedDomains) return HEIGHT * this.state.canvasRatio;
 		var yScaleRange = this._getDomainYScale().range();
-		var domainHeight = yScaleRange[1] - yScaleRange[0] + HEIGHT + FONT_SIZE * 3 + 35;
-		return domainHeight * this.state.canvasRatio;
+		var domainHeight = yScaleRange[1] - yScaleRange[0] + (HEIGHT + FONT_SIZE * 3 + 35) * this.state.canvasRatio;
+		return domainHeight;
 	},
 
 	_setupZoomEvents: function () {
@@ -190,10 +190,10 @@ var FeatureViewer = React.createClass({
 		if (!this.state.computedForceData) return null;
 		var scale = this._getScale();
 		var avgCoord, x;
-		var y = FEATURE_Y;
-		var height = this._calculateHeight();
+		var y = FEATURE_Y;	
 		var mouseOverFns = [];
 		var canvasRatio = this.state.canvasRatio;
+		var height = this._calculateHeight() / canvasRatio;
 
 		// create array of points
 		var points = [];
@@ -204,7 +204,7 @@ var FeatureViewer = React.createClass({
 					this.props.onHighlightSegment(d.start - 1, d.end - 1);
 					this.setState({
 						toolTipVisible: true,
-						toolTipTop: d.y,
+						toolTipTop: d.y / canvasRatio,
 						toolTipLeft: d.x / canvasRatio,
 						toolTipText: d.variant_type,
 						toolTipHref: null
@@ -224,12 +224,12 @@ var FeatureViewer = React.createClass({
 				steps = Math.abs(endX - startX) / DOMAIN_VORONOI_INTERVAL;
 				for (var i = steps - 1; i >= 0; i--) {
 					var pointX = (startX + i * DOMAIN_VORONOI_INTERVAL) / canvasRatio;
-					var pointY = domainYScale(d._track) / canvasRatio;
+					var pointY = domainYScale(d._track);
 					// record a mouseOver cb
 					mouseOverFns.push( () => {
 						this.setState({
 							toolTipVisible: true,
-							toolTipTop: pointY,
+							toolTipTop: pointY / canvasRatio,
 							toolTipLeft: pointX,
 							toolTipText: d.name,
 							toolTipHref: d.href
@@ -251,7 +251,7 @@ var FeatureViewer = React.createClass({
 			if (d.length === 0) return null;
 			pathString = "M" + d.join("L") + "Z";
 			var _onMouseOver = mouseOverFns[i];
-			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" stroke="none" fillOpacity="0" strokeWidth="1"/>;
+			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" stroke="black" fillOpacity="0" strokeWidth="1"/>;
 		});
 
 		return (
@@ -586,7 +586,7 @@ var FeatureViewer = React.createClass({
 
 module.exports = Radium(FeatureViewer);
 
-var DOMAIN_VORONOI_INTERVAL = 15; // add a new voronoi point for every n px across domain
+var DOMAIN_VORONOI_INTERVAL = 30; // add a new voronoi point for every n px across domain
 var HEIGHT = 70;
 var AXIS_HEIGHT = 16;
 var DOMAIN_NODE_HEIGHT = 7;

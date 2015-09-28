@@ -113,7 +113,7 @@ var style = {
 	},
 	triangle: {
 	    position: "absolute",
-	    bottom: -10,
+	    bottom: -15,
 	    left: ARROW_OFFSET - 2,
 	    width: 0,
 	    height: 0,
