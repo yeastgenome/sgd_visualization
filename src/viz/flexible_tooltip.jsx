@@ -12,7 +12,8 @@ var FlexibleTooltip = React.createClass({
 		title: React.PropTypes.string,
 		href: React.PropTypes.string,
 		left: React.PropTypes.number,
-		top: React.PropTypes.number
+		top: React.PropTypes.number,
+		onMouseEnter: React.PropTypes.func
 		// data, null or object
 	},
 
@@ -42,7 +43,7 @@ var FlexibleTooltip = React.createClass({
 		var innerContentNode = this._getInnerContentNode();
 		var arrowKlass = _isComplex ? "flexible-tooltip-arrow complex" : "flexible-tooltip-arrow";
 		return (
-			<div style={[style.wrapper, _style]}>
+			<div onMouseEnter={this.props.onMouseEnter} style={[style.wrapper, _style]}>
 				{innerContentNode}
 				<div style={[style.triangle]}></div>
 			</div>

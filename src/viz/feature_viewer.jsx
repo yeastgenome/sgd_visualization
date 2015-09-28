@@ -103,7 +103,7 @@ var FeatureViewer = React.createClass({
 			text: this.state.toolTipText,
 			href: this.state.toolTipHref
 		};
-		return <FlexibleTooltip {...toolTipProps} />;
+		return <FlexibleTooltip onMouseEnter={this._clearMouseOverTimeout} {...toolTipProps} />;
 	},
 
 	_calculateHeight: function () {
@@ -251,7 +251,9 @@ var FeatureViewer = React.createClass({
 		var pathNodes = voronoiPoints.map( (d, i) => {
 			if (d.length === 0) return null;
 			pathString = "M" + d.join("L") + "Z";
-			var _onMouseOver = mouseOverFns[i];
+			var _onMouseOver = () => {
+				this._onMouseOver(mouseOverFns[i]);
+			};
 			return <path key={"pathVn" + i} onMouseOver={_onMouseOver}  d={pathString} fill="white" stroke="none" fillOpacity="0" strokeWidth="1"/>;
 		});
 
@@ -582,6 +584,16 @@ var FeatureViewer = React.createClass({
 	    var img = canvas.toDataURL("image/png")
 	   	img = img.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
 	    window.location.href = img;
+	},
+
+	_onMouseOver: function (cb) {
+		this._clearMouseOverTimeout();
+		this._mouseOverTimeout = setTimeout( () => {
+			cb();
+		}, TOOLTIP_DELAY);
+	},
+	_clearMouseOverTimeout: function () {
+		if (this._mouseOverTimeout) clearTimeout(this._mouseOverTimeout);
 	}
 });
 
@@ -611,6 +623,8 @@ var SYNONYMOUS_COLOR = "#7b3294" // purply
 var NON_SYNONYMOUS_COLOR = "#d7191c";  // red
 var INTRON_COLOR = "#2c7bb6"; // dark blue
 var UNTRANSLATEABLE_COLOR = "gray";
+
+var TOOLTIP_DELAY = 250;
 
 // CSS in JS
 var style = {

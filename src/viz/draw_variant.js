@@ -46,7 +46,7 @@ module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY
 		ctx.stroke();
 	} else {
 		// draw circle
-		ctx.globalAlpha = 0.5;
+		ctx.globalAlpha = 1;
 		ctx.fillStyle = color;
 		var path = new Path2D();
 		path.arc((x + 0.25) * ratio, y * ratio, VARIANT_DIAMETER * ratio, 0, Math.PI * 2, true);
@@ -59,8 +59,8 @@ module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY
 var VARIANT_DIAMETER = 4;
 var VARIANT_HEIGHT = 17;
 // fill colors for variants
-var SYNONYMOUS_COLOR = "#7b3294" // purply
-var NON_SYNONYMOUS_COLOR = "#d7191c";  // red
-var INTRON_COLOR = "#2c7bb6"; // dark blue
+var SYNONYMOUS_COLOR = "#ffffbf" // yellowy
+var NON_SYNONYMOUS_COLOR = "#fc8d59";  // orangy
+var INTRON_COLOR = "#91bfdb"; // light blue
 var TEXT_COLOR = "black";
 var UNTRANSLATEABLE_COLOR = "gray";
