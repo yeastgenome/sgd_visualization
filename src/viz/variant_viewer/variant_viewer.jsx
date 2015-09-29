@@ -107,6 +107,8 @@ var VariantViewer = React.createClass({
 			isRelative={true}
 			drawIntrons={!this.props.isProteinMode}
 			forceLength={forceLength}
+			model={model}
+			isProteinMode={this.props.isProteinMode}
 		/>);
 	},
 
@@ -129,7 +131,6 @@ var VariantViewer = React.createClass({
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
 		}
-
 		return (<Parset ref="parset"
 			isVisible={true}
 			x1Coordinates={parsetX1Coord}

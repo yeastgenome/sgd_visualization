@@ -32,14 +32,16 @@ var FeatureViewer = React.createClass({
 		downloadCaption: React.PropTypes.string,
 		contigName: React.PropTypes.string,
 		contigHref: React.PropTypes.string,
-		forceLength: React.PropTypes.number
+		forceLength: React.PropTypes.number,
+		isProteinMode: React.PropTypes.bool
 	},
 
 	getDefaultProps: function () {
 		return {
 			canScroll: true,
 			drawIntrons: true,
-			isRelative: false
+			isRelative: false,
+			isProteinMode: false
 		};
 	},
 
@@ -132,7 +134,7 @@ var FeatureViewer = React.createClass({
 		var isNewDomain = (prevProps.forceLength !== this.props.forceLength) ||
 			(prevProps.chromStart !== this.props.chromStart) ||
 			(prevProps.chromEnd !== this.props.chromEnd)
-			|| prevProps.domains !== this.props.domains;
+			|| prevProps.isProteinMode !== this.props.isProteinMode;
 		if (prevState.DOMWidth !== this.state.DOMWidth || isNewDomain) {
 			if (this.props.onSetScale) {
 				var scale = this._getScale();
@@ -202,14 +204,26 @@ var FeatureViewer = React.createClass({
 			// record a mouseOver cb
 			if (typeof this.props.onHighlightSegment === "function") {
 				mouseOverFns.push( () => {
+					var refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
+					var locationStr;
+					// SNP
+					var chromStart = this.props.focusFeature.chromStart;
+					if (Math.abs(refCoord.end - refCoord.start) === 1) {
+						locationStr = chromStart + refCoord.start - 1;
+					} else {
+						locationStr = `${chromStart +refCoord.start - 1}..${chromStart +refCoord.end - 1}`
+					}
+					var contigName = this.props.contigName || "";
+					var fullLocationStr = `${contigName} ${locationStr}`;
+					var _toolTipText = `${d.variant_type} at ${fullLocationStr}`
 					this.props.onHighlightSegment(d.start - 1, d.end - 1);
 					this.setState({
 						toolTipVisible: true,
 						toolTipTop: d.y / canvasRatio,
 						toolTipLeft: d.x / canvasRatio,
-						toolTipText: d.variant_type,
+						toolTipText: _toolTipText,
 						toolTipHref: null
-					})
+					});
 				});
 			}
 			points.push([d.x / canvasRatio, d.y / canvasRatio]);
@@ -302,7 +316,7 @@ var FeatureViewer = React.createClass({
 			arrowX = endX - TRACK_HEIGHT * canvasRatio;
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
 			topY = y * canvasRatio;
-			midY =( y + TRACK_HEIGHT / 2) * canvasRatio;
+			midY = (y + TRACK_HEIGHT / 2) * canvasRatio;
 			bottomY = (y + TRACK_HEIGHT) * canvasRatio;
 
 			// draw exons and introns if blockStarts and blockSizes defined
@@ -369,8 +383,11 @@ var FeatureViewer = React.createClass({
 	_drawHighlightedSegment: function (ctx) {
 		if (!this.props.highlightedSegment) return;
 		var scale = this._getScale();
-		var startX = scale(this.props.highlightedSegment[0]);
-		var endX = scale(this.props.highlightedSegment[1]);
+		var start = this.props.highlightedSegment[0];
+		if (start !== 0) start += 1;
+		var end = this.props.highlightedSegment[1] + 1;
+		var startX = scale(start);
+		var endX = scale(end);
 		var width = Math.abs(endX - startX);
 		var height = this._calculateHeight();
 		ctx.fillStyle = HIGHLIGHT_COLOR;
@@ -624,7 +641,7 @@ var NON_SYNONYMOUS_COLOR = "#d7191c";  // red
 var INTRON_COLOR = "#2c7bb6"; // dark blue
 var UNTRANSLATEABLE_COLOR = "gray";
 
-var TOOLTIP_DELAY = 250;
+var TOOLTIP_DELAY = 200;
 
 // CSS in JS
 var style = {
