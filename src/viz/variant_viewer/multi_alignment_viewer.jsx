@@ -13,7 +13,8 @@ var MultiAlignmentViewer = React.createClass({
 		onHighlightSegment: React.PropTypes.func, // (start, end) =>
 		onSetScale: React.PropTypes.func, // scale =>
 		segments: React.PropTypes.array.isRequired,
-		sequences: React.PropTypes.array.isRequired
+		sequences: React.PropTypes.array.isRequired,
+		isProteinMode: React.PropTypes.bool
 	},
 
 	getDefaultProps: function () {
@@ -53,6 +54,14 @@ var MultiAlignmentViewer = React.createClass({
 			this.props.onSetScale(_scale);
 		}
 		this.refs.scroller.getDOMNode().onscroll = this._onScroll;
+	},
+
+	componentDidUpdate: function (prevProps, prevState) {
+		var didProteinUpdate = (prevProps.isProteinMode !== this.props.isProteinMode);
+		if (typeof this.props.onSetScale === "function" && didProteinUpdate) {
+			var scale = this._getXScale();
+			this.props.onSetScale(scale);
+		}
 	},
 
 	_onScroll: function (e) {

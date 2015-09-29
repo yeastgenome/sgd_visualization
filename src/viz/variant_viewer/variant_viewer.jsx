@@ -152,6 +152,7 @@ var VariantViewer = React.createClass({
 					segments={_segments} sequences={_sequences}
 					onSetScale={_onSetX2Scale} onHighlightSegment={this._highlightSegment}
 					highlightedSegmentDomain={this.state.highlightedAlignedSegment}
+					isProteinMode={this.props.isProteinMode}
 				/>
 			</div>
 		);
