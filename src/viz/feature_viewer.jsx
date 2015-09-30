@@ -109,7 +109,7 @@ var FeatureViewer = React.createClass({
 	},
 
 	_calculateHeight: function () {
-		if (!this.state.trackedDomains) return HEIGHT * this.state.canvasRatio;
+		if (!this.state.trackedDomains) return (HEIGHT + FONT_SIZE * 2) * this.state.canvasRatio;
 		var yScaleRange = this._getDomainYScale().range();
 		var domainHeight = yScaleRange[1] - yScaleRange[0] + (HEIGHT + FONT_SIZE * 3 + 35) * this.state.canvasRatio;
 		return domainHeight;
@@ -598,9 +598,19 @@ var FeatureViewer = React.createClass({
 	// convert canvas to png, download to user's browser downloads
 	_download: function () {
 		var canvas = this.refs.canvas.getDOMNode();
+		if (this.props.downloadCaption) {
+			var ctx = canvas.getContext("2d");
+			var fontSize = FONT_SIZE * this.state.canvasRatio;
+			var x = fontSize / 2;
+			var y = this._calculateHeight() - fontSize / 2;
+			ctx.fillStyle = TEXT_COLOR;
+			ctx.textAlign = "left";
+			ctx.fillText(this.props.downloadCaption, x, y);
+		}
 	    var img = canvas.toDataURL("image/png")
 	   	img = img.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
 	    window.location.href = img;
+	    this._drawCanvas();
 	},
 
 	_onMouseOver: function (cb) {
