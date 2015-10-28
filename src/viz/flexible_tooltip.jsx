@@ -31,10 +31,14 @@ var FlexibleTooltip = React.createClass({
 	render: function () {
 		var props = this.props;
 		var _isComplex = this._isComplex();
+		var heightOffset = 0;
+		if (_isComplex) {
+			heightOffset = _.keys(this.props.data).length * 30;
+		}
 		var _complexWidth = 350;
 		var _style = {
 			display: (props.visible ? "block" : "none"),
-			top: props.top,
+			top: props.top - heightOffset,
 			left: props.left,
 			// padding: _isComplex ? "1em" : 0,
 			width: _isComplex ? _complexWidth: "auto"

@@ -54,13 +54,17 @@ var ProteinViewer = React.createClass({
 
 	_renderLabels: function () {
 		var sources = this._getSources();
-		var yScale = this._getYScale();
 
 		var trackedDomains = this._getTrackedDomains();
-		var node;
+		var startY = this.props.locusData ? LOCUS_HEIGHT : 0;
+		var node, sourceDomains, lowestTrackNum, _top;
 		var labelNodes = sources.map( (d, i) => {
+			// find domain with lowest track num corresponding to this label
+			sourceDomains = _.filter(trackedDomains, _d => { return _d.source.id === d.id; });
+			lowestTrackNum = d3.min(sourceDomains, _d => { return _d._track; });
+			_top = startY + lowestTrackNum * PX_PER_DOMAIN;
 			node = (
-				<div key={"proteinViewerLabel" + i} style={{ position: "absolute", top: yScale(d.id) + 3, right: "1rem" }}>
+				<div key={"proteinViewerLabel" + i} style={{ position: "absolute", top: _top, right: "1rem" }}>
 					<label>{d.name}</label>
 				</div>
 			);
@@ -102,8 +106,9 @@ var ProteinViewer = React.createClass({
 
 		var transform, length, strokeColor, text, textCanFit, textNode, y;
 		var trackedDomains = this._getTrackedDomains();
+		var startY = this.props.locusData ? LOCUS_HEIGHT : 0;
 		var domainNodes = trackedDomains.map( (d, i) => {
-			y = yScale(d.source.id) + d._track * PX_PER_DOMAIN;
+			y = startY + d._track * PX_PER_DOMAIN;
 			transform = `translate(${xScale(d.start)}, ${y})`;
 			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
 			strokeColor = colorScale(d.source.name);
@@ -158,9 +163,9 @@ var ProteinViewer = React.createClass({
 
 		var d = _.find(this.props.data, d => { return d.domain.id === this.state.mouseOverDomainId; });
 		var xScale = this._getXScale();
-		var yScale = this._getYScale();
 		var left = xScale(d.start);
-		var top = yScale(d.source.id) + (d._track + 1) * PX_PER_DOMAIN;
+		var startY = this.props.locusData ? LOCUS_HEIGHT : 0;
+		var top = startY + d._track * PX_PER_DOMAIN;
 		var _coordString = `${d.start}..${d.end}`;
 		var tooltipData = {
 			Coords: _coordString,
@@ -249,7 +254,9 @@ var ProteinViewer = React.createClass({
 	},
 
 	_getHeight: function () {
-		return d3.max(this._getYScale().range()) + PX_PER_DOMAIN / 2;
+		var trackedDomains = this._getTrackedDomains();
+		var heightestTrackNum = d3.max(trackedDomains, d => { return d._track; });
+		return (heightestTrackNum + 2) * PX_PER_DOMAIN + LOCUS_HEIGHT;
 	}
 });
 
