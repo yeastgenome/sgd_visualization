@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 "use strict";
 var d3 = require("d3");
 var React = require("react");
@@ -48,7 +47,7 @@ var ProteinViewer = React.createClass({
 	},
 
 	_calculateWidth: function () {
-		var vizNodeWidth = this.refs.vizNode.getDOMNode().getBoundingClientRect().width;
+		var vizNodeWidth = this.refs.vizNode.getBoundingClientRect().width;
 		this.setState({ DOMWidth: vizNodeWidth });
 	},
 

@@ -6,7 +6,7 @@
 var CalculateCanvasRatio = {
 	calculateCanvasRatio: function (cb) {
 		// query device pixel ratio
-		var ctx = this.refs.canvas.getDOMNode().getContext("2d");
+		var ctx = this.refs.canvas.getContext("2d");
 		var devicePixelRatio = window.devicePixelRatio || 1;
 		var backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
 			ctx.mozBackingStorePixelRatio ||

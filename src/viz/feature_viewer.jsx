@@ -52,7 +52,7 @@ var FeatureViewer = React.createClass({
 		var containerHeight = _height / canvasRatio;
 		var scrollerNode = null// {this.props.canScroll ? <div ref="scroller" style={[style.scroller]} /> : null} // TEMP
 		return (
-			<div className="feature-viewer">
+			<div ref="wrapper" className="feature-viewer">
 				{this._renderControls()}
 				<div onMouseLeave={this._clearToolTip} style={[style.container]}>
 					{this._renderTooltip()}
@@ -83,7 +83,7 @@ var FeatureViewer = React.createClass({
 	},
 
 	componentDidMount: function () {
-		var frame = this.refs.frame.getDOMNode();
+		var frame = this.refs.frame;
 		// scroll to half
 		frame.scrollLeft = SCROLL_START;
 		frame.scrollTop = MAX_Y_SCROLL;
@@ -117,7 +117,7 @@ var FeatureViewer = React.createClass({
 
 	_setupZoomEvents: function () {
 		// play with d3 zoom
-		var scroller = this.refs.scroller.getDOMNode();
+		var scroller = this.refs.scroller;
 		var scale = this._getScale();
 		var zoomFn = d3.behavior.zoom()
 			.y(scale)
@@ -279,14 +279,14 @@ var FeatureViewer = React.createClass({
 	},
 
 	_calculateWidth: function () {
-		var _width = this.getDOMNode().getBoundingClientRect().width - 1;
+		var _width = this.refs.wrapper.getBoundingClientRect().width - 1;
 		this.setState({
 			DOMWidth: _width
 		});
 	},
 
 	_drawCanvas: function () {
-		var canvas = this.refs.canvas.getDOMNode();
+		var canvas = this.refs.canvas;
 		var ctx = canvas.getContext("2d");
 		ctx.font = FONT_SIZE * this.state.canvasRatio + "px 'Lato' sans-serif";
 		ctx.textAlign = "center";
@@ -565,7 +565,7 @@ var FeatureViewer = React.createClass({
 
 	_onScroll: function (e) {
 		return // TEMP
-		var frame = this.refs.frame.getDOMNode();
+		var frame = this.refs.frame;
 		var left = frame.scrollLeft;
 		var top = frame.scrollTop;
 		var originalLeft = SCROLL_WIDTH / 2;
@@ -597,7 +597,7 @@ var FeatureViewer = React.createClass({
 
 	// convert canvas to png, download to user's browser downloads
 	_download: function () {
-		var canvas = this.refs.canvas.getDOMNode();
+		var canvas = this.refs.canvas;
 		if (this.props.downloadCaption) {
 			var ctx = canvas.getContext("2d");
 			var fontSize = FONT_SIZE * this.state.canvasRatio;

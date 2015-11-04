@@ -1,5 +1,6 @@
 "use strict";
 var React = require("react");
+var ReactDOM = require("react-dom");
 
 var _ProteinViewerComponent = require("./viz/protein_viewer.jsx");
 var _VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
@@ -31,7 +32,7 @@ class _VariantViewer {
 		var _downloadCaption = conf.downloadCaption;
 		var _isRelative = conf.isRelative;
 
-		React.render(React.createElement(_VariantViewerComponent, {
+		ReactDOM.render(React.createElement(_VariantViewerComponent, {
 			name: _name,
 			alignedDnaSequences: _alignedDnaSequences,
 			alignedProteinSequences: _alignedProteinSequences,
@@ -59,7 +60,7 @@ class _ProteinViewer {
 		if (typeof options === "undefined") options = {};
 		options.el = options.el || document.body;
 
-		React.render(React.createElement(_ProteinViewerComponent, {
+		ReactDOM.render(React.createElement(_ProteinViewerComponent, {
 			data: options.config.domains,
 			locusData: options.config.locus
 		}), options.el);

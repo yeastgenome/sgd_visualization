@@ -47,7 +47,7 @@ var StandaloneAxis = React.createClass({
 		var _klass = `standalone-axis ${this.props.gridTicks ? "grid-ticks" : ""}`;
 		var _containerStyle = { position: "relative" };
 		if (this.props.gridTicks) _containerStyle.height = "100%";
-		return (<div className={_klass} style={_containerStyle}>
+		return (<div ref="wrapper" className={_klass} style={_containerStyle}>
 			{labelNode}
 			<svg ref="svg" style={{ width: "100%", height: _height }}></svg>
 		</div>);
@@ -85,7 +85,7 @@ var StandaloneAxis = React.createClass({
 		};
 		var _baseScale = scaleTypes[this.props.scaleType];
 		
-		var _width = this.getDOMNode().getBoundingClientRect().width - 1;
+		var _width = this.refs.wrapper.getBoundingClientRect().width - 1;
 		var _xOffset = _width * props.leftRatio;
 		var _scale = _baseScale.domain(props.domain).range([0, _width - _xOffset]);
 
@@ -99,7 +99,7 @@ var StandaloneAxis = React.createClass({
 		// must have scale calculated
 		if (!this.state.scale) return;
 
-		var _tickSize = this.props.gridTicks ? (-this.getDOMNode().offsetHeight) : 6;
+		var _tickSize = this.props.gridTicks ? (-this.refs.wrapper.offsetHeight) : 6;
 		var axisFn = d3.svg.axis()
 			.orient(this.props.orientation)
 			.ticks(this.props.ticks)
@@ -107,12 +107,12 @@ var StandaloneAxis = React.createClass({
 			.tickSize(_tickSize)
 			.scale(this.state.scale);
 
-		var svg = d3.select(this.refs["svg"].getDOMNode());
+		var svg = d3.select(this.refs.svg);
 		
-		var _xTranslate = (this.getDOMNode().getBoundingClientRect().width * this.props.leftRatio)
+		var _xTranslate = (this.refs.wrapper.getBoundingClientRect().width * this.props.leftRatio)
 		var _yTranslate = (this.props.orientation === "top") ? 30 : 0;
 		if (this.props.gridTicks && this.props.orientation === "bottom") {
-			_yTranslate += this.getDOMNode().getBoundingClientRect().height - 24;
+			_yTranslate += this.refs.wrapper.getBoundingClientRect().height - 24;
 		}
 		var _translate = `translate(${_xTranslate}, ${_yTranslate})`;
 		var axis = svg.selectAll("g.axis").data([null]);

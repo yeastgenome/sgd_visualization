@@ -84,7 +84,7 @@ var VariantLegend = React.createClass({
 		var yDelta = (LABEL_HEIGHT + LABEL_BOTTOM + 1);
 		var width = this._getWidth() * canvasRatio;
 		var height = this._getHeight() * canvasRatio;
-		var canvas = this.refs.canvas.getDOMNode();
+		var canvas = this.refs.canvas;
 		var ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, width, height);
 		var i = 0;

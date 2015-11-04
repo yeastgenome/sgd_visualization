@@ -53,7 +53,7 @@ var MultiAlignmentViewer = React.createClass({
 			var _scale = this._getXScale();
 			this.props.onSetScale(_scale);
 		}
-		this.refs.scroller.getDOMNode().onscroll = this._onScroll;
+		this.refs.scroller.onscroll = this._onScroll;
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
@@ -66,7 +66,7 @@ var MultiAlignmentViewer = React.createClass({
 
 	_onScroll: function (e) {
 		if (!this.props.onSetScale) return;
-		var _scrollLeft = this.refs.scroller.getDOMNode().scrollLeft;
+		var _scrollLeft = this.refs.scroller.scrollLeft;
 		var _xScale = this._getXScale();
 		var _oldRange = _xScale.range();
 		var _newRange = _oldRange.map( d => {
