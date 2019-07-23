@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 "use strict";
 
 // calculate drawing ratio to solve blurry high DPI canvas issue
