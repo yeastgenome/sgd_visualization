@@ -1,5 +1,5 @@
 "use strict";
-var _ = require("underscore");
+import _ from 'underscore';
 
 var isLeftOverlap, isRightOverlap, isInside;
 var isOverlap = function (a, b) {
@@ -37,4 +37,4 @@ var AssignTracksToDomains = function (domains) {
 	return merged;
 };
 
-module.exports = AssignTracksToDomains;
+export default AssignTracksToDomains;

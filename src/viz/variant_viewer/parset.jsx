@@ -1,8 +1,8 @@
 "use strict";
 
-var d3 = require("d3");
-var React = require("react");
-var _ = require("underscore");
+import d3 from 'd3';
+import React from 'react';
+import _ from 'underscore';
 
 // style static elements
 var HEIGHT = 70;
@@ -66,4 +66,4 @@ var Parset = React.createClass({
 	}
 });
 
-module.exports = Parset;
+export default Parset;

@@ -1,5 +1,5 @@
 "use strict";
-var d3 = require("d3");
+import d3 from 'd3';
 
 var HEIGHT = 17;
 var POINT_WIDTH = 10;
@@ -37,4 +37,4 @@ var generateTrapezoidPath = function (width, orientation) {
 	return areaFn(points) + "Z";
 };
 
-module.exports = generateTrapezoidPath;
+export default generateTrapezoidPath;

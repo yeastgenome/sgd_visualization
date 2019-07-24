@@ -1,13 +1,13 @@
 "use strict";
 
-var d3 = require("d3");
-var _ = require("underscore");
+import d3 from 'd3';
+import _ from 'underscore';
 
 var PX_PER_CHAR = 8.41;
 var SUMMARIZED_SIZE = 30;
 
 // give an array of segment objects, get a d3 scale
-var GetJaggedScale = function (segments) {
+export default  function (segments) {
 	// sort segments by domain
 	var _segs = _.sortBy(segments, s => {
 		return s.domain[0];
@@ -31,5 +31,3 @@ var GetJaggedScale = function (segments) {
 		.domain(_domain)
 		.range(_range);
 };
-
-module.exports = GetJaggedScale;

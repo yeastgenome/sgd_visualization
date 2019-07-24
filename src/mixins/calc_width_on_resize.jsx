@@ -15,4 +15,4 @@ var CalcWidthOnRisize = {
 	}
 };
 
-module.exports = CalcWidthOnRisize;
+export default CalcWidthOnRisize;

@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function (ctx, variantType, snpType, x, y, originalX, originalY, ratio) {
+var DrawVariant =  function (ctx, variantType, snpType, x, y, originalX, originalY, ratio) {
 	ratio = ratio || 1;
 	ctx.lineWidth = 1 * ratio;
 	if (typeof originalX === "undefined") originalX = x;
@@ -64,3 +64,5 @@ var NON_SYNONYMOUS_COLOR = "#fc8d59";  // orangy
 var INTRON_COLOR = "#91bfdb"; // light blue
 var TEXT_COLOR = "black";
 var UNTRANSLATEABLE_COLOR = "gray";
+
+export default DrawVariant;

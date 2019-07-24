@@ -1,8 +1,8 @@
 "use strict";
 
-var React = require("react");
-var _ = require("underscore");
-var Radium = require("radium");
+import React from 'react';
+import _ from 'underscore';
+import Radium from 'radium';
 
 var FlexibleTooltip = React.createClass({
 	propTypes: {
@@ -128,4 +128,4 @@ var style = {
 	}
 };
 
-module.exports = Radium(FlexibleTooltip);
+export default Radium(FlexibleTooltip);

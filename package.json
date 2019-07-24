@@ -5,22 +5,28 @@
   "repository": "https://github.com/yeastgenome/sgd_visualization",
   "homepage": "http://www.yeastgenome.org",
   "browserify": {
-    "transform": [["reactify", { "es6": true }]]
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ]
+    ]
   },
   "dependencies": {
-    "react": "^0.14.2",
-    "react-dom": "^0.14.2",
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0",
     "d3": "^3.5.6",
     "underscore": "^1.8.3",
-    "radium": "^0.14.1",
+    "radium": "^0.25.2",
     "reactify": "~1.1.0"
   },
   "devDependencies": {
-    "node-jsx": "~0.12.4",
+    "browserify": "^16.3.0",
     "mkdirp": "^0.5.0",
-    "sniper": "0.x",
-    "browserify": "6.x",
-    "watchify": "^1.0.6"
+    "node-jsx": "~0.12.4",
+    "watchify": "^3.11.1"
   },
   "scripts": {
     "test": "mocha",
@@ -31,11 +37,26 @@
     "sniper": "sniper ."
   },
   "sniper": {
-    "js": ["/build/sgd_visualization.js"],
-    "buildJS": ["https://s3-us-west-2.amazonaws.com/viz-assets/sgd_visualization.js"],
-    "css": ["http://fonts.googleapis.com/css?family=Lato"],
-    "snippets": ["examples"],
+    "js": [
+      "/build/sgd_visualization.js"
+    ],
+    "buildJS": [
+      "https://s3-us-west-2.amazonaws.com/viz-assets/sgd_visualization.js"
+    ],
+    "css": [
+      "http://fonts.googleapis.com/css?family=Lato"
+    ],
+    "snippets": [
+      "examples"
+    ],
     "first": "variant_viewer_dna"
   },
-  "keywords": ["biojs","react","d3", "genetic", "biology", "variation"]
+  "keywords": [
+    "biojs",
+    "react",
+    "d3",
+    "genetic",
+    "biology",
+    "variation"
+  ]
 }

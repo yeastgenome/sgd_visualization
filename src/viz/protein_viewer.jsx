@@ -1,13 +1,13 @@
 "use strict";
-var d3 = require("d3");
-var React = require("react");
-var _ = require("underscore");
+import d3 from 'd3';
+import React from 'react';
+import _ from 'underscore';
 
-var AssignTracksToDomains = require("./assign_tracks_to_domains");
-var CalcWidthOnResize = require("../mixins/calc_width_on_resize.jsx");
-var FlexibleTooltip = require("./flexible_tooltip.jsx");
-var GenerateTrapezoidPath = require("./generate_trapezoid_path");
-var StandaloneAxis = require("./standalone_axis.jsx");
+import AssignTracksToDomains from './assign_tracks_to_domains'; 
+import CalcWidthOnResize from '../mixins/calc_width_on_resize';
+import FlexibleTooltip from './flexible_tooltip';
+import GenerateTrapezoidPath from './generate_trapezoid_path';
+import StandaloneAxis from './standalone_axis';
 
 var DOMAIN_NODE_HEIGHT = 10;
 var DOMAIN_TEXT_FONT_SIZE = 14;
@@ -35,7 +35,7 @@ var ProteinViewer = React.createClass({
 	
 	render: function () {
 		return (
-			<div className="sgd-viz protein-viewer">
+			<div>
 				{this._renderLabels()}
 				{this._renderViz()}
 			</div>
@@ -258,5 +258,4 @@ var ProteinViewer = React.createClass({
 		return (heightestTrackNum + 2) * PX_PER_DOMAIN + LOCUS_HEIGHT;
 	}
 });
-
-module.exports = ProteinViewer;
+export default ProteinViewer;

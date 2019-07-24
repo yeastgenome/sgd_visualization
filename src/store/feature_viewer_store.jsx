@@ -1,6 +1,6 @@
 "use strict";
-var _ = require("underscore");
-var d3 = require("d3");
+import _ from 'underscore';
+import d3 from 'd3';
 
 var featureTracks = [];
 var vizTracks = []; // TEMP example [{ id: "viz1", type:"checker" }, false, false]
@@ -9,7 +9,7 @@ var interactionData = [];
 
 var MIN_BP_PER_FRAME = 100;
 
-module.exports = class FeatureViewerStore {
+class FeatureViewerStore {
 	// *** accessors ***
 	getOriginalPosition (featureTrackId) {
 		var datum = _.findWhere(featureTracks, { id: featureTrackId });
@@ -125,3 +125,5 @@ module.exports = class FeatureViewerStore {
 		position.chromEnd = newDomain[1];
 	}
 };
+
+export default FeatureViewerStore;

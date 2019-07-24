@@ -15,4 +15,4 @@ var DidClickOutside = {
 	},
 };
 
-module.exports = DidClickOutside;
+export default DidClickOutside;

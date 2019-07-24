@@ -1,11 +1,11 @@
 "use strict";
-var d3 = require("d3");
-var React = require("react");
-var _ = require("underscore");
-var Radium = require("radium");
+import d3 from 'd3';
+import React from 'react';
+import _ from 'underscore';
+import Radium from 'radium';
 
-var getJaggedScale = require("./get_jagged_scale.jsx");
-var MultiScaleAxis = require("./multi_scale_axis.jsx");
+import getJaggedScale  from './get_jagged_scale';
+import MultiScaleAxis from './multi_scale_axis.jsx';
 
 var MultiAlignmentViewer = React.createClass({
 	propTypes: {
@@ -182,4 +182,4 @@ var style = {
 	}
 };
 
-module.exports = Radium(MultiAlignmentViewer);
+export default Radium(MultiAlignmentViewer);

@@ -1,10 +1,10 @@
 "use strict";
 
-var _ = require("underscore");
+import _ from 'underscore';
 
 var DEFAULT_REFERENCE_NAME = "S288C";
 
-module.exports = class AlignmentModel {
+class AlignmentModel {
 
 	constructor (options) {
 		this.attributes = {};
@@ -159,3 +159,5 @@ module.exports = class AlignmentModel {
 		});
 	}
 };
+
+export default AlignmentModel;

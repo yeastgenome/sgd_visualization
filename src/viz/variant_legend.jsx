@@ -1,11 +1,11 @@
 "use strict";
-var React = require("react");
-var Radium = require("radium");
+import React from 'react';
+import Radium from 'radium';
 
-var DrawVariant = require("./draw_variant");
-var DidClickOutside = require("../mixins/did_click_outside.jsx");
-var CalculateCanvasRatio = require("../mixins/calculate_canvas_ratio.jsx");
-var appStyle = require("./style");
+import DrawVariant from './draw_variant';
+import DidClickOutside from '../mixins/did_click_outside.jsx';
+import CalculateCanvasRatio from '../mixins/calculate_canvas_ratio.jsx';
+import appStyle from './style';
 
 var VariantLegend = React.createClass({
 	mixins: [DidClickOutside, CalculateCanvasRatio],
@@ -102,7 +102,7 @@ var VariantLegend = React.createClass({
 	}
 });
 
-module.exports = Radium(VariantLegend);
+export default Radium(VariantLegend);
 
 var WIDTH = 200;
 var HEIGHT = 190;

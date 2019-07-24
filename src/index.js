@@ -1,11 +1,11 @@
 "use strict";
-var React = require("react");
-var ReactDOM = require("react-dom");
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-var _ProteinViewerComponent = require("./viz/protein_viewer.jsx");
-var _VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
+import _ProteinViewerComponent from './viz/protein_viewer.jsx';
+import _VariantViewerComponent from './viz/variant_viewer/variant_viewer.jsx';
 
-var exampleData = require("./variant_viewer_fixture_data");
+var exampleData = require("./variant_viewer_fixture_data.json");
 
 class _VariantViewer {
 	constructor (options) {
@@ -67,7 +67,8 @@ class _ProteinViewer {
 	}
 }
 
-module.exports = {
+
+export default {
 	ProteinViewer: _ProteinViewer,
 	VariantViewer: _VariantViewer,
 	ProteinViewerComponent: _ProteinViewerComponent,

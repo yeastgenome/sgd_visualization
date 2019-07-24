@@ -1,15 +1,15 @@
 "use strict";
-var d3 = require("d3");
-var React = require("react");
-var Radium = require("radium");
-var _ = require("underscore");
+import d3 from 'd3';
+import React from 'react';
+import Radium from 'radium';
+import _ from 'underscore';
 
-var AssignTracksToDomains = require("./assign_tracks_to_domains");
-var CalculateCanvasRatio = require("../mixins/calculate_canvas_ratio.jsx");
-var DrawVariant = require("./draw_variant");
-var FlexibleTooltip = require("./flexible_tooltip.jsx");
-var VariantLegend = require("./variant_legend.jsx");
-var appStyle = require("./style");
+import AssignTracksToDomains from  './assign_tracks_to_domains';
+import CalculateCanvasRatio from '../mixins/calculate_canvas_ratio';
+import DrawVariant from './draw_variant';
+import FlexibleTooltip from './flexible_tooltip';
+import VariantLegend from './variant_legend';
+import appStyle from './style'; 
 
 var FeatureViewer = React.createClass({
 	mixins: [CalculateCanvasRatio],
@@ -623,7 +623,7 @@ var FeatureViewer = React.createClass({
 	}
 });
 
-module.exports = Radium(FeatureViewer);
+export default Radium(FeatureViewer);
 
 var DOMAIN_VORONOI_INTERVAL = 30; // add a new voronoi point for every n px across domain
 var HEIGHT = 70;

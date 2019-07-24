@@ -1,7 +1,7 @@
 "use strict";
-var d3 = require("d3");
-var React = require("react");
-var _ = require("underscore");
+import d3 from 'd3';
+import React from 'react';
+import _ from 'underscore';
 
 var TICK_HEIGHT = 6;
 var HEIGHT = 40;
@@ -63,4 +63,4 @@ var MultiScaleAxis = React.createClass({
 	}
 });
 
-module.exports = MultiScaleAxis;
+export default MultiScaleAxis;

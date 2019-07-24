@@ -18,4 +18,4 @@ var CalculateCanvasRatio = {
 	},
 };
 
-module.exports = CalculateCanvasRatio;
+export default CalculateCanvasRatio;

@@ -1,13 +1,13 @@
 "use strict";
-var d3 = require("d3");
-var React = require("react");
-var _ = require("underscore");
+import d3 from 'd3';
+import React from 'react';
+import _ from 'underscore';
 
-var AlignmentModel = require("./alignment_model.jsx");
-var FeatureViewer = require("../feature_viewer.jsx");
-var FeatureViewerStore = require("../../store/feature_viewer_store.jsx");
-var MultiAlignmentViewer = require("./multi_alignment_viewer.jsx");
-var Parset = require("./parset.jsx");
+import AlignmentModel from './alignment_model.jsx';
+import FeatureViewer from '../feature_viewer.jsx';
+import FeatureViewerStore from '../../store/feature_viewer_store.jsx';
+import MultiAlignmentViewer from './multi_alignment_viewer.jsx';
+import Parset from './parset.jsx';
 
 var LABEL_WIDTH = 150;
 
@@ -202,4 +202,4 @@ var VariantViewer = React.createClass({
 	}
 });
 
-module.exports = VariantViewer;
+export default VariantViewer;

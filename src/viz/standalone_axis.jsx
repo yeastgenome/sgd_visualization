@@ -1,9 +1,9 @@
 "use strict";
 
-var d3 = require("d3");
-var React = require("react");
+import d3 from 'd3';
+import React from 'react';
 
-var CalcWidthOnResize = require("../mixins/calc_width_on_resize.jsx");
+import CalcWidthOnResize from '../mixins/calc_width_on_resize.jsx';
 
 var StandaloneAxis = React.createClass({
 	mixins: [CalcWidthOnResize],
@@ -127,4 +127,4 @@ var StandaloneAxis = React.createClass({
 
 });
 
-module.exports = StandaloneAxis;
+export default StandaloneAxis;
