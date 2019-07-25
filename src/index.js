@@ -1,6 +1,4 @@
 "use strict";
-import React from 'react';
-import ReactDOM from 'react-dom';
 
 import _ProteinViewerComponent from './viz/protein_viewer.jsx';
 import _VariantViewerComponent from './viz/variant_viewer/variant_viewer.jsx';
@@ -67,10 +65,9 @@ class _ProteinViewer {
 	}
 }
 
-
-export default {
-	ProteinViewer: _ProteinViewer,
-	VariantViewer: _VariantViewer,
-	ProteinViewerComponent: _ProteinViewerComponent,
-	VariantViewerComponent: _VariantViewerComponent
+export  {
+	_ProteinViewer as ProteinViewer,
+	_VariantViewer as VariantViewer,
+	_ProteinViewerComponent as ProteinViewerComponent,
+	_VariantViewerComponent as VariantViewerComponent
 };
