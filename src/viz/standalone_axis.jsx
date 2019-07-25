@@ -1,43 +1,18 @@
 "use strict";
 
 import d3 from 'd3';
-import React from 'react';
+import React,{Component} from 'react';
+import PropTypes from 'prop-types';
 
 import CalcWidthOnResize from '../mixins/calc_width_on_resize.jsx';
+class StandaloneAxis extends Component{
+	constructor(props){
+		super(props);
+		this.state = {scale: null};
+		this._calculateWidth = this._calculateWidth.bind(this);
+	}
 
-var StandaloneAxis = React.createClass({
-	mixins: [CalcWidthOnResize],
-
-	propTypes: {
-		domain: React.PropTypes.array.isRequired, // * d3 style i.e. [0, 100]
-		gridTicks: React.PropTypes.bool,
-		labelText: React.PropTypes.string,
-		leftRatio: React.PropTypes.number,
-		orientation: React.PropTypes.string, // *
-		scaleType: React.PropTypes.string, // ["linear", "sqrt"]
-		ticks: React.PropTypes.number,
-		tickFormat: React.PropTypes.func, // d3 style
-		transitionDuration: React.PropTypes.number // millis
-	},
-
-	getDefaultProps: function () {
-		return {
-			gridTicks: false,
-			leftRatio: 0,
-			orientation: "top", // [top, right, bottom, left]
-			scaleType: "linear",
-			ticks: 3,
-			transitionDuration: 0
-		};
-	},
-
-	getInitialState: function () {
-		return {
-			scale: null
-		};
-	},
-
-	render: function () {
+	render() {
 		var labelNode = this.props.labelText ?
 			<p className="axis-label" style={{ marginLeft: `${this.props.leftRatio * 100}%`, position: "relative" }}>{this.props.labelText}</p> :
 			null;
@@ -50,30 +25,36 @@ var StandaloneAxis = React.createClass({
 			{labelNode}
 			<svg ref="svg" style={{ width: "100%", height: _height }}></svg>
 		</div>);
-	},
+	};
 
 	// After initial render, calculate the scale (based on width), which will then trigger update, which eventually
 	// renders d3 SVG axis.
-	componentDidMount: function () {
-		this._calculateScale();
-	},
+	componentDidMount() {
+		this.setState({isMounted:true},this._calculateScale());
+	};
 
-	componentWillReceiveProps: function (nextProps) {
+	componentWillUnmount(){
+		this.setState({isMounted:false});
+	}
+
+	componentWillReceiveProps(nextProps) {
 		this._calculateScale(nextProps);
-	},
+	};
 
-	componentDidUpdate: function () {
+	componentDidUpdate() {
 		this._renderSVG();
-	},
+	};
 
 	// called by mixin
-	_calculateWidth: function () {
-		this._calculateScale();
-	},
+	_calculateWidth(){
+		if(this.state.isMounted){
+			this._calculateScale();
+		}
+	};
 
-	_calculateScale: function (nextProps) {
-		var props = nextProps || this.props;
+	_calculateScale(nextProps) {
 		
+		var props = nextProps || this.props;
 		// maxValue can't be null
 		if (props.maxValue === null) return;
 
@@ -91,10 +72,10 @@ var StandaloneAxis = React.createClass({
 		this.setState({
 			scale: _scale
 		});
-	},
+	};
 
 	// render d3 axis 
-	_renderSVG: function () {
+	_renderSVG(){
 		// must have scale calculated
 		if (!this.state.scale) return;
 
@@ -123,8 +104,28 @@ var StandaloneAxis = React.createClass({
 		axis.transition().duration(this.props.transitionDuration)
 			.attr({ transform: _translate })
 			.call(axisFn);
-	}
+	};
+}
 
-});
+StandaloneAxis.propTypes = {
+	domain: PropTypes.array.isRequired, // * d3 style i.e. [0, 100]
+	gridTicks: PropTypes.bool,
+	labelText: PropTypes.string,
+	leftRatio: PropTypes.number,
+	orientation: PropTypes.string, // *
+	scaleType: PropTypes.string, // ["linear", "sqrt"]
+	ticks: PropTypes.number,
+	tickFormat: PropTypes.func, // d3 style
+	transitionDuration: PropTypes.number // millis
+}
 
-export default StandaloneAxis;
+StandaloneAxis.defaultProps={
+	gridTicks: false,
+	leftRatio: 0,
+	orientation: "top", // [top, right, bottom, left]
+	scaleType: "linear",
+	ticks: 3,
+	transitionDuration: 0
+}
+
+export default CalcWidthOnResize(StandaloneAxis);
