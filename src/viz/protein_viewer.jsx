@@ -23,22 +23,20 @@ class ProteinViewer extends Component{
 		super(props);
 		this.state={DOMWidth: 400,mouseOverDomainId: null};
 		this._onDomainMouseLeave = this._onDomainMouseLeave.bind(this);
+		this._calculateWidth = this._calculateWidth.bind(this);
 	}
 
 	render(){
 		return(
-			<div>Protein Viewer New
       <div>
 				{this._renderLabels()}
 				{this._renderViz()}
 			</div>
-      </div>
 		)
 	}
 
   componentDidMount(){
-		this._calculateWidth();
-		this.setState({isMounted:true});
+		this.setState({isMounted:true},this._calculateWidth);
   }
 
 	componentWillUnmount(){
