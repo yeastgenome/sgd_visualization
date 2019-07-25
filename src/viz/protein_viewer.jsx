@@ -1,7 +1,8 @@
 "use strict";
 import d3 from 'd3';
-import React from 'react';
+import React,{Component} from 'react';
 import _ from 'underscore';
+import PropTypes from 'prop-types';
 
 import AssignTracksToDomains from './assign_tracks_to_domains'; 
 import CalcWidthOnResize from '../mixins/calc_width_on_resize';
@@ -17,41 +18,41 @@ var PX_PER_DOMAIN = 24;
 var PX_PER_CHAR = 7;
 var LOCUS_FILL = "#696599";
 
-var ProteinViewer = React.createClass({
-	mixins: [CalcWidthOnResize],
+class ProteinViewer extends Component{
+	constructor(props){
+		super(props);
+		this.state={DOMWidth: 400,mouseOverDomainId: null};
+		this._onDomainMouseLeave = this._onDomainMouseLeave.bind(this);
+	}
 
-	propTypes: {
-		data: React.PropTypes.array.isRequired,
-		locusData: React.PropTypes.object.isRequired,
-		colorScale: React.PropTypes.func // optional d3-ish scale
-	},
-
-	getInitialState: function () {
-		return {
-			DOMWidth: 400,
-			mouseOverDomainId: null
-		};
-	},
-	
-	render: function () {
-		return (
-			<div>
+	render(){
+		return(
+			<div>Protein Viewer New
+      <div>
 				{this._renderLabels()}
 				{this._renderViz()}
 			</div>
-		);
-	},
+      </div>
+		)
+	}
 
-	componentDidMount: function () {
+  componentDidMount(){
 		this._calculateWidth();
-	},
+		this.setState({isMounted:true});
+  }
 
-	_calculateWidth: function () {
-		var vizNodeWidth = this.refs.vizNode.getBoundingClientRect().width;
-		this.setState({ DOMWidth: vizNodeWidth });
-	},
+	componentWillUnmount(){
+		this.setState({isMounted:false});
+	}
 
-	_renderLabels: function () {
+  _calculateWidth() {
+		if(this.state.isMounted){
+			var vizNodeWidth = this.refs.vizNode.getBoundingClientRect().width;
+			this.setState({ DOMWidth: vizNodeWidth });
+		}
+	}
+
+  _renderLabels() {
 		var sources = this._getSources();
 
 		var trackedDomains = this._getTrackedDomains();
@@ -74,29 +75,24 @@ var ProteinViewer = React.createClass({
 				{labelNodes}
 			</div>
 		);
-	},
+	}
 
-	_renderViz: function () {
+  _renderViz() {
 		var domain = this._getXScale().domain();
 		var height = this._getHeight();
 
 		return (
 			<div onMouseLeave={this._onDomainMouseLeave} className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: height + 24 }}>
-				<StandaloneAxis
-					domain={domain}
-					leftRatio={0.20}
-					gridTicks={true}
-					orientation="bottom"
-				/>
+				<StandaloneAxis domain={domain} leftRatio={0.20} gridTicks={true} orientation="bottom" />
 				<div ref="vizNode" style={{ width: "80%", height: height, left: "20%", position: "absolute", top: 0, border: "1px solid #ddd"}}>
 					{this._getSVGNode()}
 					{this._getTooltipNode()}
 				</div>
 			</div>
 		);
-	},
+	}
 
-	_getSVGNode: function () {
+  _getSVGNode() {
 		var xScale = this._getXScale();
 		var yScale = this._getYScale();
 		var colorScale = this._getColorScale();
@@ -137,9 +133,9 @@ var ProteinViewer = React.createClass({
 				{domainNodes}
 			</svg>
 		);
-	},
+	}
 
-	_getLocusNode: function () {
+  _getLocusNode() {
 		if (!this.props.locusData) return null;
 		var width = this._getXScale()(this.props.locusData.end);
 		var pathString = GenerateTrapezoidPath(width);
@@ -150,16 +146,16 @@ var ProteinViewer = React.createClass({
 			<g transform="translate(0, 7)">
 				<line x1="0" x2={endX} y1={lineY} y2={lineY} stroke="#ddd" strokeDasharray="5 3" />
 				<path d={pathString} fill={LOCUS_FILL}/>
-				<text x={width/2} y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE} fill="white" anchor="middle">
+				<text x={width/2} y={DOMAIN_TEXT_FONT_SIZE} fontSize={DOMAIN_TEXT_FONT_SIZE} fill="white" textAnchor="middle">
 					{this.props.locusData.name}
 				</text>
 			</g>
 		);
-	},
+	}
 
-	_getTooltipNode: function () {
+  _getTooltipNode() {
 		if (!this.state.mouseOverDomainId) return null;
-
+		
 		var d = _.find(this.props.data, d => { return d.domain.id === this.state.mouseOverDomainId; });
 		var xScale = this._getXScale();
 		var left = xScale(d.start);
@@ -178,22 +174,22 @@ var ProteinViewer = React.createClass({
 			href={d.domain.href}
 			data={tooltipData}
 		/>);
-	},
+	}
 
-	_onDomainMouseOver: function (e, d) {
+  _onDomainMouseOver(e, d) {
 		if (this._mouseLeaveTimeout) clearTimeout(this._mouseLeaveTimeout)
 		this.setState({ mouseOverDomainId: d.domain.id });
-	},
+	}
 
-	_onDomainMouseLeave: function () {
+	_onDomainMouseLeave() {
 		this._mouseLeaveTimeout = setTimeout( () => {
-			if (this.isMounted()) {
+			if (this.state.isMounted) {
 				this.setState({ mouseOverDomainId: null });
 			}
 		}, MOUSE_LEAVE_DELAY);
-	},
+	}
 
-	_getSources: function () {
+	_getSources() {
 		var _groupedData = _.groupBy(this.props.data, d => {
 			return d.source.name;
 		});
@@ -205,24 +201,24 @@ var ProteinViewer = React.createClass({
 			return _.extend(_baseData, { numberDomains: _length });
 		});
 		return _dataAsArray;
-	},
+	}
 
-	_getTrackedDomains: function () {
+	_getTrackedDomains() {
 		// cache to this._trackedDomains
 		if (!this._trackedDomains) {
 			this._trackedDomains = AssignTracksToDomains(this.props.data);
 		}
 		return this._trackedDomains;
-	},
+	}
 
-	_getXScale: function () {
+	_getXScale() {
 		var locusData = this.props.locusData;
 		return d3.scale.linear()
 			.domain([locusData.start, locusData.end])
 			.range([-2, this.state.DOMWidth - 2]);
-	},
+	}
 
-	_getYScale: function () {
+	_getYScale() {
 		var startY = this.props.locusData ? LOCUS_HEIGHT : 0;
 		var domain = [];
 		var range = [];
@@ -242,20 +238,27 @@ var ProteinViewer = React.createClass({
 		return d3.scale.ordinal()
 			.domain(domain)
 			.range(range);
-	},
+	}
 
-	_getColorScale: function () {
+	_getColorScale() {
 		if (this.props.colorScale) return this.props.colorScale;
 		var sources = this._getSources()
 			.map( d => { return d.name; });
 		return d3.scale.category10()
 			.domain(sources);
-	},
+	}
 
-	_getHeight: function () {
+	_getHeight() {
 		var trackedDomains = this._getTrackedDomains();
 		var heightestTrackNum = d3.max(trackedDomains, d => { return d._track; });
 		return (heightestTrackNum + 2) * PX_PER_DOMAIN + LOCUS_HEIGHT;
 	}
-});
-export default ProteinViewer;
+};
+
+ProteinViewer.propTypes = {
+		data: PropTypes.array.isRequired,
+		locusData:PropTypes.object.isRequired,
+		colorScale:PropTypes.func // optional d3-ish scale
+};
+
+export default CalcWidthOnResize(ProteinViewer);
