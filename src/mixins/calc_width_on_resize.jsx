@@ -7,15 +7,16 @@ import React,{Component} from 'react';
 function CalcWidthOnResize(WrappedComponent){
 	return class extends Component{
 		componentDidMount(){
+			this._handleResize = this._handleResize.bind(this);
 			window.addEventListener('resize', this._handleResize);
 		}
 
 		_handleResize(){
-			this._calculateWidth();
+			this.refs.wrappedComponent._calculateWidth();
 		}
 
 		render(){
-			return(<WrappedComponent {...this.props}/>)
+			return(<WrappedComponent ref="wrappedComponent" {...this.props}/>)
 		}
 	}
 }
