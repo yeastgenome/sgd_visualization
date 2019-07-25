@@ -3,16 +3,21 @@
 	This mixin simply calls that method on resize
 */
 
-var CalcWidthOnRisize = {
-	componentDidMount: function() {
-		window.addEventListener('resize', this._handleResize);
-	},
+import React,{Component} from 'react';
+function CalcWidthOnResize(WrappedComponent){
+	return class extends Component{
+		componentDidMount(){
+			window.addEventListener('resize', this._handleResize);
+		}
 
-	_handleResize: function () {
-		if (this.isMounted()) {
+		_handleResize(){
 			this._calculateWidth();
 		}
-	}
-};
 
-export default CalcWidthOnRisize;
+		render(){
+			return(<WrappedComponent {...this.props}/>)
+		}
+	}
+}
+
+export default CalcWidthOnResize;
