@@ -1,7 +1,8 @@
 "use strict";
 import d3 from 'd3';
-import React from 'react';
+import React,{Component} from 'react';
 import _ from 'underscore';
+import PropTypes from 'prop-types';
 
 import AlignmentModel from './alignment_model.jsx';
 import FeatureViewer from '../feature_viewer.jsx';
@@ -11,48 +12,31 @@ import Parset from './parset.jsx';
 
 var LABEL_WIDTH = 150;
 
-var VariantViewer = React.createClass({
-	propTypes: {
-		name: React.PropTypes.string,
-		chromStart: React.PropTypes.number.isRequired,
-		chromEnd: React.PropTypes.number.isRequired,
-		contigName: React.PropTypes.string,
-		contigHref: React.PropTypes.string,
-		alignedDnaSequences: React.PropTypes.array,
-		alignedProteinSequences: React.PropTypes.array,
-		variantDataDna: React.PropTypes.array,
-		variantDataProtein: React.PropTypes.array,
-		dnaLength: React.PropTypes.number,
-		proteinLength: React.PropTypes.number,
-		strand: React.PropTypes.string, // "+" or "-"
-		isProteinMode: React.PropTypes.bool,
-		domains: React.PropTypes.array,
-		downloadCaption: React.PropTypes.string,
-	},
-
-	getInitialState: function () {
+class VariantViewer extends Component {
+	constructor(props){
+		super(props);
 		var _store = this._getNewStore();
-
-		return {
+		this.state = {
 			highlightedAlignedSegment: null, // [0, 100] relative coord to aligned sequence
 			parsetVisible: false,
 			x1Scale: function () { return 0; },
 			x2Scale: function () { return 0; },
 			store: _store
 		};
-	},
+	}
 
-	render: function () {
+	render() {
 		return (
 			<div className="sgd-viz variant-viewer">
-				{this._renderFeatureViewer()}
-				{this._renderParset()}
-				{this._renderSequence()}
+				<h1>VariantViewer</h1>
+				{/* {this._renderFeatureViewer()} */}
+				{/* {this._renderParset()} */}
+				{/* {this._renderSequence()} */}
 			</div>
 		);
-	},
+	}
 
-	_renderFeatureViewer: function () {
+	_renderFeatureViewer() {
 		var featureData = this.state.store.getFeatureTrackData("variantViewer");
 		var _features = featureData.features;
 		var _focusFeature = _features[0];
@@ -109,9 +93,9 @@ var VariantViewer = React.createClass({
 			model={model}
 			isProteinMode={this.props.isProteinMode}
 		/>);
-	},
+	}
 
-	_renderParset: function () {
+	_renderParset() {
 		var _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
 		// get ref highlighted coord
 		var model = this._getModel();
@@ -135,9 +119,9 @@ var VariantViewer = React.createClass({
 			x1Coordinates={parsetX1Coord}
 			x2Coordinates={parsetX2Coord}
 		/>);
-	},
+	}
 
-	_renderSequence: function () {
+	_renderSequence() {
 		var model = this._getModel();
 		var _sequences = model.formatSequences(this.props.isProteinMode, this.props.strainIds);
 		var _segments = model.formatSegments(this.props.isProteinMode);
@@ -155,22 +139,22 @@ var VariantViewer = React.createClass({
 				/>
 			</div>
 		);
-	},
+	}
 
-	_highlightSegment: function (start, end) {
+	_highlightSegment(start, end) {
 		this.setState({ highlightedAlignedSegment: [start, end] })
-	},
+	}
 
-	_getModel: function () {
+	_getModel() {
 		return new AlignmentModel({
 			alignedDnaSequences: this.props.alignedDnaSequences,
 			alignedProteinSequences: this.props.alignedProteinSequences,
 			variantDataDna: this.props.variantDataDna,
 			variantDataProtein: this.props.variantDataProtein
 		});
-	},
+	}
 
-	_getNewStore: function () {
+	_getNewStore(){
 		var _chromStart = this.props.chromStart;
 		var _chromEnd = this.props.chromEnd;
 		var _strand = this.props.strand || "+";
@@ -200,6 +184,24 @@ var VariantViewer = React.createClass({
 		store.addFeatureTrack(featureTrackData);
 		return store;
 	}
-});
+}
+
+VariantViewer.propTypes = {
+	name: PropTypes.string,
+		chromStart: PropTypes.number.isRequired,
+		chromEnd: PropTypes.number.isRequired,
+		contigName: PropTypes.string,
+		contigHref: PropTypes.string,
+		alignedDnaSequences: PropTypes.array,
+		alignedProteinSequences: PropTypes.array,
+		variantDataDna: PropTypes.array,
+		variantDataProtein: PropTypes.array,
+		dnaLength: PropTypes.number,
+		proteinLength: PropTypes.number,
+		strand: PropTypes.string, // "+" or "-"
+		isProteinMode: PropTypes.bool,
+		domains: PropTypes.array,
+		downloadCaption: PropTypes.string,
+}
 
 export default VariantViewer;
