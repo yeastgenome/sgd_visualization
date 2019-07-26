@@ -1,29 +1,21 @@
 "use strict";
 
 import d3 from 'd3';
-import React from 'react';
+import React,{Component} from 'react';
 import _ from 'underscore';
+import PropTypes from 'prop-types';
 
 // style static elements
 var HEIGHT = 70;
 var HIGHLIGHT_COLOR = "#EBDD71";
 var LINE_HEIGHT = 6;
 
-var Parset = React.createClass({
-	propTypes: {
-		isVisible: React.PropTypes.bool,
-		x1Coordinates: React.PropTypes.array,
-		x2Coordinates: React.PropTypes.array
-	},
+class Parset extends Component{
+	constructor(props){
+		super(props);
+	}
 
-	getDefaultProps: function () {
-		return {
-			isVisible: false,
-			text: ""
-		};
-	},
-
-	render: function () {
+	render(){
 		var _x1C = this.props.x1Coordinates;
 		var _x2C = this.props.x2Coordinates;
 		var x1 = [_x1C[0], _x1C[1]];
@@ -41,9 +33,9 @@ var Parset = React.createClass({
 				{x2LineNode}
 			</svg>
 		</div>);
-	},
+	}
 
-	_getX1LineNode: function () {
+	_getX1LineNode() {
 		return null;
 		if (!this.props.isVisible) return null;
 		var _x1C = this.props.x1Coordinates;
@@ -52,9 +44,9 @@ var Parset = React.createClass({
 			<line x1={_x1C[0]} x2={_x1C[1]} y1={LINE_HEIGHT} y2={LINE_HEIGHT} stroke="black" />
 			<line x1={_x1C[1]} x2={_x1C[1]} y1={0} y2={LINE_HEIGHT} stroke="black" />
 		</g>);
-	},
+	}
 
-	_getX2LineNode: function () {
+	_getX2LineNode() {
 		if (!this.props.isVisible) return null;
 
 		var _x2C = this.props.x2Coordinates;
@@ -64,6 +56,17 @@ var Parset = React.createClass({
 			<line x1={_x2C[1]} x2={_x2C[1]} y1={HEIGHT - LINE_HEIGHT} y2={HEIGHT} stroke="black" />
 		</g>);
 	}
-});
+}
+
+Parset.propTypes = {
+	isVisible: PropTypes.bool,
+	x1Coordinates: PropTypes.array,
+	x2Coordinates: PropTypes.array
+}
+
+Parset.defaultProps = {
+	isVisible: false,
+	text: ""
+}
 
 export default Parset;
