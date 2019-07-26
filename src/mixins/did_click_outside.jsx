@@ -7,29 +7,18 @@ import React,{Component} from 'react';
 function DidClickOutside(WrappedComponent){
 	return class extends Component{
 		componentDidMount(){
+			this._handleClick = this._handleClick.bind(this);
 			document.addEventListener("click",this._handleClick);
 		}
 
 		_handleClick(){
-			if (this.isMounted() && this.didClickOutside) {
-				this.didClickOutside();
-			}
+			this.refs.wrapper.didClickOutside();
 		}
 
 		render(){
-			return(<WrappedComponent />);
+			return(<WrappedComponent ref="wrapper" />);
 		}
 	}
 }
 
-export default DidClickOutside = {
-	// add event listener to document to dismiss when clicking
-	componentDidMount: function () {
-		document.addEventListener("click", () => {
-			if (this.isMounted() && this.didClickOutside) {
-				this.didClickOutside();
-			}
-		});
-	},
-};
-
+export default DidClickOutside;
