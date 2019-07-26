@@ -1,18 +1,18 @@
 "use strict";
 import d3 from 'd3';
-import React from 'react';
+import React,{Component} from 'react';
 import _ from 'underscore';
+import PropTypes from 'prop-types';
 
 var TICK_HEIGHT = 6;
 var HEIGHT = 40;
 
-var MultiScaleAxis = React.createClass({
-	propTypes: {
-		segments: React.PropTypes.array.isRequired,
-		scale: React.PropTypes.func.isRequired
-	},
+class MultiScaleAxis extends Component{
+	constructor(props){
+		super(props);
+	}
 
-	render: function () {
+	render(){
 		var tickNodes = this._getTickNodes();
 		var segmentNodes = this._getSegmentNodes();
 
@@ -20,9 +20,9 @@ var MultiScaleAxis = React.createClass({
 			{tickNodes}
 			{segmentNodes}
 		</svg>);
-	},
+	}
 
-	_getSegmentNodes: function () {
+	_getSegmentNodes() {
 		var scale = this.props.scale;
 		var segmentNodes= _.map(this.props.segments, (s, i) => {
 			var _y = HEIGHT - 1;
@@ -37,9 +37,26 @@ var MultiScaleAxis = React.createClass({
 			/>);
 		});
 		return segmentNodes;
-	},
+	}
 
-	_getTickNodes: function () {
+	_getSegmentNodes() {
+		var scale = this.props.scale;
+		var segmentNodes= _.map(this.props.segments, (s, i) => {
+			var _y = HEIGHT - 1;
+			return (<line key={"segmentLine" + i}
+				x1={scale(s.domain[0] - 1)}
+				x2={scale(s.domain[1] - 1)}
+				y1={_y}
+				y2={_y}
+				strokeDasharray={s.visible ? null : "3px 3px"}
+				stroke="black"
+				fill="none"
+			/>);
+		});
+		return segmentNodes;
+	}
+
+	_getTickNodes() {
 		var scale = this.props.scale;
 
 		var tickData = _.reduce(this.props.segments, (memo, s) => {
@@ -61,6 +78,12 @@ var MultiScaleAxis = React.createClass({
 		});
 		return <g>{tickNodes}</g>
 	}
-});
+
+}
+
+MultiScaleAxis.propTypes = {
+	segments: PropTypes.array.isRequired,
+	scale: PropTypes.func.isRequired
+}
 
 export default MultiScaleAxis;
