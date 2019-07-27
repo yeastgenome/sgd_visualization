@@ -1,8 +1,9 @@
 "use strict";
 import d3 from 'd3';
-import React from 'react';
+import React,{Component} from 'react';
 import Radium from 'radium';
 import _ from 'underscore';
+import PropTypes from 'prop-types';
 
 import AssignTracksToDomains from  './assign_tracks_to_domains';
 import CalculateCanvasRatio from '../mixins/calculate_canvas_ratio';
@@ -11,40 +12,26 @@ import FlexibleTooltip from './flexible_tooltip';
 import VariantLegend from './variant_legend';
 import appStyle from './style'; 
 
-var FeatureViewer = React.createClass({
-	mixins: [CalculateCanvasRatio],
-	propTypes: {
-		featureTrackId: React.PropTypes.string,
-		canScroll: React.PropTypes.bool,
-		chromStart: React.PropTypes.number,
-		chromEnd: React.PropTypes.number,
-		domains: React.PropTypes.array, // [{ name, id, start, end, sourceName, sourceId }, ...]
-		features: React.PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
-		focusFeature: React.PropTypes.object, // { chromStart, chromEnd, strand }
-		highlightedSegment: React.PropTypes.array, // []
-		onSetScale: React.PropTypes.func,
-		variantData: React.PropTypes.array, // [{ coordinates: [0, 5], referenceCoordinates: [0, 5], type: "SNP", snpType: "intron" }, ...]
-		onHighlightSegment: React.PropTypes.func,
-		onForceUpdate: React.PropTypes.func,
-		isRelative: React.PropTypes.bool,
-		drawIntrons: React.PropTypes.bool,
-		downloadCaption: React.PropTypes.string,
-		contigName: React.PropTypes.string,
-		contigHref: React.PropTypes.string,
-		forceLength: React.PropTypes.number,
-		isProteinMode: React.PropTypes.bool
-	},
+class FeatureViewer extends Component{
+	constructor(props){
+		super(props);
+		this.state = {DOMWidth: 400,
+			offsetLeft: 0,
+			offsetTop: 0,
+			computedForceData: null,
+			trackedDomains: null,
+			canvasRatio: 1,
+			toolTipVisible: false,
+			toolTipTop: 0,
+			toolTipLeft: 0,
+			toolTipText: "",
+			toolTipHref: null}
 
-	getDefaultProps: function () {
-		return {
-			canScroll: true,
-			drawIntrons: true,
-			isRelative: false,
-			isProteinMode: false
-		};
-	},
-
-	render: function () {
+			this._clearToolTip = this._clearToolTip.bind(this);
+			this._download = this._download.bind(this);
+	}
+	
+	render(){
 		var _width = this.state.DOMWidth;
 		var _height = this._calculateHeight();
 		var canvasRatio = this.state.canvasRatio;
@@ -63,40 +50,24 @@ var FeatureViewer = React.createClass({
 				</div>
 			</div>
 		);
-	},
+	}
 
-	getInitialState: function () {
-		return {
-			DOMWidth: 400,
-			offsetLeft: 0,
-			offsetTop: 0,
-			computedForceData: null,
-			trackedDomains: null,
-			canvasRatio: 1,
-			toolTipVisible: false,
-			toolTipTop: 0,
-			toolTipLeft: 0,
-			toolTipText: "",
-			toolTipHref: null
-		};
-	},
-
-	componentDidMount: function () {
+	componentDidMount(){
 		var frame = this.refs.frame;
 		// scroll to half
 		frame.scrollLeft = SCROLL_START;
 		frame.scrollTop = MAX_Y_SCROLL;
 
-		this.calculateCanvasRatio();
+		this.setState({canvasRatio:this.props.calculateCanvasRatio(this)});
 		this._calculateWidth();
 		this._drawCanvas();
 		if (this.props.canScroll) frame.addEventListener("scroll", this._onScroll);
 		if (this.props.domains) this._updateTrackedDomains();
 		// mobile stuff
 		// if (isMobile) this._setupZoomEvents();
-	},
+	}
 
-	_renderTooltip: function () {
+	_renderTooltip(){
 		var toolTipProps = {
 			visible: this.state.toolTipVisible,
 			top: this.state.toolTipTop,
@@ -105,16 +76,16 @@ var FeatureViewer = React.createClass({
 			href: this.state.toolTipHref
 		};
 		return <FlexibleTooltip onMouseEnter={this._clearMouseOverTimeout} {...toolTipProps} />;
-	},
+	}
 
-	_calculateHeight: function () {
+	_calculateHeight(){
 		if (!this.state.trackedDomains) return (HEIGHT + FONT_SIZE * 2) * this.state.canvasRatio;
 		var yScaleRange = this._getDomainYScale().range();
 		var domainHeight = yScaleRange[1] - yScaleRange[0] + (HEIGHT + FONT_SIZE * 3 + 35) * this.state.canvasRatio;
 		return domainHeight;
-	},
+	}
 
-	_setupZoomEvents: function () {
+	_setupZoomEvents(){
 		// play with d3 zoom
 		var scroller = this.refs.scroller;
 		var scale = this._getScale();
@@ -126,9 +97,9 @@ var FeatureViewer = React.createClass({
 				this.props.onSetScale(scale);
 			});
 		d3.select(scroller).call(zoomFn);
-	},
+	}
 
-	componentDidUpdate: function (prevProps, prevState) {
+	componentDidUpdate(prevProps, prevState) {
 		this._drawCanvas();
 		var isNewDomain = (prevProps.forceLength !== this.props.forceLength) ||
 			(prevProps.chromStart !== this.props.chromStart) ||
@@ -154,9 +125,9 @@ var FeatureViewer = React.createClass({
 			this._updateTrackedDomains();
 			this._clearToolTip();
 		}
-	},
+	}
 
-	_renderControls: function () {
+	_renderControls(){
 		var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
 		return (
 			<div style={[style.uiContainer]}>
@@ -171,9 +142,9 @@ var FeatureViewer = React.createClass({
 				</div>
 			</div>
 		);
-	},
+	}
 
-	_recalculateForceLayout: function () {
+	_recalculateForceLayout(){
 		var raw = this._getRawVariants();
 		var forceFn = d3.layout.force()
 			.nodes(raw)
@@ -186,9 +157,9 @@ var FeatureViewer = React.createClass({
 			// });
 		forceFn.start();
 		this.setState({ computedForceData: forceFn.nodes() });
-	},
+	}
 
-	_renderVoronoi: function () {
+	_renderVoronoi(){
 		if (!this.state.computedForceData) return null;
 		var scale = this._getScale();
 		var avgCoord, x;
@@ -275,16 +246,16 @@ var FeatureViewer = React.createClass({
 				{pathNodes}
 			</svg>
 		);
-	},
+	}
 
-	_calculateWidth: function () {
+	_calculateWidth(){
 		var _width = this.refs.wrapper.getBoundingClientRect().width - 1;
 		this.setState({
 			DOMWidth: _width
 		});
-	},
+	}
 
-	_drawCanvas: function () {
+	_drawCanvas(){
 		var canvas = this.refs.canvas;
 		var ctx = canvas.getContext("2d");
 		ctx.font = FONT_SIZE * this.state.canvasRatio + "px 'Lato' sans-serif";
@@ -297,9 +268,9 @@ var FeatureViewer = React.createClass({
 		this._drawFeatures(ctx);
 		this._drawVariants(ctx);
 		this._drawDomains(ctx);
-	},
+	}
 
-	_drawFeatures: function (ctx) {
+	_drawFeatures(ctx) {
 		ctx.fillStyle = FILL_COLOR;
 		var scale = this._getScale();
 		var startOffset = this.props.isRelative ? this.props.chromStart : 0;
@@ -377,9 +348,9 @@ var FeatureViewer = React.createClass({
 				ctx.fill();
 			}
 		});
-	},
+	}
 
-	_drawHighlightedSegment: function (ctx) {
+	_drawHighlightedSegment(ctx) {
 		if (!this.props.highlightedSegment) return;
 		var scale = this._getScale();
 		var start = this.props.highlightedSegment[0];
@@ -391,9 +362,9 @@ var FeatureViewer = React.createClass({
 		var height = this._calculateHeight();
 		ctx.fillStyle = HIGHLIGHT_COLOR;
 		ctx.fillRect(startX, 0 , width, height);
-	},
+	}
 
-	_drawAxis: function (ctx) {
+	_drawAxis(ctx) {
 		var scale = this._getScale();
 		var ticks = scale.ticks();
 		var canvasRatio = this.state.canvasRatio;
@@ -421,9 +392,9 @@ var FeatureViewer = React.createClass({
 				ctx.stroke();
 			}
 		});
-	},
+	}
 
-	_drawVariants: function (ctx) {
+	_drawVariants(ctx) {
 		var computedData = this.state.computedForceData;
 		var canvasRatio = this.state.canvasRatio;
 		// TEMP
@@ -444,10 +415,10 @@ var FeatureViewer = React.createClass({
 			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), x, y, stemX, stemY, canvasRatio);
 		});
 		
-	},
+	}
 
 	// input for force layout, get array of "natural" positions of variant nodes
-	_getRawVariants: function () {
+	_getRawVariants(){
 		var scale = this._getScale();
 		var positionOffset = this.props.isRelative ? 0 : this.props.focusFeature.chromStart;
 		var _y = (FEATURE_Y + TRACK_HEIGHT / 2  - VARIANT_HEIGHT) * this.state.canvasRatio;
@@ -462,9 +433,9 @@ var FeatureViewer = React.createClass({
 				y: _y
 			});
 		});
-	},
+	}
 
-	_drawDomains: function (ctx) {
+	_drawDomains(ctx) {
 		var domains = this.state.trackedDomains;
 		if (!domains) return;
 		var xScale = this._getScale();
@@ -516,9 +487,9 @@ var FeatureViewer = React.createClass({
 			// label if there's size
 			if (ctx.measureText(d.name).width < width) ctx.fillText(d.name, textX, textY);;
 		});
-	},
+	}
 
-	_getScale: function () {
+	_getScale(){
 		var chromLength = Math.abs(this.props.chromEnd - this.props.chromStart);
 		var length = (typeof this.props.forceLength === "undefined") ? chromLength : this.props.forceLength;
 		var _domain = this.props.isRelative ?
@@ -527,10 +498,10 @@ var FeatureViewer = React.createClass({
 		return d3.scale.linear()
 			.domain(_domain)
 			.range([10, (this.state.DOMWidth - 10) * this.state.canvasRatio]);
-	},
+	}
 
 	// undo effect of canvas ratio on scales for
-	_getAdjustedScale: function () {
+	_getAdjustedScale(){
 		var oldScale = this._getScale();
 		var newRange = oldScale.range()
 			.map( d => {
@@ -538,15 +509,15 @@ var FeatureViewer = React.createClass({
 			});
 		oldScale.range(newRange);
 		return oldScale;
-	},
+	}
 
-	_updateTrackedDomains: function () {
+	_updateTrackedDomains(){
 		var _trackedDomains = AssignTracksToDomains(this.props.domains);
 		if (!this.props.domains) _trackedDomains = null;
 		this.setState({ trackedDomains: _trackedDomains });
-	},
+	}
 
-	_getDomainYScale: function () {
+	_getDomainYScale(){
 		var trackedDomains = this.state.trackedDomains;
 		var trackAttr = "_track";
 		var allTracks = trackedDomains.map( d => { return d[trackAttr]; });
@@ -560,9 +531,9 @@ var FeatureViewer = React.createClass({
 		return d3.scale.linear()
 			.domain([startTrack, topTrack])
 			.range([startY * this.state.canvasRatio, stopY * this.state.canvasRatio]);
-	},
+	}
 
-	_onScroll: function (e) {
+	_onScroll(e) {
 		return // TEMP
 		var frame = this.refs.frame;
 		var left = frame.scrollLeft;
@@ -588,14 +559,14 @@ var FeatureViewer = React.createClass({
 
 		this.setState({ offsetLeft: left, offsetTop: top });
 		if (typeof this.props.onForceUpdate === "function") this.props.onForceUpdate();
-	},
+	}
 
-	_clearToolTip: function () {
+	_clearToolTip(){
 		this.setState({ toolTipVisible: false });
-	},
+	}
 
 	// convert canvas to png, download to user's browser downloads
-	_download: function () {
+	_download(){
 		var canvas = this.refs.canvas;
 		if (this.props.downloadCaption) {
 			var ctx = canvas.getContext("2d");
@@ -610,20 +581,50 @@ var FeatureViewer = React.createClass({
 	   	img = img.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
 	    window.location.href = img;
 	    this._drawCanvas();
-	},
+	}
 
-	_onMouseOver: function (cb) {
+	_onMouseOver(cb) {
 		this._clearMouseOverTimeout();
 		this._mouseOverTimeout = setTimeout( () => {
 			cb();
 		}, TOOLTIP_DELAY);
-	},
-	_clearMouseOverTimeout: function () {
+	}
+
+	_clearMouseOverTimeout(){
 		if (this._mouseOverTimeout) clearTimeout(this._mouseOverTimeout);
 	}
-});
+}
 
-export default Radium(FeatureViewer);
+FeatureViewer.propTypes = {
+	featureTrackId: PropTypes.string,
+	canScroll: PropTypes.bool,
+	chromStart: PropTypes.number,
+	chromEnd: PropTypes.number,
+	domains: PropTypes.array, // [{ name, id, start, end, sourceName, sourceId }, ...]
+	features: PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
+	focusFeature: PropTypes.object, // { chromStart, chromEnd, strand }
+	highlightedSegment: PropTypes.array, // []
+	onSetScale: PropTypes.func,
+	variantData: PropTypes.array, // [{ coordinates: [0, 5], referenceCoordinates: [0, 5], type: "SNP", snpType: "intron" }, ...]
+	onHighlightSegment: PropTypes.func,
+	onForceUpdate: PropTypes.func,
+	isRelative: PropTypes.bool,
+	drawIntrons: PropTypes.bool,
+	downloadCaption: PropTypes.string,
+	contigName: PropTypes.string,
+	contigHref: PropTypes.string,
+	forceLength: PropTypes.number,
+	isProteinMode: PropTypes.bool
+}
+
+FeatureViewer.defaultProps = {
+	canScroll: true,
+	drawIntrons: true,
+	isRelative: false,
+	isProteinMode: false
+}
+
+export default CalculateCanvasRatio(Radium(FeatureViewer));
 
 var DOMAIN_VORONOI_INTERVAL = 30; // add a new voronoi point for every n px across domain
 var HEIGHT = 70;
