@@ -23,15 +23,16 @@ class VariantViewer extends Component {
 			x2Scale: function () { return 0; },
 			store: _store
 		};
+		this._highlightSegment = this._highlightSegment.bind(this);
 	}
 
 	render() {
 		return (
 			<div className="sgd-viz variant-viewer">
 				<h1>VariantViewer</h1>
-				{/* {this._renderFeatureViewer()} */}
-				{/* {this._renderParset()} */}
-				{/* {this._renderSequence()} */}
+				{this._renderFeatureViewer()}
+				{this._renderParset()}
+				{this._renderSequence()}
 			</div>
 		);
 	}
