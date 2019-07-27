@@ -16,7 +16,7 @@ function DidClickOutside(WrappedComponent){
 		}
 
 		render(){
-			return(<WrappedComponent ref="wrapper" />);
+			return(<WrappedComponent ref="wrapper" {...this.props}/>);
 		}
 	}
 }
