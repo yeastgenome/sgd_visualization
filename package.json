@@ -24,10 +24,16 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
     "browserify": "^16.3.0",
     "mkdirp": "^0.5.0",
     "node-jsx": "~0.12.4",
-    "watchify": "^3.11.1"
+    "watchify": "^3.11.1",
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6"
   },
   "scripts": {
     "test": "mocha",
