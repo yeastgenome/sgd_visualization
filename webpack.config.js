@@ -4,8 +4,8 @@ module.exports = {
   entry: "./src/index.js",
   mode: 'development',
   output: {
-    filename: "./sgd_visualization.js",
-    path: path.join(__dirname, "build")
+    filename: "./index.js",
+    path: path.join(__dirname, "lib")
   },
 
   module: {

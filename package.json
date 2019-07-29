@@ -1,7 +1,7 @@
 {
   "name": "sgd_visualization",
   "version": "1.0.12",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/yeastgenome/sgd_visualization",
   "homepage": "http://www.yeastgenome.org",
   "browserify": {
@@ -37,7 +37,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "build": "mkdirp build && browserify -r ./:sgd_visualization -o build/sgd_visualization.js",
+    "build":"webpack --mode production",
     "build-browser": "npm run build",
     "watch": "watchify -r ./:sgd_visualization -v -o build/sgd_visualization.js",
     "w": "prunner \"npm run sniper\" \"npm run watch\"",
