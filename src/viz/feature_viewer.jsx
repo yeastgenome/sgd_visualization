@@ -29,6 +29,7 @@ class FeatureViewer extends Component{
 
 			this._clearToolTip = this._clearToolTip.bind(this);
 			this._download = this._download.bind(this);
+			this._clearMouseOverTimeout = this._clearMouseOverTimeout.bind(this);
 	}
 	
 	render(){

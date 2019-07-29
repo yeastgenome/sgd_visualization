@@ -13,6 +13,7 @@ class MultiAlignmentViewer extends Component{
 	constructor(props){
 		super(props);
 		this.state = {activeSequenceName: null};
+		this._onScroll = this._onScroll.bind(this);
 	}
 
 	render() {
