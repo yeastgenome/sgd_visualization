@@ -1,6 +1,6 @@
 "use strict";
 
-import _ProteinViewerComponent from './viz/protein_viewer.jsx';
+import ProteinViewerComponent from './viz/protein_viewer.jsx';
 import _VariantViewerComponent from './viz/variant_viewer/variant_viewer.jsx';
 
 var exampleData = require("./variant_viewer_fixture_data.json");
@@ -65,7 +65,7 @@ class _ProteinViewer {
 	}
 }
 
-export default ProteinViewer = _ProteinViewer;
+export default ProteinViewerComponent;
 
 // export  {
 // 	_ProteinViewer as ProteinViewer,
