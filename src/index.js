@@ -65,9 +65,11 @@ class _ProteinViewer {
 	}
 }
 
-export  {
-	_ProteinViewer as ProteinViewer,
-	_VariantViewer as VariantViewer,
-	_ProteinViewerComponent as ProteinViewerComponent,
-	_VariantViewerComponent as VariantViewerComponent
-};
+export default ProteinViewer = _ProteinViewer;
+
+// export  {
+// 	_ProteinViewer as ProteinViewer,
+// 	_VariantViewer as VariantViewer,
+// 	_ProteinViewerComponent as ProteinViewerComponent,
+// 	_VariantViewerComponent as VariantViewerComponent
+// };
