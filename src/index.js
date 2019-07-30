@@ -81,11 +81,12 @@ class TestComponent extends Component{
 		window.addEventListener("click",this.handleClick);
 	}
 	handleClick(){
-		console.log(this.refs.tc);
+		// console.log(this.refs.tc);
+		console.log('No refs');
 	}
 	render(){
 		return(
-			<h1 ref='tc'>Test Component</h1>
+			<h1>Test Component</h1>
 		)
 	}
 }
