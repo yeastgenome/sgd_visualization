@@ -41,7 +41,8 @@
     "build-browser": "npm run build",
     "watch": "watchify -r ./:sgd_visualization -v -o build/sgd_visualization.js",
     "w": "prunner \"npm run sniper\" \"npm run watch\"",
-    "sniper": "sniper ."
+    "sniper": "sniper .",
+    "prepublish":"npm run build"
   },
   "sniper": {
     "js": [
