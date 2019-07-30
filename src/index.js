@@ -75,9 +75,17 @@
 
 import React,{Component} from 'react';
 class TestComponent extends Component{
+	constructor(props){
+		super(props);
+		this.handleClick = this.handleClick.bind(this);
+		window.addEventListener("click",this.handleClick);
+	}
+	handleClick(){
+		console.log(this.refs.tc);
+	}
 	render(){
 		return(
-			<h1>Test Component</h1>
+			<h1 ref='tc'>Test Component</h1>
 		)
 	}
 }
