@@ -80,6 +80,9 @@ class TestComponent extends Component{
 		this.handleClick = this.handleClick.bind(this);
 		window.addEventListener("click",this.handleClick);
 	}
+
+	
+
 	handleClick(){
 		console.log(this);
 		console.log(this.refs.header);
