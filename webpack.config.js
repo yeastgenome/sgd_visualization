@@ -5,7 +5,8 @@ module.exports = {
   mode: 'development',
   output: {
     filename: "./index.js",
-    path: path.join(__dirname, "lib")
+    path: path.join(__dirname, "lib"),
+    libraryTarget: 'commonjs2'
   },
 
   module: {
@@ -23,6 +24,9 @@ module.exports = {
     ]
   },
   resolve: {
+    alias: {
+      'react': path.join(__dirname, 'node_modules', 'react')
+    },
     extensions: ['*', '.js', '.jsx'],
   },
   stats: {
