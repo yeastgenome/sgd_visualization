@@ -45,7 +45,7 @@ class ProteinViewer extends Component{
 
   _calculateWidth() {
 		if(this.state.isMounted){
-			var vizNodeWidth = this.refs.vizNode.getBoundingClientRect().width;
+			var vizNodeWidth = this.vizNode.getBoundingClientRect().width;
 			this.setState({ DOMWidth: vizNodeWidth });
 		}
 	}
@@ -82,7 +82,7 @@ class ProteinViewer extends Component{
 		return (
 			<div onMouseLeave={this._onDomainMouseLeave} className="protein-viewer-viz-container"  style={{ position: "relative", width: "100%", height: height + 24 }}>
 				<StandaloneAxis domain={domain} leftRatio={0.20} gridTicks={true} orientation="bottom" />
-				<div ref="vizNode" style={{ width: "80%", height: height, left: "20%", position: "absolute", top: 0, border: "1px solid #ddd"}}>
+				<div ref={(vizNode) => this.vizNode = vizNode} style={{ width: "80%", height: height, left: "20%", position: "absolute", top: 0, border: "1px solid #ddd"}}>
 					{this._getSVGNode()}
 					{this._getTooltipNode()}
 				</div>

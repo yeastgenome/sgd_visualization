@@ -12,11 +12,11 @@ function CalcWidthOnResize(WrappedComponent){
 		}
 
 		_handleResize(){
-			this.refs.wrappedComponent._calculateWidth();
+			this.wrappedComponent._calculateWidth();
 		}
 
 		render(){
-			return(<WrappedComponent ref="wrappedComponent" {...this.props}/>)
+			return(<WrappedComponent ref={(wrappedComponent) => this.wrappedComponent = wrappedComponent} {...this.props}/>)
 		}
 	}
 }
