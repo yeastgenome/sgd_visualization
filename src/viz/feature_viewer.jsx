@@ -39,12 +39,12 @@ class FeatureViewer extends Component{
 		var containerHeight = _height / canvasRatio;
 		var scrollerNode = null// {this.props.canScroll ? <div ref="scroller" style={[style.scroller]} /> : null} // TEMP
 		return (
-			<div ref="wrapper" className="feature-viewer">
+			<div ref={(wrapper)=>this.wrapper=wrapper} className="feature-viewer">
 				{this._renderControls()}
 				<div onMouseLeave={this._clearToolTip} style={[style.container]}>
 					{this._renderTooltip()}
-					<canvas ref="canvas" width={_width * canvasRatio} height={_height} style={[style.canvas, { width: _width, height: _height / canvasRatio }]} />
-					<div ref="frame" style={[style.frame, { height: containerHeight }]}>
+					<canvas ref={(canvas)=>this.canvas=canvas} width={_width * canvasRatio} height={_height} style={[style.canvas, { width: _width, height: _height / canvasRatio }]} />
+					<div ref={(frame)=>this.frame =frame} style={[style.frame, { height: containerHeight }]}>
 						{this._renderVoronoi()}
 						{scrollerNode}
 					</div>
@@ -54,7 +54,7 @@ class FeatureViewer extends Component{
 	}
 
 	componentDidMount(){
-		var frame = this.refs.frame;
+		var frame = this.frame;
 		// scroll to half
 		frame.scrollLeft = SCROLL_START;
 		frame.scrollTop = MAX_Y_SCROLL;
@@ -88,7 +88,7 @@ class FeatureViewer extends Component{
 
 	_setupZoomEvents(){
 		// play with d3 zoom
-		var scroller = this.refs.scroller;
+		var scroller = this.scroller;
 		var scale = this._getScale();
 		var zoomFn = d3.behavior.zoom()
 			.y(scale)
@@ -250,14 +250,14 @@ class FeatureViewer extends Component{
 	}
 
 	_calculateWidth(){
-		var _width = this.refs.wrapper.getBoundingClientRect().width - 1;
+		var _width = this.wrapper.getBoundingClientRect().width - 1;
 		this.setState({
 			DOMWidth: _width
 		});
 	}
 
 	_drawCanvas(){
-		var canvas = this.refs.canvas;
+		var canvas = this.canvas;
 		var ctx = canvas.getContext("2d");
 		ctx.font = FONT_SIZE * this.state.canvasRatio + "px 'Lato' sans-serif";
 		ctx.textAlign = "center";
@@ -568,7 +568,7 @@ class FeatureViewer extends Component{
 
 	// convert canvas to png, download to user's browser downloads
 	_download(){
-		var canvas = this.refs.canvas;
+		var canvas = this.canvas;
 		if (this.props.downloadCaption) {
 			var ctx = canvas.getContext("2d");
 			var fontSize = FONT_SIZE * this.state.canvasRatio;

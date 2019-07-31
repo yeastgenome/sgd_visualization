@@ -115,7 +115,7 @@ class VariantViewer extends Component {
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
 		}
-		return (<Parset ref="parset"
+		return (<Parset ref={(parset)=>this.parset=parset}
 			isVisible={true}
 			x1Coordinates={parsetX1Coord}
 			x2Coordinates={parsetX2Coord}
@@ -132,7 +132,7 @@ class VariantViewer extends Component {
 
 		return (
 			<div>
-				<MultiAlignmentViewer ref="multiAlignmentViewer"
+				<MultiAlignmentViewer ref={(multiAlignmentViewer)=>this.multiAlignmentViewer=multiAlignmentViewer}
 					segments={_segments} sequences={_sequences}
 					onSetScale={_onSetX2Scale} onHighlightSegment={this._highlightSegment}
 					highlightedSegmentDomain={this.state.highlightedAlignedSegment}
