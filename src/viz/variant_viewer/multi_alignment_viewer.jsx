@@ -23,10 +23,10 @@ class MultiAlignmentViewer extends Component{
 
 		return (<div>
 			{this._getLabelsNode()}
-			<div ref="scroller" style={[style.scroller]}>
+			<div ref={(scroller) => this.scroller  = scroller} style={[style.scroller]}>
 				<div style={{ width: maxX + FONT_SIZE }}>
 					<MultiScaleAxis segments={this.props.segments} scale={xScale} />
-					<svg ref="svg" style={{ width: maxX + FONT_SIZE, height: svgHeight }}>
+					<svg ref={(svg) => this.svg = svg} style={{ width: maxX + FONT_SIZE, height: svgHeight }}>
 						{this._getSegmentNodes()}
 						{this._getVisibleSegmentNodes()}
 					</svg>
@@ -40,7 +40,7 @@ class MultiAlignmentViewer extends Component{
 			var _scale = this._getXScale();
 			this.props.onSetScale(_scale);
 		}
-		this.refs.scroller.onscroll = this._onScroll;
+		this.scroller.onscroll = this._onScroll;
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -53,7 +53,7 @@ class MultiAlignmentViewer extends Component{
 
 	_onScroll(e) {
 		if (!this.props.onSetScale) return;
-		var _scrollLeft = this.refs.scroller.scrollLeft;
+		var _scrollLeft = this.scroller.scrollLeft;
 		var _xScale = this._getXScale();
 		var _oldRange = _xScale.range();
 		var _newRange = _oldRange.map( d => {

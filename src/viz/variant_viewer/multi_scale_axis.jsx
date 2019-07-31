@@ -16,7 +16,7 @@ class MultiScaleAxis extends Component{
 		var tickNodes = this._getTickNodes();
 		var segmentNodes = this._getSegmentNodes();
 
-		return (<svg ref="svg" style={{ width: "100%", height: HEIGHT }}>
+		return (<svg ref={(svg)=> this.svg=svg} style={{ width: "100%", height: HEIGHT }}>
 			{tickNodes}
 			{segmentNodes}
 		</svg>);

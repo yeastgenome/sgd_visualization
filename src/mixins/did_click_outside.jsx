@@ -12,11 +12,11 @@ function DidClickOutside(WrappedComponent){
 		}
 
 		_handleClick(){
-			this.refs.wrapper.didClickOutside();
+			this.wrappedComponent.didClickOutside();
 		}
 
 		render(){
-			return(<WrappedComponent ref="wrapper" {...this.props}/>);
+			return(<WrappedComponent ref={(wrappedComponent) => this.wrappedComponent = wrappedComponent} {...this.props}/>);
 		}
 	}
 }

@@ -86,7 +86,7 @@ class VariantLegend extends Component{
 		var canvasRatio = this.state.canvasRatio;
 		return (
 			<div style={style.panel}>
-				<canvas ref="canvas"
+				<canvas ref={(canvas)=>this.canvas = canvas}
 					width={_width * canvasRatio} height={_height * canvasRatio}
 					style={{ width: _width, height: _height }}
 				/>
@@ -125,7 +125,7 @@ class VariantLegend extends Component{
 		var yDelta = (LABEL_HEIGHT + LABEL_BOTTOM + 1);
 		var width = this._getWidth() * canvasRatio;
 		var height = this._getHeight() * canvasRatio;
-		var canvas = this.refs.canvas;
+		var canvas = this.canvas;
 		var ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, width, height);
 		var i = 0;
