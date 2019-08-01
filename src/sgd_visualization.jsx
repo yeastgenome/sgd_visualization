@@ -2,10 +2,7 @@
 
 import d3 from 'd3';
 import React from 'react';
+import ProteinViewer from '../src/viz/protein_viewer.jsx';
+import VariantViewer from '../src/viz/variant_viewer/variant_viewer.jsx';
 
-var SGDVisualization = {
-	ProteinViewer: require("./viz/protein_viewer.jsx"),
-	VariantViewer: require("./viz/variant_viewer/variant_viewer.jsx")
-};
-
-export default SGDVisualization;
+export { ProteinViewer, VariantViewer };
