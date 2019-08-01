@@ -29,7 +29,6 @@ class VariantViewer extends Component {
 	render() {
 		return (
 			<div className="sgd-viz variant-viewer">
-				<h1>VariantViewer</h1>
 				{this._renderFeatureViewer()}
 				{this._renderParset()}
 				{this._renderSequence()}
