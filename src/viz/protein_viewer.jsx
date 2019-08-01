@@ -28,7 +28,7 @@ class ProteinViewer extends Component{
 
 	render(){
 		return(
-      <div>
+      <div className="sgd-viz protein-viewer">
 				{this._renderLabels()}
 				{this._renderViz()}
 			</div>
