@@ -27,22 +27,28 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
+    "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.6",
     "browserify": "^16.3.0",
+    "jest": "^24.8.0",
     "mkdirp": "^0.5.0",
     "node-jsx": "~0.12.4",
+    "react-test-renderer": "^16.8.6",
     "watchify": "^3.11.1",
     "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6"
   },
+  "babel":{
+    "presets": ["@babel/preset-react", "@babel/preset-env"]
+  },
   "scripts": {
-    "test": "mocha",
+    "test": "jest",
     "build": "webpack --mode development",
     "build-browser": "npm run build",
     "watch": "watchify -r ./:sgd_visualization -v -o build/sgd_visualization.js",
     "w": "prunner \"npm run sniper\" \"npm run watch\"",
     "sniper": "sniper .",
-    "prepublish":"npm run build"
+    "prepublish": "npm run build"
   },
   "sniper": {
     "js": [
