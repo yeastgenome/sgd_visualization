@@ -1,12 +1,11 @@
-var assert = require("assert");
-var React = require("react");
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 // jsx
 require("node-jsx").install({ harmony: true });
 
-var ProteinViewer = require("../src/sgd_visualization.jsx").ProteinViewer;
+import {ProteinViewer} from '../src/sgd_visualization';
 
-describe("ProteinViewer", function(){
-	it("should render to a viz with classes 'sgd-viz' and 'protein-viewer'", function(){
+test("should render to a viz with classes 'sgd-viz' and 'protein-viewer'",()=>{
 		var _data = [
 			{
 				start: 1,
@@ -52,11 +51,8 @@ describe("ProteinViewer", function(){
 			href: "http://google.com"
 		};
 
-		var markup = React.renderToStaticMarkup(React.createElement(ProteinViewer, {
-			data: _data,
-			locusData: _locusData
-		}));
-		assert.equal(markup.match('class="sgd-viz protein-viewer') !== null, true);
-		assert.equal(markup.match(/<div/).index, 0);
-	});
+		var markup = ReactDOMServer.renderToStaticMarkup(<ProteinViewer data={_data} locusData={_locusData}/>)
+		
+		expect(markup.match('class="sgd-viz protein-viewer')).not.toBeNull()
+		expect(markup.match(/<div/).index).toEqual(0)
 });
