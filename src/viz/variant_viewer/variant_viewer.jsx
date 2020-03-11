@@ -63,8 +63,14 @@ var VariantViewer = React.createClass({
 		var model = this._getModel();
 		var refCoordinates;
 		var baseArr = this.props.isProteinMode ? this.props.variantDataProtein : this.props.variantDataDna;
-		var _variantData = baseArr.map( d => {
-			refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
+	        var _variantData = baseArr.map( d => {
+		        var start = d.start;
+		        var end = d.end;
+		        if (this.props.isProteinMode) {
+			    start = d.dna_start;
+			    end = d.dna_end;
+			}
+			refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(start, end, this.props.isProteinMode);
 			return _.extend(d, {
 				coordinates: [d.start, d.end],
 				referenceCoordinates: [refCoordinates.start, refCoordinates.end],
