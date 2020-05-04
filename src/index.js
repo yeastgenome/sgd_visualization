@@ -6,7 +6,7 @@ import _VariantViewerComponent from './viz/variant_viewer/variant_viewer.jsx';
 var exampleData = require("./variant_viewer_fixture_data.json");
 
 class _VariantViewer {
-	constructor (options) {
+	constructor(options) {
 		if (typeof options === "undefined") options = {};
 		options.el = options.el || document.body;
 
@@ -54,7 +54,7 @@ class _VariantViewer {
 };
 
 class _ProteinViewer {
-	constructor (options) {
+	constructor(options) {
 		if (typeof options === "undefined") options = {};
 		options.el = options.el || document.body;
 
@@ -65,7 +65,7 @@ class _ProteinViewer {
 	}
 }
 
-export  {
+export {
 	_ProteinViewer as ProteinViewer,
 	_VariantViewer as VariantViewer,
 	_ProteinViewerComponent as ProteinViewerComponent,
