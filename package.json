@@ -1,6 +1,6 @@
 {
   "name": "sgd_visualization",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0",
   "main": "./lib/index.js",
   "repository": "https://github.com/yeastgenome/sgd_visualization",
   "homepage": "http://www.yeastgenome.org",
