@@ -55,7 +55,7 @@ class VariantViewer extends Component {
                         }
                         refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
 			return _.extend(d, {
-				coordinates: [start, end],
+				coordinates: [d.start, d.end],
 				referenceCoordinates: [refCoordinates.start, refCoordinates.end],
 				type: d.variant_type
 			});
