@@ -53,9 +53,9 @@ class VariantViewer extends Component {
                             start = d.dna_start;
                             end = d.dna_end;
                         }
-                        refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(start, end, this.props.isProteinMode);
+                        refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
 			return _.extend(d, {
-				coordinates: [d.start, d.end],
+				coordinates: [start, end],
 				referenceCoordinates: [refCoordinates.start, refCoordinates.end],
 				type: d.variant_type
 			});
