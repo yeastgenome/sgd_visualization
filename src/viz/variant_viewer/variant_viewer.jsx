@@ -47,7 +47,13 @@ class VariantViewer extends Component {
 		var refCoordinates;
 		var baseArr = this.props.isProteinMode ? this.props.variantDataProtein : this.props.variantDataDna;
 	        var _variantData = baseArr.map( d => {
-			refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.dna_start, d.dna_end, this.props.isProteinMode);
+                        var start = d.start;
+                        var end = d.end;
+                        if (this.props.isProteinMode) {
+                            start = d.dna_start;
+                            end = d.dna_end;
+                        }
+                        refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(start, end, this.props.isProteinMode);
 			return _.extend(d, {
 				coordinates: [d.start, d.end],
 				referenceCoordinates: [refCoordinates.start, refCoordinates.end],
