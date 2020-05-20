@@ -178,8 +178,8 @@ class FeatureViewer extends Component{
 				        var start = d.start;
                     		        var end = d.end;
                                         if (this.props.isProteinMode) {
-					    start = d.dna_start;
-					    end = d.dna_end;
+					    start = start * 3;
+					    end = end * 3;
 				        }
 					var refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(start, end, this.props.isProteinMode);
 					var locationStr;
