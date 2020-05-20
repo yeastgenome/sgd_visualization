@@ -174,14 +174,14 @@ class FeatureViewer extends Component{
 		this.state.computedForceData.forEach( d => {
 			// record a mouseOver cb
 			if (typeof this.props.onHighlightSegment === "function") {
-			    mouseOverFns.push( () => {
-				        var start = d.start;
-                    		        var end = d.end;
-				        if (typeof d.dna_start !== 'undefined') {
-                                            start = d.dna_start;
-					    end = d.dna_end;
-				        }				
-					var refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(start, end, this.props.isProteinMode);
+			    mouseOverFns.push( () => {				        
+				        var refCoord;
+				        if (this.props.isProteinMode) {
+				            refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(d.dna_start, d.dna_end, this.props.isProteinMode);
+					}
+				        else {
+					    refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
+				        }
 					var locationStr;
 					// SNP
 					var chromStart = this.props.focusFeature.chromStart;
