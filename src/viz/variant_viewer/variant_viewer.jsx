@@ -201,7 +201,9 @@ VariantViewer.propTypes = {
 		dnaLength: PropTypes.number,
 		proteinLength: PropTypes.number,
 		strand: PropTypes.string, // "+" or "-"
-		isProteinMode: PropTypes.bool,
+                isProteinMode: PropTypes.bool,
+                isUpstreamMode: PropTypes.bool,
+                isDownstreamMode: PropTypes.bool,
 		domains: PropTypes.array,
 		downloadCaption: PropTypes.string,
 }
