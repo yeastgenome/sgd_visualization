@@ -92,6 +92,8 @@ class VariantViewer extends Component {
 			forceLength={forceLength}
 			model={model}
 			isProteinMode={this.props.isProteinMode}
+			isUpstreamMode={this.props.isUpstreamMode}
+			isDownstreamMode={this.props.isDownstreamMode}
 		/>);
 	}
 
