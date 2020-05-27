@@ -47,7 +47,7 @@ class VariantViewer extends Component {
 		var refCoordinates;
 		var baseArr = this.props.isProteinMode ? this.props.variantDataProtein : this.props.variantDataDna;
 		var _variantData = baseArr.map( d => {
-			refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
+		        refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode, this.props.isUpstreamMode, this.props.isDownstreamMode);
 			return _.extend(d, {
 				coordinates: [d.start, d.end],
 				referenceCoordinates: [refCoordinates.start, refCoordinates.end],
@@ -57,7 +57,7 @@ class VariantViewer extends Component {
 		var _highlightedSegment = null;
 		var hs = this.state.highlightedAlignedSegment;
 		if (hs) {
-			var obj = model.getReferenceCoordinatesFromAlignedCoordinates(hs[0], hs[1], this.props.isProteinMode);
+		    var obj = model.getReferenceCoordinatesFromAlignedCoordinates(hs[0], hs[1], this.props.isProteinMode, this.props.isUpstreamMode, this.props.isDownstreamMode);
 			_highlightedSegment = [obj.start, obj.end];
 		}
 		var _onForceUpdate = () => {
@@ -101,7 +101,7 @@ class VariantViewer extends Component {
 		var _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
 		// get ref highlighted coord
 		var model = this._getModel();
-		var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode);
+	    var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode, this.props.isUpstreamMode, this.props.isDownstreamMode);
 		_refCoord = [_refCoord.start, _refCoord.end];
 		var offset = this.props.isRelative ? 0 : this.props.chromStart;
 		var parsetX1Coord = _refCoord

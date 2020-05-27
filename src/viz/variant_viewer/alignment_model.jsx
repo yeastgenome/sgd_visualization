@@ -46,7 +46,7 @@ class AlignmentModel {
 	}
 
 	// from start and end of aligned sequence, return reference coordinates (currently always S288C)
-	getReferenceCoordinatesFromAlignedCoordinates (alignedStart, alignedEnd, isProtein) {
+        getReferenceCoordinatesFromAlignedCoordinates(alignedStart, alignedEnd, isProtein, isUpstream, isDownstream) {
 		var _attr = this.attributes;
 		var _seqs = isProtein ? _attr.alignedProteinSequences : _attr.alignedDnaSequences;
 		var referenceSequence = _.findWhere(_seqs, { name: _attr.referenceName }).sequence;
