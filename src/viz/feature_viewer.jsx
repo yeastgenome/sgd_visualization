@@ -187,10 +187,10 @@ class FeatureViewer extends Component{
                                             }
 					}
 				        else if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+				            console.log("chromStart="+chromStart + ", d.start="+d.start + ", d.end="+d.end)
 				            if (Math.abs(refCoord.end - refCoord.start) === 1) {
                                                 locationStr = chromStart + d.start - 1;
                                             } else {
-						console.log("chromStart="+chromStart + ", d.start="+d.start + ", d.end="+d.end)
                                                 locationStr = `${chromStart + d.start - 1}..${chromStart + d.end - 1}`
                                             }
 				    
