@@ -300,18 +300,9 @@ class FeatureViewer extends Component{
 	        var endPos = this.props.chromEnd - startOffset;
                 var startX = scale(startPos);
                 var endX = scale(endPos);
-                var arrowX = endX - TRACK_HEIGHT * canvasRatio;
-	        var y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP                                                  
-                var topY = y * canvasRatio;
-                var midY = (y + TRACK_HEIGHT / 2) * canvasRatio;
-                var bottomY = (y + TRACK_HEIGHT) * canvasRatio;
-	        ctx.beginPath();
-                ctx.moveTo(startX, topY);
-                ctx.lineTo(arrowX, topY);
-                ctx.lineTo(endX, midY);
-                ctx.lineTo(arrowX, bottomY);
-                ctx.lineTo(startX, bottomY);
-                ctx.closePath();
+                var topY = FEATURE_Y* canvasRatio;
+                var bottomY = (FEATURE_Y + TRACK_HEIGHT) * canvasRatio;
+	        ctx.fillRect(startX, topY, endX, bottomY - topY);
                 ctx.fill();
 	}
     
