@@ -280,8 +280,13 @@ class FeatureViewer extends Component{
 		ctx.clearRect(0, 0, this.state.DOMWidth * this.state.canvasRatio, height);
 
 		this._drawHighlightedSegment(ctx);
-		this._drawAxis(ctx);
-		this._drawFeatures(ctx);
+	        this._drawAxis(ctx);
+	        if (this.props.isUpstream || this.props.isDownstream) {
+		    ;
+		}
+	        else {
+		    this._drawFeatures(ctx);
+		}
 		this._drawVariants(ctx);
 		this._drawDomains(ctx);
 	}
@@ -294,10 +299,8 @@ class FeatureViewer extends Component{
 		var startPos, endPos, startX, endX, arrowX, y, topY, midY, bottomY, isPlusStrand;
 		this.props.features.forEach( d => {
 			isPlusStrand = d.strand === "+";
-			// startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
-		        // endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
-		        startPos = (isPlusStrand ? this.props.chromStart : this.props.chromEnd) - startOffset;
-		        endPos = (isPlusStrand ? this.props.chromEnd : this.props.chromStart) - startOffset;
+			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
+		        endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
 			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
@@ -312,8 +315,6 @@ class FeatureViewer extends Component{
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
 				d.blockStarts.forEach( (_d, _i) => {
 					isLast = (_i === d.blockStarts.length - 1);
-
-				        console.log("endPos="+endPos + ", _d="+_d + ", d.blockSizes=" + d.blockSizes[_i]);
 				    
 				        if (isPlusStrand) {
 						_startX = Math.round(scale(_d + startPos));
@@ -342,8 +343,6 @@ class FeatureViewer extends Component{
 						ctx.fill();
 					} else {
 					        _width = Math.abs(_endX - _startX);
-
-					        console.log("_startX="+_startX + ", topY="+topY + ", _width="+_width + ", bottomY=" + bottomY);
 					    
 						ctx.fillRect(_startX, topY, _width, bottomY - topY);
 						// intron to next exon
