@@ -294,8 +294,10 @@ class FeatureViewer extends Component{
 		var startPos, endPos, startX, endX, arrowX, y, topY, midY, bottomY, isPlusStrand;
 		this.props.features.forEach( d => {
 			isPlusStrand = d.strand === "+";
-			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
-			endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
+			// startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
+		        // endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
+		        startPos = (isPlusStrand ? this.props.chromStart : this.props.chromEnd) - startOffset;
+		        endPos = (isPlusStrand ? this.props.chromEnd : this.props.chromStart) - startOffset;
 			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
@@ -304,8 +306,6 @@ class FeatureViewer extends Component{
 			topY = y * canvasRatio;
 			midY = (y + TRACK_HEIGHT / 2) * canvasRatio;
 			bottomY = (y + TRACK_HEIGHT) * canvasRatio;
-
-		        console.log("d.chromStart="+d.chromStart+", d.chromEnd="+d.chromEnd+ ", startOffset="+startOffset);
 		    
 			// draw exons and introns if blockStarts and blockSizes defined
 			if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
