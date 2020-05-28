@@ -65,8 +65,8 @@ class VariantViewer extends Component {
 		}
 	        var _domains = (this.props.isProteinMode && this.props.domains) ? this.props.domains: null;
 
-	        var _chromStart = "";
-	        var _chromEnd = "";
+	        var _chromStart;
+	        var _chromEnd;
 	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
 		    _chromStart = Math.min(this.props.chromStart, this.props.chromEnd);
                     _chromEnd = Math.max(this.props.chromStart, this.props.chromEnd);

@@ -20,7 +20,7 @@ class FeatureViewer extends Component{
 			offsetTop: 0,
 			computedForceData: null,
 			trackedDomains: null,
-			canvasRatio: 1,
+			canvasRatio: 1.5,
 			toolTipVisible: false,
 			toolTipTop: 0,
 			toolTipLeft: 0,
