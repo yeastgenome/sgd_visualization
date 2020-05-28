@@ -302,7 +302,8 @@ class FeatureViewer extends Component{
                 var endX = scale(endPos);
                 var topY = FEATURE_Y* canvasRatio;
                 var bottomY = (FEATURE_Y + TRACK_HEIGHT) * canvasRatio;
-	        ctx.fillRect(startX, topY, endX, bottomY - topY);
+	        // ctx.fillRect(startX, topY, endX, bottomY - topY);
+	        ctx.fillRect(10, 23, 700, 46);
                 ctx.fill();
 	}
     
