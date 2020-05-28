@@ -305,6 +305,8 @@ class FeatureViewer extends Component{
 			midY = (y + TRACK_HEIGHT / 2) * canvasRatio;
 			bottomY = (y + TRACK_HEIGHT) * canvasRatio;
 
+		        console.log("d.chromStart="+d.chromStart+", d.chromEnd="+d.chromEnd+ ", startOffset="+startOffset);
+		    
 			// draw exons and introns if blockStarts and blockSizes defined
 			if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
