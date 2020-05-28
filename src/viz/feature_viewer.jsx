@@ -633,7 +633,9 @@ FeatureViewer.propTypes = {
 	contigName: PropTypes.string,
 	contigHref: PropTypes.string,
 	forceLength: PropTypes.number,
-	isProteinMode: PropTypes.bool
+        isProteinMode: PropTypes.bool,
+        isUpstreamMode: PropTypes.bool,
+        isDownstreamMode: PropTypes.bool
 }
 
 FeatureViewer.defaultProps = {
