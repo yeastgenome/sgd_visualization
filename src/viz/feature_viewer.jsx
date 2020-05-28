@@ -336,7 +336,10 @@ class FeatureViewer extends Component{
 						ctx.closePath();
 						ctx.fill();
 					} else {
-						_width = Math.abs(_endX - _startX);
+					        _width = Math.abs(_endX - _startX);
+
+					        console.log("_startX="+_startX + ", topY="+topY + ", _width="+_width + ", bottomY=" + bottomY);
+					    
 						ctx.fillRect(_startX, topY, _width, bottomY - topY);
 						// intron to next exon
 						_nextRelStart = d.blockStarts[_i + 1];
