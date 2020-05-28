@@ -63,10 +63,18 @@ class VariantViewer extends Component {
 		var _onForceUpdate = () => {
 			this.forceUpdate();
 		}
-		var _domains = (this.props.isProteinMode && this.props.domains) ? this.props.domains: null;
-		var _chromStart = Math.min(featureData.position.chromStart, featureData.position.chromEnd);
-		var _chromEnd = Math.max(featureData.position.chromStart, featureData.position.chromEnd);
+	        var _domains = (this.props.isProteinMode && this.props.domains) ? this.props.domains: null;
 
+	        var _chromStart = "";
+	        var _chromEnd = "";
+	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+		    _chromStart = Math.min(this.props.chromStart, this.props.chromEnd);
+                    _chromEnd = Math.max(this.props.chromStart, this.props.chromEnd);
+	        }
+	        else {
+		    _chromStart = Math.min(featureData.position.chromStart, featureData.position.chromEnd);
+		    _chromEnd = Math.max(featureData.position.chromStart, featureData.position.chromEnd);
+                }
 		var forceLength;
 		if (this.props.isProteinMode && this.props.proteinLength) forceLength = this.props.proteinLength;
 
@@ -92,8 +100,6 @@ class VariantViewer extends Component {
 			forceLength={forceLength}
 			model={model}
 			isProteinMode={this.props.isProteinMode}
-			isUpstreamMode={this.props.isUpstreamMode}
-			isDownstreamMode={this.props.isDownstreamMode}
 		/>);
 	}
 
