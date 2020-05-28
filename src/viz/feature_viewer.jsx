@@ -282,7 +282,7 @@ class FeatureViewer extends Component{
 		this._drawHighlightedSegment(ctx);
 	        this._drawAxis(ctx);
 	        if (this.props.isUpstream || this.props.isDownstream) {
-		    ;
+		    this._drawIntergenicRegions(ctx);
 		}
 	        else {
 		    this._drawFeatures(ctx);
@@ -291,6 +291,30 @@ class FeatureViewer extends Component{
 		this._drawDomains(ctx);
 	}
 
+        _drawIntergenicRegions(ctx) {
+	        ctx.fillStyle = FILL_COLOR;
+	        var scale = this._getScale();
+	        var startOffset = this.props.isRelative ? this.props.chromStart : 0;
+	        var canvasRatio = this.state.canvasRatio;
+	        var startPos = this.props.chromStart - startOffset;
+	        var endPos = this.props.chromEnd - startOffset;
+                var startX = scale(startPos);
+                var endX = scale(endPos);
+                var arrowX = endX - TRACK_HEIGHT * canvasRatio;
+	        var y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP                                                  
+                var topY = y * canvasRatio;
+                var midY = (y + TRACK_HEIGHT / 2) * canvasRatio;
+                var bottomY = (y + TRACK_HEIGHT) * canvasRatio;
+	        ctx.beginPath();
+                ctx.moveTo(startX, topY);
+                ctx.lineTo(arrowX, topY);
+                ctx.lineTo(endX, midY);
+                ctx.lineTo(arrowX, bottomY);
+                ctx.lineTo(startX, bottomY);
+                ctx.closePath();
+                ctx.fill();
+	}
+    
 	_drawFeatures(ctx) {
 		ctx.fillStyle = FILL_COLOR;
 		var scale = this._getScale();
