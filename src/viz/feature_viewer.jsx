@@ -178,7 +178,13 @@ class FeatureViewer extends Component{
 				        var refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
 					var locationStr;
 					// SNP
-				        var chromStart = this.props.focusFeature.chromStart;
+				        var chromStart;
+				        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+					    chromStart = this.props.chromStart;
+					}
+				        else {
+					    chromStart = this.props.focusFeature.chromStart;
+					}
 				        if (this.props.isProteinMode) {
 					    if (Math.abs(refCoord.end - refCoord.start) === 1) {
                                                 locationStr = chromStart + d.dna_start - 1;
