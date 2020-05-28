@@ -310,7 +310,10 @@ class FeatureViewer extends Component{
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
 				d.blockStarts.forEach( (_d, _i) => {
 					isLast = (_i === d.blockStarts.length - 1);
-					if (isPlusStrand) {
+
+				        console.log("endPos="+endPos + ", _d="+_d + ", d.blockSizes=" + d.blockSizes[_i]);
+				    
+				        if (isPlusStrand) {
 						_startX = Math.round(scale(_d + startPos));
 						_endX = Math.round(scale(_d + d.blockSizes[_i] + startPos));
 					} else {
