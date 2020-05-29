@@ -77,7 +77,8 @@ class VariantViewer extends Component {
                 }
 		var forceLength;
 		if (this.props.isProteinMode && this.props.proteinLength) forceLength = this.props.proteinLength;
-
+	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) forceLength = this.props.chromEnd - this.props.chromStart + 1;
+	    
 	        var _drawIntrons = true;
 	        if (this.props.isProteinMode || this.props.isUpstreamMode || this.props.isDownstreamMode) {
 		    _drawIntrons = false;
