@@ -296,9 +296,8 @@ class FeatureViewer extends Component{
 		        isPlusStrand = d.strand === "+";
 
 		        if (this.props.UpstreamMode || this.props.DownstreamMode) {
-			    startPos = (isPlusStrand ? this.props.chromStart : this.props.chromEnd) - startOffset;
-                            endPos = (isPlusStrand ? this.props.chromEnd : this.props.chromStart) - startOffset;
-			    console.log("startPos="+startPos + ", endPos="+endPos)	
+			    startPos = this.props.chromStart - startOffset;
+                            endPos = this.props.chromEnd - startOffset;
 			}
 		        else {
 		            startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
@@ -309,12 +308,9 @@ class FeatureViewer extends Component{
 			startX = scale(startPos);
 			endX = scale(endPos);
 
-
-		    
-		        alert("startX="+startX+", endX="+endX);
-		        console.log("startX="+startX+", endX="+endX);
-
-		    
+		        // if (startX == endX) {
+			//    startX = 10;
+			// }
 		    
 		        arrowX = endX - TRACK_HEIGHT * canvasRatio;
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
