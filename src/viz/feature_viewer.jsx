@@ -298,18 +298,13 @@ class FeatureViewer extends Component{
 		        if (this.props.UpstreamMode || this.props.DownstreamMode) {
 			    startPos = (isPlusStrand ? this.props.chromStart : this.props.chromEnd) - startOffset;
                             endPos = (isPlusStrand ? this.props.chromEnd : this.props.chromStart) - startOffset;
+			    console.log("startPos="+startPos + ", endPos="+endPos)	
 			}
 		        else {
 		            startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
 		            endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
 			}
-
-		        if (startPos > endPos) {
-			    var tmp = startPos;
-			    startPos = endPos;
-			    endPos = tmp;
-			}
-		    
+  
 			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
