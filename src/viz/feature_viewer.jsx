@@ -618,7 +618,7 @@ FeatureViewer.propTypes = {
 	chromStart: PropTypes.number,
 	chromEnd: PropTypes.number,
 	domains: PropTypes.array, // [{ name, id, start, end, sourceName, sourceId }, ...]
-	features: PropTyopes.array, // [{ chromStart, chromEnd, strand }, ...]
+	features: PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
 	focusFeature: PropTypes.object, // { chromStart, chromEnd, strand }
 	highlightedSegment: PropTypes.array, // []
 	onSetScale: PropTypes.func,
