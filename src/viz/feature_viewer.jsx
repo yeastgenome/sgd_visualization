@@ -281,30 +281,9 @@ class FeatureViewer extends Component{
 
 		this._drawHighlightedSegment(ctx);
 	        this._drawAxis(ctx);
-	        if (this.props.isUpstream || this.props.isDownstream) {
-		    this._drawIntergenicRegions(ctx);
-		}
-	        else {
-		    this._drawFeatures(ctx);
-		}
+		this._drawFeatures(ctx);
 		this._drawVariants(ctx);
 		this._drawDomains(ctx);
-	}
-
-        _drawIntergenicRegions(ctx) {
-	        ctx.fillStyle = FILL_COLOR;
-	        var scale = this._getScale();
-	        var startOffset = this.props.isRelative ? this.props.chromStart : 0;
-	        var canvasRatio = this.state.canvasRatio;
-	        var startPos = this.props.chromStart - startOffset;
-	        var endPos = this.props.chromEnd - startOffset;
-                var startX = scale(startPos);
-                var endX = scale(endPos);
-                var topY = FEATURE_Y* canvasRatio;
-                var bottomY = (FEATURE_Y + TRACK_HEIGHT) * canvasRatio;
-	        // ctx.fillRect(startX, topY, endX, bottomY - topY);
-	        ctx.fillRect(10, 23, 700, 46);
-                ctx.fill();
 	}
     
 	_drawFeatures(ctx) {
@@ -314,7 +293,7 @@ class FeatureViewer extends Component{
 		var canvasRatio = this.state.canvasRatio;
 		var startPos, endPos, startX, endX, arrowX, y, topY, midY, bottomY, isPlusStrand;
 		this.props.features.forEach( d => {
-			isPlusStrand = d.strand === "+";
+		        isPlusStrand = d.strand === "+";
 			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
 		        endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
 			if (this.props.forceLength) endPos = this.props.forceLength;
@@ -324,8 +303,7 @@ class FeatureViewer extends Component{
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
 			topY = y * canvasRatio;
 			midY = (y + TRACK_HEIGHT / 2) * canvasRatio;
-			bottomY = (y + TRACK_HEIGHT) * canvasRatio;
-		    
+			bottomY = (y + TRACK_HEIGHT) * canvasRatio;		    
 			// draw exons and introns if blockStarts and blockSizes defined
 			if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
@@ -640,7 +618,7 @@ FeatureViewer.propTypes = {
 	chromStart: PropTypes.number,
 	chromEnd: PropTypes.number,
 	domains: PropTypes.array, // [{ name, id, start, end, sourceName, sourceId }, ...]
-	features: PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
+	features: PropTyopes.array, // [{ chromStart, chromEnd, strand }, ...]
 	focusFeature: PropTypes.object, // { chromStart, chromEnd, strand }
 	highlightedSegment: PropTypes.array, // []
 	onSetScale: PropTypes.func,

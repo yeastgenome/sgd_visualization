@@ -78,6 +78,11 @@ class VariantViewer extends Component {
 		var forceLength;
 		if (this.props.isProteinMode && this.props.proteinLength) forceLength = this.props.proteinLength;
 
+	        var _drawIntrons = true;
+	        if (this.props.isProteinMode || this.props.isUpstreamMode || this.props.isDownstreamMode) {
+		    _drawIntrons = false;
+		}
+	    
 		return (<FeatureViewer
 			featureTrackId={"variantViewer"}
 			store={this.state.store}
@@ -96,7 +101,7 @@ class VariantViewer extends Component {
 			onHighlightSegment={this._highlightSegment}
 			onForceUpdate={_onForceUpdate}
 			isRelative={true}
-			drawIntrons={!this.props.isProteinMode}
+			drawIntrons={_drawIntrons}
 			forceLength={forceLength}
 			model={model}
 			isProteinMode={this.props.isProteinMode}
