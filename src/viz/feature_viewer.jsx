@@ -279,10 +279,10 @@ class FeatureViewer extends Component{
 		var height = this._calculateHeight();
 		ctx.clearRect(0, 0, this.state.DOMWidth * this.state.canvasRatio, height);
 
-		// this._drawHighlightedSegment(ctx);
+		this._drawHighlightedSegment(ctx);
 	        this._drawAxis(ctx);
 		this._drawFeatures(ctx);
-		this._drawVariants(ctx);
+		// this._drawVariants(ctx);
 		this._drawDomains(ctx);
 	}
     
