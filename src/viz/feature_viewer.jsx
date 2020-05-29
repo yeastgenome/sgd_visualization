@@ -294,8 +294,15 @@ class FeatureViewer extends Component{
 		var startPos, endPos, startX, endX, arrowX, y, topY, midY, bottomY, isPlusStrand;
 		this.props.features.forEach( d => {
 		        isPlusStrand = d.strand === "+";
-			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
-		        endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
+
+		        if (this.props.UpstreamMode || this.props.DownstreamMode) {
+			    startPos = (isPlusStrand ? this.props.chromStart : this.props.chromEnd) - startOffset;
+                            endPos = (isPlusStrand ? this.props.chromEnd : this.props.chromStart) - startOffset;
+			}
+		        else {
+		            startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
+		            endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
+			}
 			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
@@ -306,10 +313,10 @@ class FeatureViewer extends Component{
 			bottomY = (y + TRACK_HEIGHT) * canvasRatio;		    
 			// draw exons and introns if blockStarts and blockSizes defined
 		        if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
-
-			        console.log("isProtein-1="+this.props.isProtein);
-                                console.log("isUpstream-1="+this.props.isUpstream);
-                                console.log("isDownstream-1="+this.props.isDownstream);
+		    
+			        console.log("isProtein-1="+this.props.isProteinMode);
+                                console.log("isUpstream-1="+this.props.isUpstreamMode);
+                                console.log("isDownstream-1="+this.props.isDownstreamMode);
 			
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
 				d.blockStarts.forEach( (_d, _i) => {
@@ -361,9 +368,9 @@ class FeatureViewer extends Component{
 			// or just draw simple "blocky" feature
 			} else {
 
-			        console.log("isProtein="+this.props.isProtein);
-			        console.log("isUpstream="+this.props.isUpstream);
-			        console.log("isDownstream="+this.props.isDownstream);
+			        console.log("isProtein="+this.props.isProteinMode);
+			        console.log("isUpstream="+this.props.isUpstreamMode);
+			        console.log("isDownstream="+this.props.isDownstreamMode);
 
 			        ctx.beginPath();
 				ctx.moveTo(startX, topY);
