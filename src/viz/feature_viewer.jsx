@@ -308,6 +308,13 @@ class FeatureViewer extends Component{
 			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
+
+
+		    
+		        alert("startX="+startX+", endX="+endX);
+		        console.log("startX="+startX+", endX="+endX);
+
+		    
 		    
 		        arrowX = endX - TRACK_HEIGHT * canvasRatio;
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
