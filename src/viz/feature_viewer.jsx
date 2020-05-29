@@ -296,7 +296,7 @@ class FeatureViewer extends Component{
 		        isPlusStrand = d.strand === "+";
 
 		        if (this.props.UpstreamMode || this.props.DownstreamMode) {
-			    startPos = this.props.chromStart - startOffset;
+			    startPos = 0;
                             endPos = this.props.chromEnd - startOffset;
 			}
 		        else {
@@ -308,8 +308,8 @@ class FeatureViewer extends Component{
 			startX = scale(startPos);
 			endX = scale(endPos);
 
-
-		    
+		       
+		   
 		        alert("startPos="+startPos + ", endPos="+endPos + ", startX="+startX+", endX="+endX);
 		    
 		    
