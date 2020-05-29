@@ -305,7 +305,12 @@ class FeatureViewer extends Component{
 			midY = (y + TRACK_HEIGHT / 2) * canvasRatio;
 			bottomY = (y + TRACK_HEIGHT) * canvasRatio;		    
 			// draw exons and introns if blockStarts and blockSizes defined
-			if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
+		        if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
+
+			        console.log("isProtein-1="+this.props.isProtein);
+                                console.log("isUpstream-1="+this.props.isUpstream);
+                                console.log("isDownstream-1="+this.props.isDownstream);
+			
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
 				d.blockStarts.forEach( (_d, _i) => {
 					isLast = (_i === d.blockStarts.length - 1);
@@ -355,7 +360,12 @@ class FeatureViewer extends Component{
 
 			// or just draw simple "blocky" feature
 			} else {
-				ctx.beginPath();
+
+			        console.log("isProtein="+this.props.isProtein);
+			        console.log("isUpstream="+this.props.isUpstream);
+			        console.log("isDownstream="+this.props.isDownstream);
+
+			        ctx.beginPath();
 				ctx.moveTo(startX, topY);
 				ctx.lineTo(arrowX, topY);
 				ctx.lineTo(endX, midY);
