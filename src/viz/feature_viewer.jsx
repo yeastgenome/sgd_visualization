@@ -308,9 +308,12 @@ class FeatureViewer extends Component{
 			startX = scale(startPos);
 			endX = scale(endPos);
 
-		        // if (startX == endX) {
-			//    startX = 10;
-			// }
+
+		    
+		        alert("startPos="+startPos + ", endPos="+endPos + ", startX="+startX+", endX="+endX);
+		    
+		    
+
 		    
 		        arrowX = endX - TRACK_HEIGHT * canvasRatio;
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
