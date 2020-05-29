@@ -310,10 +310,14 @@ class FeatureViewer extends Component{
 
 		    
 		        if (this.props.DownstreamMode) {
-		            console("startX="+startX + ", endX="+endX);
-		            console("endX="+startX + ", endX="+endX);
+		            console("Downstream: startX="+startX + ", endX="+endX);
+		            console("Downstream: endX="+startX + ", endX="+endX);
                         }
 
+		        if (this.props.UpstreamMode) {
+                            console("Upstream: startX="+startX + ", endX="+endX);
+                            console("Upstream: endX="+startX + ", endX="+endX);
+                        }
 		    
 		        arrowX = endX - TRACK_HEIGHT * canvasRatio;
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
@@ -322,11 +326,7 @@ class FeatureViewer extends Component{
 			bottomY = (y + TRACK_HEIGHT) * canvasRatio;		    
 			// draw exons and introns if blockStarts and blockSizes defined
 		        if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
-		    
-			        console.log("isProtein-1="+this.props.isProteinMode);
-                                console.log("isUpstream-1="+this.props.isUpstreamMode);
-                                console.log("isDownstream-1="+this.props.isDownstreamMode);
-			
+		   			
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
 				d.blockStarts.forEach( (_d, _i) => {
 					isLast = (_i === d.blockStarts.length - 1);
@@ -376,10 +376,6 @@ class FeatureViewer extends Component{
 
 			// or just draw simple "blocky" feature
 			} else {
-
-			        console.log("isProtein="+this.props.isProteinMode);
-			        console.log("isUpstream="+this.props.isUpstreamMode);
-			        console.log("isDownstream="+this.props.isDownstreamMode);
 
 			        ctx.beginPath();
 				ctx.moveTo(startX, topY);
