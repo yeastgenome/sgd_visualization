@@ -294,26 +294,11 @@ class FeatureViewer extends Component{
 		var startPos, endPos, startX, endX, arrowX, y, topY, midY, bottomY, isPlusStrand;
 		this.props.features.forEach( d => {
 		        isPlusStrand = d.strand === "+";
-
-		        if (this.props.UpstreamMode || this.props.DownstreamMode) {
-			    startPos = 0;
-                            endPos = this.props.chromEnd - startOffset;
-			}
-		        else {
-		            startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
-		            endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
-			}
-  
+		        startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
+		        endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
 			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
-
-		       
-		   
-		        alert("startPos="+startPos + ", endPos="+endPos + ", startX="+startX+", endX="+endX);
-		    
-		    
-
 		    
 		        arrowX = endX - TRACK_HEIGHT * canvasRatio;
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
@@ -373,6 +358,7 @@ class FeatureViewer extends Component{
 			// or just draw simple "blocky" feature
 			} else {
 
+			        if (startX > 10) startX =10;
 			        ctx.beginPath();
 				ctx.moveTo(startX, topY);
 				ctx.lineTo(arrowX, topY);
