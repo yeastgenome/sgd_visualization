@@ -97,6 +97,7 @@ class VariantLegend extends Component{
 					<p style={style.label}>Nonsynonymous SNP</p>
 					<p style={style.label}>Intron SNP</p>
 					<p style={style.label}>Untranslatable SNP</p>
+					<p style={style.label}>Intergenic SNP</p>
 				</div>
 			</div>
 		);
@@ -120,7 +121,7 @@ class VariantLegend extends Component{
 
 	_drawLegend() {
 		var exampleInDels = ["insertion", "deletion"];
-		var exampleSnps = ["synonymous", "nonsynonymous", "intron", "untranslatable"];
+	        var exampleSnps = ["synonymous", "nonsynonymous", "intron", "untranslatable", "intergenic"];
 		var canvasRatio = this.state.canvasRatio;
 		var yDelta = (LABEL_HEIGHT + LABEL_BOTTOM + 1);
 		var width = this._getWidth() * canvasRatio;
