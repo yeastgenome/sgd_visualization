@@ -65,6 +65,6 @@ var NON_SYNONYMOUS_COLOR = "#fc8d59";  // orangy
 var INTRON_COLOR = "#91bfdb"; // light blue
 var TEXT_COLOR = "black";
 var UNTRANSLATEABLE_COLOR = "gray";
-var INTERGENIC_COLOR = "#5c0ab9";
+var INTERGENIC_COLOR = "#0ab94c";
 
 export default DrawVariant;
