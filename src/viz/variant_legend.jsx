@@ -8,7 +8,7 @@ import CalculateCanvasRatio from '../mixins/calculate_canvas_ratio.jsx';
 import appStyle from './style';
 
 var WIDTH = 200;
-var HEIGHT = 190;
+var HEIGHT = 220;
 var BACKGROUND_COLOR = "#fff";
 var BORDER_COLOR = "#ccc";
 var LABEL_HEIGHT = 20;
