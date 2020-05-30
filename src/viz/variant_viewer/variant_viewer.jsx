@@ -108,6 +108,7 @@ class VariantViewer extends Component {
 			isProteinMode={this.props.isProteinMode}
 			isUpstreamMode={this.props.isUpstreamMode}
 			isDownstreamMode={this.props.isDownstreamMode}
+			intergenicDisplayName={this.props.intergenicDisplayName}
 		/>);
 	}
 
@@ -218,6 +219,7 @@ VariantViewer.propTypes = {
                 isProteinMode: PropTypes.bool,
                 isUpstreamMode: PropTypes.bool,
                 isDownstreamMode: PropTypes.bool,
+                intergenicDisplayName: PropTypes.string,
 		domains: PropTypes.array,
 		downloadCaption: PropTypes.string,
 }

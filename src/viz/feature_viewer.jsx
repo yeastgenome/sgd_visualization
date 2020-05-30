@@ -129,11 +129,16 @@ class FeatureViewer extends Component{
 	}
 
 	_renderControls(){
-		var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
+	        var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
+
+	        var display_name = '';
+	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+	                display_name = this.props.intergenicDisplayName;
+		}
 		return (
 			<div style={[style.uiContainer]}>
 				<div>
-					<h3>Location: {contigTextNode} {this.props.chromStart}..{this.props.chromEnd}</h3>
+				        <h3>Location: {contigTextNode} {this.props.chromStart}..{this.props.chromEnd} {display_name}</h3>
 				</div>
 				<div style={[style.btnContainer]}>
 					<div style={[style.btnGroup]}>
@@ -637,7 +642,8 @@ FeatureViewer.propTypes = {
 	forceLength: PropTypes.number,
         isProteinMode: PropTypes.bool,
         isUpstreamMode: PropTypes.bool,
-        isDownstreamMode: PropTypes.bool
+        isDownstreamMode: PropTypes.bool,
+        intergenicDisplayName: PropTypes.string,
 }
 
 FeatureViewer.defaultProps = {
