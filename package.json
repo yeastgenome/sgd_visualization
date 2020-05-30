@@ -1,6 +1,6 @@
 {
   "name": "sgd_visualization_beta",
-  "version": "2.0.0-beta-sw.43",
+  "version": "2.0.0-beta-sw.44",
   "main": "./lib/index.js",
   "repository": {
     "type": "git",

@@ -10,7 +10,8 @@ var DrawVariant =  function (ctx, variantType, snpType, x, y, originalX, origina
 		"synonymous": SYNONYMOUS_COLOR,
 		"nonsynonymous": NON_SYNONYMOUS_COLOR,
 		"intron": INTRON_COLOR,
-		"untranslatable": UNTRANSLATEABLE_COLOR
+	        "untranslatable": UNTRANSLATEABLE_COLOR,
+	        "intergenic": INTERGENIC_COLOR
 	};
 
 	// draw line
@@ -64,5 +65,6 @@ var NON_SYNONYMOUS_COLOR = "#fc8d59";  // orangy
 var INTRON_COLOR = "#91bfdb"; // light blue
 var TEXT_COLOR = "black";
 var UNTRANSLATEABLE_COLOR = "gray";
+var INTERGENIC_COLOR = "#af8cd6";
 
 export default DrawVariant;
