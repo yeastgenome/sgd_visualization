@@ -286,13 +286,21 @@ class FeatureViewer extends Component{
 
 		this._drawHighlightedSegment(ctx);
 	        this._drawAxis(ctx);
-		// this._drawFeatures(ctx);
+		this._drawFeatures(ctx);
 		this._drawVariants(ctx);
 		this._drawDomains(ctx);
 	}
     
-	_drawFeatures(ctx) {
-		ctx.fillStyle = FILL_COLOR;
+        _drawFeatures(ctx) {
+	        if (this.props.isUpstreamMode) {
+		    ctx.fillStyle = FILL_COLOR_UP;
+		}
+	        else if (this.props.isDownstreamMode) {
+		    ctx.fillStyle = FILL_COLOR_DOWN;
+		}
+		else {
+		    ctx.fillStyle = FILL_COLOR;
+		}
 		var scale = this._getScale();
 		var startOffset = this.props.isRelative ? this.props.chromStart : 0;
 		var canvasRatio = this.state.canvasRatio;
@@ -662,6 +670,8 @@ var DOMAIN_NODE_HEIGHT = 7;
 var HIGHLIGHT_COLOR = "#EBDD71";
 var FONT_SIZE = 14;
 var FILL_COLOR = "#09AEB2";
+var FILL_COLOR_UP = "#daf7a6";
+var FILL_COLOR_DOWN = "#a6b90a";
 var MAX_Y_SCROLL = HEIGHT * 4;
 var PX_PER_DOMAIN = 24;
 var SCROLL_WIDTH = 10000;
