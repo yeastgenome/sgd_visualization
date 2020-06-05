@@ -370,16 +370,22 @@ class FeatureViewer extends Component{
 
 			// or just draw simple "blocky" feature
 			} else {
-
+			    
 			        if (startX > 10) startX =10;
-			        ctx.beginPath();
-				ctx.moveTo(startX, topY);
-				// ctx.lineTo(arrowX, topY);
-				ctx.lineTo(endX, midY);
-				// ctx.lineTo(arrowX, bottomY);
-				ctx.lineTo(startX, bottomY);
-				ctx.closePath();
-				ctx.fill();
+			        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+				    var width = Math.abs(endX - startX);
+				    ctx.fillRect(startX, topY, width, bottomY-topY);
+				}
+			        else {
+			            ctx.beginPath();
+				    ctx.moveTo(startX, topY);
+				    ctx.lineTo(arrowX, topY);
+				    ctx.lineTo(endX, midY);
+				    ctx.lineTo(arrowX, bottomY);
+				    ctx.lineTo(startX, bottomY);
+				    ctx.closePath();
+				    ctx.fill();
+				}
 			}
 		});
 	}
