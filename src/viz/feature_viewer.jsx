@@ -286,7 +286,7 @@ class FeatureViewer extends Component{
 
 		this._drawHighlightedSegment(ctx);
 	        this._drawAxis(ctx);
-		this._drawFeatures(ctx);
+		// this._drawFeatures(ctx);
 		this._drawVariants(ctx);
 		this._drawDomains(ctx);
 	}
