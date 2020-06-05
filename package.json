@@ -1,6 +1,6 @@
 {
   "name": "sgd_visualization_beta",
-  "version": "2.0.0-beta-sw.50",
+  "version": "2.0.0-beta-sw.51",
   "main": "./lib/index.js",
   "repository": {
     "type": "git",
@@ -24,22 +24,22 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "reactify": "~1.1.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.10.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-react": "^7.10.1",
     "babel-jest": "^24.8.0",
-    "babel-loader": "^8.0.6",
-    "browserify": "^16.3.0",
+    "babel-loader": "^8.1.0",
+    "browserify": "^16.5.1",
     "jest": "^24.8.0",
-    "mkdirp": "^0.5.0",
+    "mkdirp": "^0.5.5",
     "node-jsx": "~0.12.4",
-    "react-test-renderer": "^16.8.6",
+    "react-test-renderer": "^16.13.1",
     "watchify": "^3.11.1",
     "webpack": "^4.38.0",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.11"
   },
   "babel": {
     "presets": [

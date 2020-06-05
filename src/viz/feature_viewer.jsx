@@ -374,9 +374,9 @@ class FeatureViewer extends Component{
 			        if (startX > 10) startX =10;
 			        ctx.beginPath();
 				ctx.moveTo(startX, topY);
-				ctx.lineTo(arrowX, topY);
+				// ctx.lineTo(arrowX, topY);
 				ctx.lineTo(endX, midY);
-				ctx.lineTo(arrowX, bottomY);
+				// ctx.lineTo(arrowX, bottomY);
 				ctx.lineTo(startX, bottomY);
 				ctx.closePath();
 				ctx.fill();
