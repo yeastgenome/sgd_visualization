@@ -292,11 +292,8 @@ class FeatureViewer extends Component{
 	}
     
         _drawFeatures(ctx) {
-	        if (this.props.isUpstreamMode) {
-		    ctx.fillStyle = FILL_COLOR_UP;
-		}
-	        else if (this.props.isDownstreamMode) {
-		    ctx.fillStyle = FILL_COLOR_DOWN;
+	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+		    ctx.fillStyle = FILL_COLOR_UPDOWN;
 		}
 		else {
 		    ctx.fillStyle = FILL_COLOR;
@@ -676,8 +673,8 @@ var DOMAIN_NODE_HEIGHT = 7;
 var HIGHLIGHT_COLOR = "#EBDD71";
 var FONT_SIZE = 14;
 var FILL_COLOR = "#09AEB2";
-var FILL_COLOR_UP = "#d6bb1e";
-var FILL_COLOR_DOWN = "#a6b90a";
+var FILL_COLOR_UPDOWN = "#d6bb1e";
+// var FILL_COLOR_DOWN = "#a6b90a";
 var MAX_Y_SCROLL = HEIGHT * 4;
 var PX_PER_DOMAIN = 24;
 var SCROLL_WIDTH = 10000;
