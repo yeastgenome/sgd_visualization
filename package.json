@@ -1,11 +1,21 @@
 {
-  "name": "sgd_visualization",
-  "version": "1.0.12",
+  "name": "sgd_visualization_beta",
+  "version": "2.0.0-beta-sw.56",
   "main": "src/index.js",
-  "repository": "https://github.com/yeastgenome/sgd_visualization",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeastgenome/sgd_visualization.git"
+  },
   "homepage": "http://www.yeastgenome.org",
   "browserify": {
-    "transform": [["reactify", { "es6": true }]]
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ]
+    ]
   },
   "dependencies": {
     "react": "^0.14.2",
@@ -31,11 +41,36 @@
     "sniper": "sniper ."
   },
   "sniper": {
-    "js": ["/build/sgd_visualization.js"],
-    "buildJS": ["https://s3-us-west-2.amazonaws.com/viz-assets/sgd_visualization.js"],
-    "css": ["http://fonts.googleapis.com/css?family=Lato"],
-    "snippets": ["examples"],
+    "js": [
+      "/build/sgd_visualization.js"
+    ],
+    "buildJS": [
+      "https://s3-us-west-2.amazonaws.com/viz-assets/sgd_visualization.js"
+    ],
+    "css": [
+      "http://fonts.googleapis.com/css?family=Lato"
+    ],
+    "snippets": [
+      "examples"
+    ],
     "first": "variant_viewer_dna"
   },
-  "keywords": ["biojs","react","d3", "genetic", "biology", "variation"]
+  "keywords": [
+    "biojs",
+    "react",
+    "d3",
+    "genetic",
+    "biology",
+    "variation"
+  ],
+  "description": "[![Build Status](https://travis-ci.org/yeastgenome/sgd_visualization.svg)](https://travis-ci.org/yeastgenome/sgd_visualization)",
+  "bugs": {
+    "url": "https://github.com/yeastgenome/sgd_visualization/issues"
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "author": "SGD",
+  "license": "ISC"
 }
