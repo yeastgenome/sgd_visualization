@@ -23,7 +23,7 @@ class FeatureViewer extends Component{
 			canvasRatio: 1,
 			toolTipVisible: false,
 			toolTipTop: 0,
-			toolTipLeft: 200,
+			toolTipLeft: 50,
 			toolTipText: "",
 			toolTipHref: null}
 
