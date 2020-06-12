@@ -21,7 +21,7 @@ class FlexibleTooltip extends Component{
 		var _style = {
 			display: (props.visible ? "block" : "none"),
 			top: props.top - heightOffset,
-			left: 100,
+			left: props.left,
 			// padding: _isComplex ? "1em" : 0,
 			width: _isComplex ? _complexWidth: "auto"
 		};
@@ -121,7 +121,7 @@ var style = {
 	    left: ARROW_OFFSET - 2,
 	    width: 0,
 	    height: 0,
-	    marginLeft: -7,
+	    marginLeft: -70,
 	    borderLeft: "8px solid transparent",
 	    borderRight: "8px solid transparent",
 	    borderTop: "15px solid #e7e7e7"
