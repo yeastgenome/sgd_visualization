@@ -121,7 +121,7 @@ var style = {
 	    left: ARROW_OFFSET - 2,
 	    width: 0,
 	    height: 0,
-	    marginLeft: 93,
+	    marginLeft: 100,
 	    borderLeft: "8px solid transparent",
 	    borderRight: "8px solid transparent",
 	    borderTop: "15px solid #e7e7e7"
