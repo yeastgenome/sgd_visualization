@@ -16,7 +16,7 @@ class FeatureViewer extends Component{
 	constructor(props){
 		super(props);
 		this.state = {DOMWidth: 400,
-			offsetLeft: 0,
+			offsetLeft: 200,
 			offsetTop: 0,
 			computedForceData: null,
 			trackedDomains: null,
