@@ -16,14 +16,14 @@ class FeatureViewer extends Component{
 	constructor(props){
 		super(props);
 		this.state = {DOMWidth: 400,
-			offsetLeft: 200,
+			offsetLeft: 0,
 			offsetTop: 0,
 			computedForceData: null,
 			trackedDomains: null,
 			canvasRatio: 1,
 			toolTipVisible: false,
 			toolTipTop: 0,
-			toolTipLeft: 0,
+			toolTipLeft: 200,
 			toolTipText: "",
 			toolTipHref: null}
 
