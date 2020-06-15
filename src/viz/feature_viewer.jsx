@@ -434,8 +434,7 @@ class FeatureViewer extends Component{
 	_drawVariants(ctx) {
 		var computedData = this.state.computedForceData;
 		var canvasRatio = this.state.canvasRatio;
-	    
-	        // TEMP
+		// TEMP
 		// if (!computedData) return;
 		var originalData = this._getRawVariants();
 		var originalDatum, snpType, type, path;
@@ -449,7 +448,7 @@ class FeatureViewer extends Component{
 			x = d.x / canvasRatio;
 			y = d.y / canvasRatio;
 			stemX = originalDatum.x / canvasRatio;
-		        stemY = originalDatum.y / canvasRatio;
+			stemY = originalDatum.y / canvasRatio;
 			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), x, y, stemX, stemY, canvasRatio);
 		});
 		
@@ -630,9 +629,9 @@ class FeatureViewer extends Component{
 
         _clearMouseOverTimeout(){
 	        console.log("this.props.isDownstreamMode="+this.props.isDownstreamMode);
-	    
 		if (this._mouseOverTimeout) clearTimeout(this._mouseOverTimeout);
 	}
+}
 
 FeatureViewer.propTypes = {
 	featureTrackId: PropTypes.string,
