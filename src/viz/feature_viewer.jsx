@@ -626,10 +626,11 @@ class FeatureViewer extends Component{
 		this._mouseOverTimeout = setTimeout( () => {
 			cb();
 		}, TOOLTIP_DELAY);
-	        this._clearMouseOverTimeout();
 	}
 
-	_clearMouseOverTimeout(){
+        _clearMouseOverTimeout(){
+	        console.log("this.props.isDownstreamMode="+this.props.isDownstreamMode);
+	    
 		if (this._mouseOverTimeout) clearTimeout(this._mouseOverTimeout);
 	}
 /Users/shuai }
