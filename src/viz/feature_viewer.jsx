@@ -633,7 +633,6 @@ class FeatureViewer extends Component{
 	    
 		if (this._mouseOverTimeout) clearTimeout(this._mouseOverTimeout);
 	}
-/Users/shuai }
 
 FeatureViewer.propTypes = {
 	featureTrackId: PropTypes.string,
