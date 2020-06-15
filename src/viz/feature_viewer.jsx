@@ -52,7 +52,7 @@ class FeatureViewer extends Component{
 			</div>
 		);
 	}
-
+ 
 	componentDidMount(){
 		var frame = this.frame;
 		// scroll to half
@@ -284,7 +284,7 @@ class FeatureViewer extends Component{
 		var height = this._calculateHeight();
 		ctx.clearRect(0, 0, this.state.DOMWidth * this.state.canvasRatio, height);
 
-		this._drawHighlightedSegment(ctx);
+		// this._drawHighlightedSegment(ctx);
 	        this._drawAxis(ctx);
 		this._drawFeatures(ctx);
 		this._drawVariants(ctx);
@@ -433,12 +433,11 @@ class FeatureViewer extends Component{
 
 	_drawVariants(ctx) {
 		var computedData = this.state.computedForceData;
-		var canvasRatio = this.state.canvasRatio;
+	        var canvasRatio = this.state.canvasRatio;
 		// TEMP
-		// if (!computedData) return;
+	        // if (!computedData) return;
 		var originalData = this._getRawVariants();
 		var originalDatum, snpType, type, path;
-
 		// TEMP, just use raw, don't recalc
 		// old computedData.forEach( (d, i) => {
 		var x, y, stemX, stemY;
@@ -449,7 +448,7 @@ class FeatureViewer extends Component{
 			y = d.y / canvasRatio;
 			stemX = originalDatum.x / canvasRatio;
 			stemY = originalDatum.y / canvasRatio;
-			// DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), x, y, stemX, stemY, canvasRatio);
+			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), x, y, stemX, stemY, canvasRatio);
 		});
 		
 	}
