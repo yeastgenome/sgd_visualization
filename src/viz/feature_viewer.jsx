@@ -29,7 +29,8 @@ class FeatureViewer extends Component{
 
 			this._clearToolTip = this._clearToolTip.bind(this);
 			this._download = this._download.bind(this);
-			this._clearMouseOverTimeout = this._clearMouseOverTimeout.bind(this);
+	                this._clearMouseOverTimeout = this._clearMouseOverTimeout.bind(this);
+	                this._clearMouseOverTimeout = this._clearMouseOverTimeout.bind(this);
 	}
 	
 	render(){
@@ -628,7 +629,6 @@ class FeatureViewer extends Component{
 	}
 
         _clearMouseOverTimeout(){
-	        console.log("this.props.isDownstreamMode="+this.props.isDownstreamMode);
 		if (this._mouseOverTimeout) clearTimeout(this._mouseOverTimeout);
 	}
 }
