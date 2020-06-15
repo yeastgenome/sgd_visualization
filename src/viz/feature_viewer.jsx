@@ -450,11 +450,6 @@ class FeatureViewer extends Component{
 			y = d.y / canvasRatio;
 			stemX = originalDatum.x / canvasRatio;
 		        stemY = originalDatum.y / canvasRatio;
-
-
-		        console.log("this.props.isUpstreamMode="+this.props.isUpstreamMode+", this.props.isDownstreamMode="+this.props.isDownstreamMode+ ", canvasRatio="+canvasRatio+", originalDatum.x="+originalDatum.x+", originalDatum.y="+originalDatum.x);
-
-		    
 			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), x, y, stemX, stemY, canvasRatio);
 		});
 		
@@ -631,12 +626,13 @@ class FeatureViewer extends Component{
 		this._mouseOverTimeout = setTimeout( () => {
 			cb();
 		}, TOOLTIP_DELAY);
+	        this._clearMouseOverTimeout();
 	}
 
 	_clearMouseOverTimeout(){
 		if (this._mouseOverTimeout) clearTimeout(this._mouseOverTimeout);
 	}
-}
+/Users/shuai }
 
 FeatureViewer.propTypes = {
 	featureTrackId: PropTypes.string,
