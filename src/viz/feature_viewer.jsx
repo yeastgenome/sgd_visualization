@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import AssignTracksToDomains from  './assign_tracks_to_domains';
 import CalculateCanvasRatio from '../mixins/calculate_canvas_ratio';
 import DrawVariant from './draw_variant';
-// import FlexibleTooltip from './flexible_tooltip';
+import FlexibleTooltip from './flexible_tooltip';
 import VariantLegend from './variant_legend';
 import appStyle from './style'; 
 
@@ -76,7 +76,7 @@ class FeatureViewer extends Component{
 			text: this.state.toolTipText,
 			href: this.state.toolTipHref
 		};
-		// return <FlexibleTooltip onMouseEnter={this._clearMouseOverTimeout} {...toolTipProps} />;
+		return <FlexibleTooltip onMouseEnter={this._clearMouseOverTimeout} {...toolTipProps} />;
 	}
 
 	_calculateHeight(){
@@ -449,7 +449,7 @@ class FeatureViewer extends Component{
 			y = d.y / canvasRatio;
 			stemX = originalDatum.x / canvasRatio;
 			stemY = originalDatum.y / canvasRatio;
-			DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), x, y, stemX, stemY, canvasRatio);
+			// DrawVariant(ctx, d.variant_type.toLowerCase(), snpType.toLowerCase(), x, y, stemX, stemY, canvasRatio);
 		});
 		
 	}
