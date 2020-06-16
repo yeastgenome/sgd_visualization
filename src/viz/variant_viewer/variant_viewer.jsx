@@ -127,11 +127,24 @@ class VariantViewer extends Component {
 			.map( d => {
 				return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
+
+
+
+	    
+	    
+	        console.log("this.props.isDownstreamMode="+this.props.isDownstreamMode+", parsetX1Coord="+parsetX1Coord+", parsetX2Coord="+parsetX2Coord);
+
+
+
+	    
+	    
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
 		}
-		return (<Parset ref={(parset)=>this.parset=parset}
+
+	    
+	        return (<Parset ref={(parset)=>this.parset=parset}
 			isVisible={true}
 			x1Coordinates={parsetX1Coord}
 			x2Coordinates={parsetX2Coord}
