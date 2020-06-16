@@ -136,7 +136,7 @@ class FeatureViewer extends Component{
 	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
 	            display_name = this.props.intergenicDisplayName
 		}
-	        else if (this.props.strand == '-') {
+	        else if (this.props.orientation == '-') {
 	            chromRange = this.props.chromEnd + ".." + this.props.chromStart;
 		}
 		return (
@@ -641,7 +641,7 @@ FeatureViewer.propTypes = {
 	canScroll: PropTypes.bool,
 	chromStart: PropTypes.number,
         chromEnd: PropTypes.number,
-        strand: PropTypes.string,
+        orientation: PropTypes.string,
 	domains: PropTypes.array, // [{ name, id, start, end, sourceName, sourceId }, ...]
 	features: PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
 	focusFeature: PropTypes.object, // { chromStart, chromEnd, strand }

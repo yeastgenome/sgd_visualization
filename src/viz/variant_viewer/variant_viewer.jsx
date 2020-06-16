@@ -91,7 +91,7 @@ class VariantViewer extends Component {
 			canScroll={true}
 			chromStart={_chromStart}
 			chromEnd={_chromEnd}
-			strand={this.props.strand}
+			orientation={this.props.orientation}
 			contigName={this.props.contigName}
 			contigHref={this.props.contigHref}
 			downloadCaption={this.props.downloadCaption}
@@ -216,7 +216,8 @@ VariantViewer.propTypes = {
 		variantDataProtein: PropTypes.array,
 		dnaLength: PropTypes.number,
 		proteinLength: PropTypes.number,
-		strand: PropTypes.string, // "+" or "-"
+                strand: PropTypes.string, // "+" or "-"
+                orientation: PropTypes.string,
                 isProteinMode: PropTypes.bool,
                 isUpstreamMode: PropTypes.bool,
                 isDownstreamMode: PropTypes.bool,
