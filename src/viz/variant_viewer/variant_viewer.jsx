@@ -136,11 +136,15 @@ class VariantViewer extends Component {
 	        console.log("BEFORE: isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
 
 
-	        var parsetX2Coord = _alignedCoord
+	        if (hasBadCoord > 0) {
+	            _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
+	            var parsetX2Coord = _alignedCoord
                         .map( d => {
                             return this.state.x2Scale(d) + LABEL_WIDTH;
                         });
 
+		}
+	    
 	        console.log("AFTER:  isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
 	    
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
