@@ -123,8 +123,10 @@ class VariantViewer extends Component {
 			.map( d => {
 				return this.state.x1Scale(d + offset);
 			});
+	        
 		var parsetX2Coord = _alignedCoord
-			.map( d => {
+		        .map( d => {
+			        
 				return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
 
@@ -132,7 +134,7 @@ class VariantViewer extends Component {
 
 	    
 	    
-	        console.log("this.props.isDownstreamMode="+this.props.isDownstreamMode+", parsetX1Coord="+parsetX1Coord+", parsetX2Coord="+parsetX2Coord);
+	        console.log("this.props.isDownstreamMode="+this.props.isDownstreamMode+", parsetX1Coord="+parsetX1Coord+", parsetX2Coord="+parsetX2Coord, ", LABEL_WIDTH="+LABEL_WIDTH);
 
 
 
