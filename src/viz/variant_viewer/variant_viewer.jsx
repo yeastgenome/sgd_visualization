@@ -125,7 +125,10 @@ class VariantViewer extends Component {
 				return this.state.x1Scale(d + offset);
 			});
 		var parsetX2Coord = _alignedCoord
-			.map( d => {
+		        .map( d => {
+			        var x2scale = this.state.x2Scale(d);
+			        console.log("d="+d+", x2Scale(d)"+x2scale + " | " + this.state.x2Scale(d));
+			    
 				return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
