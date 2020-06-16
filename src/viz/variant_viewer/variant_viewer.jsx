@@ -29,7 +29,8 @@ class VariantViewer extends Component {
 	render() {
 		return (
 			<div className="sgd-viz variant-viewer">
-				{this._renderFeatureViewer()}
+			        {this._renderFeatureViewer()}
+				{this._renderParset('reset')}
 				{this._renderParset()}
 				{this._renderSequence()}
 			</div>
@@ -113,8 +114,8 @@ class VariantViewer extends Component {
 		/>);
 	}
 
-	_renderParset() {
-		var _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
+	_renderParset(reset) {
+	        var _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
 		// get ref highlighted coord
 		var model = this._getModel();
 	        var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode);
@@ -126,11 +127,13 @@ class VariantViewer extends Component {
 			});
 		var parsetX2Coord = _alignedCoord
 		        .map( d => {
-			        var x2scale = this.state.x2Scale(d);
-			        console.log("d="+d+", x2Scale(d)"+x2scale + " | " + this.state.x2Scale(d));
-			    
-				return this.state.x2Scale(d) + LABEL_WIDTH;
+			        return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
+
+	        if (reset) {
+		    return
+		}
+		
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
