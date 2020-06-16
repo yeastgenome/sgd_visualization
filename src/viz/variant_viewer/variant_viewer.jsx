@@ -29,9 +29,9 @@ class VariantViewer extends Component {
 	render() {
 		return (
 			<div className="sgd-viz variant-viewer">
-			        {this._renderFeatureViewer()}
-			        {this._renderParset()}
-			        {this._renderSequence()}
+				{this._renderFeatureViewer()}
+				{this._renderParset()}
+				{this._renderSequence()}
 			</div>
 		);
 	}
@@ -91,6 +91,7 @@ class VariantViewer extends Component {
 			canScroll={true}
 			chromStart={_chromStart}
 			chromEnd={_chromEnd}
+			strand={this.props.strand}
 			contigName={this.props.contigName}
 			contigHref={this.props.contigHref}
 			downloadCaption={this.props.downloadCaption}
@@ -123,22 +124,15 @@ class VariantViewer extends Component {
 			.map( d => {
 				return this.state.x1Scale(d + offset);
 			});
-
 		var parsetX2Coord = _alignedCoord
-		        .map( d => {
-			    return this.state.x2Scale(d) + LABEL_WIDTH;
+			.map( d => {
+				return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
-
-	    
-	        // console.log("BEFORE: isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
-
-	    
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
 		}
-	    
-	        return (<Parset ref={(parset)=>this.parset=parset}
+		return (<Parset ref={(parset)=>this.parset=parset}
 			isVisible={true}
 			x1Coordinates={parsetX1Coord}
 			x2Coordinates={parsetX2Coord}
@@ -165,10 +159,7 @@ class VariantViewer extends Component {
 		);
 	}
 
-        _highlightSegment(start, end) {
-
-                console.log("isDownStreamMode="+this.props.isDownStreamMode+", start="+start+", end="+end);
-	    
+	_highlightSegment(start, end) {
 		this.setState({ highlightedAlignedSegment: [start, end] })
 	}
 

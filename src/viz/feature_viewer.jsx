@@ -132,13 +132,17 @@ class FeatureViewer extends Component{
 	        var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
 
 	        var display_name = '';
+	        var chromRange = this.props.chromStart + ".." + this.props.chromEnd;
 	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
-	                display_name = this.props.intergenicDisplayName;
+	            display_name = this.props.intergenicDisplayName
+		}
+	        else if (this.props.strand == '-') {
+	            chromRange = this.props.chromEnd + ".." + this.props.chromStart;
 		}
 		return (
 			<div style={[style.uiContainer]}>
 				<div>
-				        <h3>Location: {contigTextNode} {this.props.chromStart}..{this.props.chromEnd} {display_name}</h3>
+				        <h3>Location: {contigTextNode} {chromRange} {display_name}</h3>
 				</div>
 				<div style={[style.btnContainer]}>
 					<div style={[style.btnGroup]}>
@@ -194,7 +198,8 @@ class FeatureViewer extends Component{
 					    if (Math.abs(refCoord.end - refCoord.start) === 1) {
                                                 locationStr = chromStart + d.dna_start - 1;
                                             } else {
-                                                locationStr = `${chromStart + d.dna_start - 1}..${chromStart + d.dna_end - 1}`
+	
+						locationStr = `${chromStart + d.dna_start - 1}..${chromStart + d.dna_end - 1}`
                                             }
 					}
 				        else {
@@ -635,7 +640,8 @@ FeatureViewer.propTypes = {
 	featureTrackId: PropTypes.string,
 	canScroll: PropTypes.bool,
 	chromStart: PropTypes.number,
-	chromEnd: PropTypes.number,
+        chromEnd: PropTypes.number,
+        strand: PropTypes.string,
 	domains: PropTypes.array, // [{ name, id, start, end, sourceName, sourceId }, ...]
 	features: PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
 	focusFeature: PropTypes.object, // { chromStart, chromEnd, strand }
