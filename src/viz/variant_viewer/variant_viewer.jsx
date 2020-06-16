@@ -29,9 +29,9 @@ class VariantViewer extends Component {
 	render() {
 		return (
 			<div className="sgd-viz variant-viewer">
-				{this._renderFeatureViewer()}
+			        {this._renderFeatureViewer()}
+			        {this._renderSequence()}
 				{this._renderParset()}
-				{this._renderSequence()}
 			</div>
 		);
 	}
@@ -124,34 +124,19 @@ class VariantViewer extends Component {
 				return this.state.x1Scale(d + offset);
 			});
 
-	        var hasBadCoord = 0;
 		var parsetX2Coord = _alignedCoord
 		        .map( d => {
-			    if (this.state.x2Scale(d) > 1000) {   
-		                hasBadCoord = 1;
-		            }
 			    return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
 
+	    
 	        console.log("BEFORE: isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
 
-
-	        if (hasBadCoord > 0) {
-	            _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
-	            var parsetX2Coord = _alignedCoord
-                        .map( d => {
-                            return this.state.x2Scale(d) + LABEL_WIDTH;
-                        });
-
-		}
-	    
-	        console.log("AFTER:  isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
 	    
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
 			var _coord = (this.props.strand === "+") ? _refCoord[0] : _refCoord[1];
 		}
-
 	    
 	        return (<Parset ref={(parset)=>this.parset=parset}
 			isVisible={true}
