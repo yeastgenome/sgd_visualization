@@ -123,22 +123,25 @@ class VariantViewer extends Component {
 			.map( d => {
 				return this.state.x1Scale(d + offset);
 			});
-	        
+
+	        var hasBadCoord = 0;
 		var parsetX2Coord = _alignedCoord
 		        .map( d => {
-			        
-				return this.state.x2Scale(d) + LABEL_WIDTH;
+			    if (this.state.x2Scale(d) > 1000) {   
+		                hasBadCoord = 1;
+		            }
+			    return this.state.x2Scale(d) + LABEL_WIDTH;
 			});
 
+	        console.log("BEFORE: isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
 
 
-	    
-	    
-	        console.log("this.props.isDownstreamMode="+this.props.isDownstreamMode+", parsetX1Coord="+parsetX1Coord+", parsetX2Coord="+parsetX2Coord, ", LABEL_WIDTH="+LABEL_WIDTH);
+	        var parsetX2Coord = _alignedCoord
+                        .map( d => {
+                            return this.state.x2Scale(d) + LABEL_WIDTH;
+                        });
 
-
-
-	    
+	        console.log("AFTER:  isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
 	    
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
 		if (Math.abs(_refCoord[1] - _refCoord[0]) === 1) {
