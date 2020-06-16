@@ -30,8 +30,8 @@ class VariantViewer extends Component {
 		return (
 			<div className="sgd-viz variant-viewer">
 			        {this._renderFeatureViewer()}
+			        {this._renderParset()}
 			        {this._renderSequence()}
-				{this._renderParset()}
 			</div>
 		);
 	}
@@ -130,7 +130,7 @@ class VariantViewer extends Component {
 			});
 
 	    
-	        console.log("BEFORE: isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
+	        // console.log("BEFORE: isDownstreamMode="+this.props.isDownstreamMode+", parsetX2Coord="+parsetX2Coord);
 
 	    
 		// if a SNP (actually one nucleotide) make the text refer to the position, not a range
@@ -165,7 +165,10 @@ class VariantViewer extends Component {
 		);
 	}
 
-	_highlightSegment(start, end) {
+        _highlightSegment(start, end) {
+
+                console.log("isDownStreamMode="+this.props.isDownStreamMode+", start="+start+", end="+end);
+	    
 		this.setState({ highlightedAlignedSegment: [start, end] })
 	}
 
