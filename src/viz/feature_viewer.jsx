@@ -185,29 +185,53 @@ class FeatureViewer extends Component{
 			if (typeof this.props.onHighlightSegment === "function") {
 			    mouseOverFns.push( () => {
 				        var refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
+				
 					var locationStr;
-					// SNP
 				        var chromStart;
+				        var chromEnd;
 				        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
 					    chromStart = this.props.chromStart;
-					}
-				        else {
-					    chromStart = this.props.focusFeature.chromStart;
-					}
-				        if (this.props.isProteinMode) {
 					    if (Math.abs(refCoord.end - refCoord.start) === 1) {
-                                                locationStr = chromStart + d.dna_start - 1;
+                                                locationStr = chromStart + refCoord.start - 1;
                                             } else {
-	
-						locationStr = `${chromStart + d.dna_start - 1}..${chromStart + d.dna_end - 1}`
+                                                locationStr = `${chromStart +refCoord.start - 1}..${chromStart +refCoord.end - 1}`
                                             }
 					}
 				        else {
-					    if (Math.abs(refCoord.end - refCoord.start) === 1) {
-						locationStr = chromStart + refCoord.start - 1;
-					    } else {
-						locationStr = `${chromStart +refCoord.start - 1}..${chromStart +refCoord.end - 1}`
+					    chromStart = this.props.focusFeature.chromStart;
+					    chromEnd = this.props.focusFeature.chromEnd;
+					    if (this.props.orientation == '+') {
+				                if (this.props.isProteinMode) {
+					            if (Math.abs(refCoord.end - refCoord.start) === 1) {
+                                                        locationStr = chromStart + d.dna_start - 1;
+                                                    } else {
+						        locationStr = `${chromStart + d.dna_start - 1}..${chromStart + d.dna_end - 1}`
+                                                    }
+					        }
+				                else {
+					            if (Math.abs(refCoord.end - refCoord.start) === 1) {
+						        locationStr = chromStart + refCoord.start - 1;
+					            } else {
+						        locationStr = `${chromStart +refCoord.start - 1}..${chromStart +refCoord.end - 1}`
+				                    }
+					        }
 				            }
+					    else {
+						if (this.props.isProteinMode) {
+						    if (Math.abs(refCoord.end - refCoord.start) === 1) {
+							locationStr = chromEnd - d.dna_start + 1;
+						    } else {
+                                                        locationStr = `${chromEnd - d.dna_start + 1}..${chromEnd - d.dna_end + 1}`
+                                                    }
+						}
+						else {
+                                                    if (Math.abs(refCoord.end - refCoord.start) === 1) {
+                                                        locationStr = chromEnd - refCoord.start + 1;
+                                                    } else {
+                                                        locationStr = `${chromEnd - refCoord.start + 1}..${chromEnd - refCoord.end + 1}`
+                                                    }
+					      	}
+				            }		
 					}
 					var contigName = this.props.contigName || "";
 					var fullLocationStr = `${contigName} ${locationStr}`;
