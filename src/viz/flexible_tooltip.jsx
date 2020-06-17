@@ -105,7 +105,7 @@ var ARROW_OFFSET = 20;
 var style = {
 	wrapper: {
 		position: "absolute",
-		marginLeft: -ARROW_OFFSET,
+		marginLeft: -ARROW_OFFSET - 200,
 		marginTop: -65,
 		minHeight: 35,
 		padding: "0.5rem 0.5rem 0 0.5rem",
@@ -121,7 +121,7 @@ var style = {
 	    left: ARROW_OFFSET - 2,
 	    width: 0,
 	    height: 0,
-	    marginLeft: -7,
+	    marginLeft: 195,
 	    borderLeft: "8px solid transparent",
 	    borderRight: "8px solid transparent",
 	    borderTop: "15px solid #e7e7e7"

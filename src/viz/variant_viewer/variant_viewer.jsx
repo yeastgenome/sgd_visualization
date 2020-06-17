@@ -47,7 +47,7 @@ class VariantViewer extends Component {
 		var refCoordinates;
 		var baseArr = this.props.isProteinMode ? this.props.variantDataProtein : this.props.variantDataDna;
 		var _variantData = baseArr.map( d => {
-			refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
+		        refCoordinates = model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
 			return _.extend(d, {
 				coordinates: [d.start, d.end],
 				referenceCoordinates: [refCoordinates.start, refCoordinates.end],
@@ -57,19 +57,33 @@ class VariantViewer extends Component {
 		var _highlightedSegment = null;
 		var hs = this.state.highlightedAlignedSegment;
 		if (hs) {
-			var obj = model.getReferenceCoordinatesFromAlignedCoordinates(hs[0], hs[1], this.props.isProteinMode);
+		    var obj = model.getReferenceCoordinatesFromAlignedCoordinates(hs[0], hs[1], this.props.isProteinMode);
 			_highlightedSegment = [obj.start, obj.end];
 		}
 		var _onForceUpdate = () => {
 			this.forceUpdate();
 		}
-		var _domains = (this.props.isProteinMode && this.props.domains) ? this.props.domains: null;
-		var _chromStart = Math.min(featureData.position.chromStart, featureData.position.chromEnd);
-		var _chromEnd = Math.max(featureData.position.chromStart, featureData.position.chromEnd);
+	        var _domains = (this.props.isProteinMode && this.props.domains) ? this.props.domains: null;
 
+	        var _chromStart;
+	        var _chromEnd;
+	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+		    _chromStart = Math.min(this.props.chromStart, this.props.chromEnd);
+                    _chromEnd = Math.max(this.props.chromStart, this.props.chromEnd);
+	        }
+	        else {
+		    _chromStart = Math.min(featureData.position.chromStart, featureData.position.chromEnd);
+		    _chromEnd = Math.max(featureData.position.chromStart, featureData.position.chromEnd);
+                }
 		var forceLength;
 		if (this.props.isProteinMode && this.props.proteinLength) forceLength = this.props.proteinLength;
-
+	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) forceLength = this.props.chromEnd - this.props.chromStart + 1;
+	    
+	        var _drawIntrons = true;
+	        if (this.props.isProteinMode || this.props.isUpstreamMode || this.props.isDownstreamMode) {
+		    _drawIntrons = false;
+		}
+	    
 		return (<FeatureViewer
 			featureTrackId={"variantViewer"}
 			store={this.state.store}
@@ -77,6 +91,7 @@ class VariantViewer extends Component {
 			canScroll={true}
 			chromStart={_chromStart}
 			chromEnd={_chromEnd}
+			orientation={this.props.orientation}
 			contigName={this.props.contigName}
 			contigHref={this.props.contigHref}
 			downloadCaption={this.props.downloadCaption}
@@ -88,10 +103,13 @@ class VariantViewer extends Component {
 			onHighlightSegment={this._highlightSegment}
 			onForceUpdate={_onForceUpdate}
 			isRelative={true}
-			drawIntrons={!this.props.isProteinMode}
+			drawIntrons={_drawIntrons}
 			forceLength={forceLength}
 			model={model}
 			isProteinMode={this.props.isProteinMode}
+			isUpstreamMode={this.props.isUpstreamMode}
+			isDownstreamMode={this.props.isDownstreamMode}
+			intergenicDisplayName={this.props.intergenicDisplayName}
 		/>);
 	}
 
@@ -99,7 +117,7 @@ class VariantViewer extends Component {
 		var _alignedCoord = this.state.highlightedAlignedSegment || [0, 0];
 		// get ref highlighted coord
 		var model = this._getModel();
-		var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode);
+	        var _refCoord = model.getReferenceCoordinatesFromAlignedCoordinates(_alignedCoord[0], _alignedCoord[1], this.props.isProteinMode);
 		_refCoord = [_refCoord.start, _refCoord.end];
 		var offset = this.props.isRelative ? 0 : this.props.chromStart;
 		var parsetX1Coord = _refCoord
@@ -187,7 +205,7 @@ class VariantViewer extends Component {
 }
 
 VariantViewer.propTypes = {
-	name: PropTypes.string,
+                name: PropTypes.string,
 		chromStart: PropTypes.number.isRequired,
 		chromEnd: PropTypes.number.isRequired,
 		contigName: PropTypes.string,
@@ -198,8 +216,12 @@ VariantViewer.propTypes = {
 		variantDataProtein: PropTypes.array,
 		dnaLength: PropTypes.number,
 		proteinLength: PropTypes.number,
-		strand: PropTypes.string, // "+" or "-"
-		isProteinMode: PropTypes.bool,
+                strand: PropTypes.string, // "+" or "-"
+                orientation: PropTypes.string,
+                isProteinMode: PropTypes.bool,
+                isUpstreamMode: PropTypes.bool,
+                isDownstreamMode: PropTypes.bool,
+                intergenicDisplayName: PropTypes.string,
 		domains: PropTypes.array,
 		downloadCaption: PropTypes.string,
 }

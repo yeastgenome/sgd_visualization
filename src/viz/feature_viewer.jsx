@@ -129,11 +129,16 @@ class FeatureViewer extends Component{
 	}
 
 	_renderControls(){
-		var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
+	        var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
+
+	        var display_name = '';
+	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+	                display_name = this.props.intergenicDisplayName;
+		}
 		return (
 			<div style={[style.uiContainer]}>
 				<div>
-					<h3>Location: {contigTextNode} {this.props.chromStart}..{this.props.chromEnd}</h3>
+				        <h3>Location: {contigTextNode} {this.props.chromStart}..{this.props.chromEnd} {display_name}</h3>
 				</div>
 				<div style={[style.btnContainer]}>
 					<div style={[style.btnGroup]}>
@@ -178,7 +183,13 @@ class FeatureViewer extends Component{
 				        var refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
 					var locationStr;
 					// SNP
-				        var chromStart = this.props.focusFeature.chromStart;
+				        var chromStart;
+				        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+					    chromStart = this.props.chromStart;
+					}
+				        else {
+					    chromStart = this.props.focusFeature.chromStart;
+					}
 				        if (this.props.isProteinMode) {
 					    if (Math.abs(refCoord.end - refCoord.start) === 1) {
                                                 locationStr = chromStart + d.dna_start - 1;
@@ -274,37 +285,44 @@ class FeatureViewer extends Component{
 		ctx.clearRect(0, 0, this.state.DOMWidth * this.state.canvasRatio, height);
 
 		this._drawHighlightedSegment(ctx);
-		this._drawAxis(ctx);
+	        this._drawAxis(ctx);
 		this._drawFeatures(ctx);
 		this._drawVariants(ctx);
 		this._drawDomains(ctx);
 	}
-
-	_drawFeatures(ctx) {
-		ctx.fillStyle = FILL_COLOR;
+    
+        _drawFeatures(ctx) {
+	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+		    ctx.fillStyle = FILL_COLOR_UPDOWN;
+		}
+		else {
+		    ctx.fillStyle = FILL_COLOR;
+		}
 		var scale = this._getScale();
 		var startOffset = this.props.isRelative ? this.props.chromStart : 0;
 		var canvasRatio = this.state.canvasRatio;
 		var startPos, endPos, startX, endX, arrowX, y, topY, midY, bottomY, isPlusStrand;
 		this.props.features.forEach( d => {
-			isPlusStrand = d.strand === "+";
-			startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
-			endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
+		        isPlusStrand = d.strand === "+";
+		        startPos = (isPlusStrand ? d.chromStart : d.chromEnd) - startOffset;
+		        endPos = (isPlusStrand ? d.chromEnd : d.chromStart) - startOffset;
 			if (this.props.forceLength) endPos = this.props.forceLength;
 			startX = scale(startPos);
 			endX = scale(endPos);
-			arrowX = endX - TRACK_HEIGHT * canvasRatio;
+		    
+		        arrowX = endX - TRACK_HEIGHT * canvasRatio;
 			y = isPlusStrand ? FEATURE_Y : FEATURE_Y; // TEMP
 			topY = y * canvasRatio;
 			midY = (y + TRACK_HEIGHT / 2) * canvasRatio;
-			bottomY = (y + TRACK_HEIGHT) * canvasRatio;
-
+			bottomY = (y + TRACK_HEIGHT) * canvasRatio;		    
 			// draw exons and introns if blockStarts and blockSizes defined
-			if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
+		        if (this.props.drawIntrons && d.blockStarts && d.blockSizes) {
+		   			
 				var isLast, _startX, _endX, _width, _nextRelStart, _nextStartX, _nextEndX;
 				d.blockStarts.forEach( (_d, _i) => {
 					isLast = (_i === d.blockStarts.length - 1);
-					if (isPlusStrand) {
+				    
+				        if (isPlusStrand) {
 						_startX = Math.round(scale(_d + startPos));
 						_endX = Math.round(scale(_d + d.blockSizes[_i] + startPos));
 					} else {
@@ -330,7 +348,8 @@ class FeatureViewer extends Component{
 						ctx.closePath();
 						ctx.fill();
 					} else {
-						_width = Math.abs(_endX - _startX);
+					        _width = Math.abs(_endX - _startX);
+					    
 						ctx.fillRect(_startX, topY, _width, bottomY - topY);
 						// intron to next exon
 						_nextRelStart = d.blockStarts[_i + 1];
@@ -348,14 +367,22 @@ class FeatureViewer extends Component{
 
 			// or just draw simple "blocky" feature
 			} else {
-				ctx.beginPath();
-				ctx.moveTo(startX, topY);
-				ctx.lineTo(arrowX, topY);
-				ctx.lineTo(endX, midY);
-				ctx.lineTo(arrowX, bottomY);
-				ctx.lineTo(startX, bottomY);
-				ctx.closePath();
-				ctx.fill();
+			    
+			        if (startX > 10) startX =10;
+			        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
+				    var width = Math.abs(endX - startX);
+				    ctx.fillRect(startX, topY, width, bottomY-topY);
+				}
+			        else {
+			            ctx.beginPath();
+				    ctx.moveTo(startX, topY);
+				    ctx.lineTo(arrowX, topY);
+				    ctx.lineTo(endX, midY);
+				    ctx.lineTo(arrowX, bottomY);
+				    ctx.lineTo(startX, bottomY);
+				    ctx.closePath();
+				    ctx.fill();
+				}
 			}
 		});
 	}
@@ -624,7 +651,10 @@ FeatureViewer.propTypes = {
 	contigName: PropTypes.string,
 	contigHref: PropTypes.string,
 	forceLength: PropTypes.number,
-	isProteinMode: PropTypes.bool
+        isProteinMode: PropTypes.bool,
+        isUpstreamMode: PropTypes.bool,
+        isDownstreamMode: PropTypes.bool,
+        intergenicDisplayName: PropTypes.string,
 }
 
 FeatureViewer.defaultProps = {
@@ -643,6 +673,8 @@ var DOMAIN_NODE_HEIGHT = 7;
 var HIGHLIGHT_COLOR = "#EBDD71";
 var FONT_SIZE = 14;
 var FILL_COLOR = "#09AEB2";
+var FILL_COLOR_UPDOWN = "#d6bb1e";
+// var FILL_COLOR_DOWN = "#a6b90a";
 var MAX_Y_SCROLL = HEIGHT * 4;
 var PX_PER_DOMAIN = 24;
 var SCROLL_WIDTH = 10000;
@@ -660,6 +692,7 @@ var SYNONYMOUS_COLOR = "#7b3294" // purply
 var NON_SYNONYMOUS_COLOR = "#d7191c";  // red
 var INTRON_COLOR = "#2c7bb6"; // dark blue
 var UNTRANSLATEABLE_COLOR = "gray";
+var INTERGENIC_COLOR = "#0ab94c";
 
 var TOOLTIP_DELAY = 200;
 

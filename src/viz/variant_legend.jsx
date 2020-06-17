@@ -8,7 +8,7 @@ import CalculateCanvasRatio from '../mixins/calculate_canvas_ratio.jsx';
 import appStyle from './style';
 
 var WIDTH = 200;
-var HEIGHT = 190;
+var HEIGHT = 220;
 var BACKGROUND_COLOR = "#fff";
 var BORDER_COLOR = "#ccc";
 var LABEL_HEIGHT = 20;
@@ -97,6 +97,7 @@ class VariantLegend extends Component{
 					<p style={style.label}>Nonsynonymous SNP</p>
 					<p style={style.label}>Intron SNP</p>
 					<p style={style.label}>Untranslatable SNP</p>
+					<p style={style.label}>Intergenic SNP</p>
 				</div>
 			</div>
 		);
@@ -120,7 +121,7 @@ class VariantLegend extends Component{
 
 	_drawLegend() {
 		var exampleInDels = ["insertion", "deletion"];
-		var exampleSnps = ["synonymous", "nonsynonymous", "intron", "untranslatable"];
+	        var exampleSnps = ["synonymous", "nonsynonymous", "intron", "untranslatable", "intergenic"];
 		var canvasRatio = this.state.canvasRatio;
 		var yDelta = (LABEL_HEIGHT + LABEL_BOTTOM + 1);
 		var width = this._getWidth() * canvasRatio;
