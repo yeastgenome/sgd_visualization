@@ -52,7 +52,7 @@ class FeatureViewer extends Component{
 			</div>
 		);
 	}
-
+ 
 	componentDidMount(){
 		var frame = this.frame;
 		// scroll to half
@@ -132,13 +132,17 @@ class FeatureViewer extends Component{
 	        var contigTextNode = this.props.contigHref ? <a href={this.props.contigHref}>{this.props.contigName}</a> : <span>{this.props.contigName}</span>;
 
 	        var display_name = '';
+	        var chromRange = this.props.chromStart + ".." + this.props.chromEnd;
 	        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
-	                display_name = this.props.intergenicDisplayName;
+	            display_name = this.props.intergenicDisplayName
+		}
+	        else if (this.props.orientation == '-') {
+	            chromRange = this.props.chromEnd + ".." + this.props.chromStart;
 		}
 		return (
 			<div style={[style.uiContainer]}>
 				<div>
-				        <h3>Location: {contigTextNode} {this.props.chromStart}..{this.props.chromEnd} {display_name}</h3>
+				        <h3>Location: {contigTextNode} {chromRange} {display_name}</h3>
 				</div>
 				<div style={[style.btnContainer]}>
 					<div style={[style.btnGroup]}>
@@ -181,28 +185,53 @@ class FeatureViewer extends Component{
 			if (typeof this.props.onHighlightSegment === "function") {
 			    mouseOverFns.push( () => {
 				        var refCoord = this.props.model.getReferenceCoordinatesFromAlignedCoordinates(d.start, d.end, this.props.isProteinMode);
+				
 					var locationStr;
-					// SNP
 				        var chromStart;
+				        var chromEnd;
 				        if (this.props.isUpstreamMode || this.props.isDownstreamMode) {
 					    chromStart = this.props.chromStart;
-					}
-				        else {
-					    chromStart = this.props.focusFeature.chromStart;
-					}
-				        if (this.props.isProteinMode) {
 					    if (Math.abs(refCoord.end - refCoord.start) === 1) {
-                                                locationStr = chromStart + d.dna_start - 1;
+                                                locationStr = chromStart + refCoord.start - 1;
                                             } else {
-                                                locationStr = `${chromStart + d.dna_start - 1}..${chromStart + d.dna_end - 1}`
+                                                locationStr = `${chromStart +refCoord.start - 1}..${chromStart +refCoord.end - 1}`
                                             }
 					}
 				        else {
-					    if (Math.abs(refCoord.end - refCoord.start) === 1) {
-						locationStr = chromStart + refCoord.start - 1;
-					    } else {
-						locationStr = `${chromStart +refCoord.start - 1}..${chromStart +refCoord.end - 1}`
+					    chromStart = this.props.focusFeature.chromStart;
+					    chromEnd = this.props.focusFeature.chromEnd;
+					    if (this.props.orientation == '+') {
+				                if (this.props.isProteinMode) {
+					            if (Math.abs(refCoord.end - refCoord.start) === 1) {
+                                                        locationStr = chromStart + d.dna_start - 1;
+                                                    } else {
+						        locationStr = `${chromStart + d.dna_start - 1}..${chromStart + d.dna_end - 1}`
+                                                    }
+					        }
+				                else {
+					            if (Math.abs(refCoord.end - refCoord.start) === 1) {
+						        locationStr = chromStart + refCoord.start - 1;
+					            } else {
+						        locationStr = `${chromStart +refCoord.start - 1}..${chromStart +refCoord.end - 1}`
+				                    }
+					        }
 				            }
+					    else {
+						if (this.props.isProteinMode) {
+						    if (Math.abs(refCoord.end - refCoord.start) === 1) {
+							locationStr = chromEnd - d.dna_start + 1;
+						    } else {
+                                                        locationStr = `${chromEnd - d.dna_start + 1}..${chromEnd - d.dna_end + 1}`
+                                                    }
+						}
+						else {
+                                                    if (Math.abs(refCoord.end - refCoord.start) === 1) {
+                                                        locationStr = chromEnd - refCoord.start + 1;
+                                                    } else {
+                                                        locationStr = `${chromEnd - refCoord.start + 1}..${chromEnd - refCoord.end + 1}`
+                                                    }
+					      	}
+				            }		
 					}
 					var contigName = this.props.contigName || "";
 					var fullLocationStr = `${contigName} ${locationStr}`;
@@ -433,12 +462,11 @@ class FeatureViewer extends Component{
 
 	_drawVariants(ctx) {
 		var computedData = this.state.computedForceData;
-		var canvasRatio = this.state.canvasRatio;
+	        var canvasRatio = this.state.canvasRatio;
 		// TEMP
-		// if (!computedData) return;
+	        // if (!computedData) return;
 		var originalData = this._getRawVariants();
 		var originalDatum, snpType, type, path;
-
 		// TEMP, just use raw, don't recalc
 		// old computedData.forEach( (d, i) => {
 		var x, y, stemX, stemY;
@@ -636,7 +664,8 @@ FeatureViewer.propTypes = {
 	featureTrackId: PropTypes.string,
 	canScroll: PropTypes.bool,
 	chromStart: PropTypes.number,
-	chromEnd: PropTypes.number,
+        chromEnd: PropTypes.number,
+        orientation: PropTypes.string,
 	domains: PropTypes.array, // [{ name, id, start, end, sourceName, sourceId }, ...]
 	features: PropTypes.array, // [{ chromStart, chromEnd, strand }, ...]
 	focusFeature: PropTypes.object, // { chromStart, chromEnd, strand }
