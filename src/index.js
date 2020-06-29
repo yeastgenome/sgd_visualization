@@ -1,14 +1,12 @@
 "use strict";
-var React = require("react");
-var ReactDOM = require("react-dom");
 
-var _ProteinViewerComponent = require("./viz/protein_viewer.jsx");
-var _VariantViewerComponent = require("./viz/variant_viewer/variant_viewer.jsx");
+import _ProteinViewerComponent from './viz/protein_viewer.jsx';
+import _VariantViewerComponent from './viz/variant_viewer/variant_viewer.jsx';
 
-var exampleData = require("./variant_viewer_fixture_data");
+var exampleData = require("./variant_viewer_fixture_data.json");
 
 class _VariantViewer {
-	constructor (options) {
+	constructor(options) {
 		if (typeof options === "undefined") options = {};
 		options.el = options.el || document.body;
 
@@ -56,7 +54,7 @@ class _VariantViewer {
 };
 
 class _ProteinViewer {
-	constructor (options) {
+	constructor(options) {
 		if (typeof options === "undefined") options = {};
 		options.el = options.el || document.body;
 
@@ -67,9 +65,9 @@ class _ProteinViewer {
 	}
 }
 
-module.exports = {
-	ProteinViewer: _ProteinViewer,
-	VariantViewer: _VariantViewer,
-	ProteinViewerComponent: _ProteinViewerComponent,
-	VariantViewerComponent: _VariantViewerComponent
+export {
+	_ProteinViewer as ProteinViewer,
+	_VariantViewer as VariantViewer,
+	_ProteinViewerComponent as ProteinViewerComponent,
+	_VariantViewerComponent as VariantViewerComponent
 };

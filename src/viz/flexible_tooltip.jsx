@@ -1,34 +1,16 @@
-/** @jsx React.DOM */
 "use strict";
 
-var React = require("react");
-var _ = require("underscore");
-var Radium = require("radium");
+import React,{Component} from 'react';
+import _ from 'underscore';
+import Radium from 'radium';
+import PropTypes from 'prop-types';
 
-var FlexibleTooltip = React.createClass({
-	propTypes: {
-		visible: React.PropTypes.bool,
-		text: React.PropTypes.string,
-		title: React.PropTypes.string,
-		href: React.PropTypes.string,
-		left: React.PropTypes.number,
-		top: React.PropTypes.number,
-		onMouseEnter: React.PropTypes.func
-		// data, null or object
-	},
+class FlexibleTooltip extends Component{
+	constructor(props){
+		super(props);
+	}
 
-	getDefaultProps: function () {
-		return {
-			visible: false,
-			text: "",
-			left: 0,
-			top: 0,
-			title: "",
-			data: null,
-		};
-	},
-
-	render: function () {
+	render(){
 		var props = this.props;
 		var _isComplex = this._isComplex();
 		var heightOffset = 0;
@@ -43,7 +25,6 @@ var FlexibleTooltip = React.createClass({
 			// padding: _isComplex ? "1em" : 0,
 			width: _isComplex ? _complexWidth: "auto"
 		};
-
 		var innerContentNode = this._getInnerContentNode();
 		var arrowKlass = _isComplex ? "flexible-tooltip-arrow complex" : "flexible-tooltip-arrow";
 		return (
@@ -52,22 +33,21 @@ var FlexibleTooltip = React.createClass({
 				<div style={[style.triangle]}></div>
 			</div>
 		);
-	},
+	}
 
-	_getInnerContentNode: function () {
+	_getInnerContentNode() {
 		if (this._isComplex()) {
 			return this._getComplexContent();
 		} else {
 			return this._getTextNode();
 		}
-	},
+	}
 
-	// false if just has text, true means has title and data object
-	_isComplex: function () {
+	_isComplex() {
 		return (this.props.title && this.props.data);
-	},
+	}
 
-	_getComplexContent: function () {
+	_getComplexContent() {
 		// init the title node
 		var titleNode = null;
 		if (this.props.title) {
@@ -92,21 +72,40 @@ var FlexibleTooltip = React.createClass({
 				{dataNode}
 			</div>
 		);
-	},
+	}	
 
-	_getTextNode: function () {
+	_getTextNode() {
 		var _innerText = this.props.href ? (<a href={this.props.href}>{this.props.text}</a>) : this.props.text;
 		return (<span className="flexible-tooltip-text">
 			{_innerText}
 		</span>);
 	}
-});
+}
+
+FlexibleTooltip.propTypes = {
+	visible: PropTypes.bool,
+	text: PropTypes.string,
+	title: PropTypes.string,
+	href: PropTypes.string,
+	left: PropTypes.number,
+	top: PropTypes.number,
+	onMouseEnter: PropTypes.func
+}
+
+FlexibleTooltip.defaultProps = {
+	visible: false,
+	text: "",
+	left: 0,
+	top: 0,
+	title: "",
+	data: null
+}
 
 var ARROW_OFFSET = 20;
 var style = {
 	wrapper: {
 		position: "absolute",
-		marginLeft: -ARROW_OFFSET,
+		marginLeft: -ARROW_OFFSET - 200,
 		marginTop: -65,
 		minHeight: 35,
 		padding: "0.5rem 0.5rem 0 0.5rem",
@@ -122,11 +121,11 @@ var style = {
 	    left: ARROW_OFFSET - 2,
 	    width: 0,
 	    height: 0,
-	    marginLeft: -7,
+	    marginLeft: 195,
 	    borderLeft: "8px solid transparent",
 	    borderRight: "8px solid transparent",
 	    borderTop: "15px solid #e7e7e7"
 	}
 };
 
-module.exports = Radium(FlexibleTooltip);
+export default Radium(FlexibleTooltip);

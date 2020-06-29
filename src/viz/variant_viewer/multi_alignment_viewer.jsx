@@ -1,72 +1,59 @@
 "use strict";
-var d3 = require("d3");
-var React = require("react");
-var _ = require("underscore");
-var Radium = require("radium");
+import d3 from 'd3';
+import React,{Component} from 'react';
+import _ from 'underscore';
+import Radium from 'radium';
+import PropTypes from 'prop-types';
 
-var getJaggedScale = require("./get_jagged_scale.jsx");
-var MultiScaleAxis = require("./multi_scale_axis.jsx");
+import getJaggedScale  from './get_jagged_scale';
+import MultiScaleAxis from './multi_scale_axis.jsx';
 
-var MultiAlignmentViewer = React.createClass({
-	propTypes: {
-		// highlightedSegmentDomain: null or [start, end]
-		onHighlightSegment: React.PropTypes.func, // (start, end) =>
-		onSetScale: React.PropTypes.func, // scale =>
-		segments: React.PropTypes.array.isRequired,
-		sequences: React.PropTypes.array.isRequired,
-		isProteinMode: React.PropTypes.bool
-	},
+class MultiAlignmentViewer extends Component{
+	
+	constructor(props){
+		super(props);
+		this.state = {activeSequenceName: null};
+		this._onScroll = this._onScroll.bind(this);
+	}
 
-	getDefaultProps: function () {
-		return {
-			highlightedSegmentDomain: null
-		};
-	},
-
-	getInitialState: function () {
-		return {
-			activeSequenceName: null,
-		};
-	},
-
-	render: function () {
+	render() {
 		var xScale = this._getXScale();
 		var maxX = _.max(xScale.range());
 		var svgHeight = (this.props.sequences.length + 3) * (PX_PER_CHAR + 3);
 
 		return (<div>
 			{this._getLabelsNode()}
-			<div ref="scroller" style={[style.scroller]}>
+			<div ref={(scroller) => this.scroller  = scroller} style={[style.scroller]}>
 				<div style={{ width: maxX + FONT_SIZE }}>
 					<MultiScaleAxis segments={this.props.segments} scale={xScale} />
-					<svg ref="svg" style={{ width: maxX + FONT_SIZE, height: svgHeight }}>
+					<svg ref={(svg) => this.svg = svg} style={{ width: maxX + FONT_SIZE, height: svgHeight }}>
 						{this._getSegmentNodes()}
 						{this._getVisibleSegmentNodes()}
 					</svg>
 				</div>
 			</div>
 		</div>);
-	},
+	}
 
-	componentDidMount: function () {
+	componentDidMount(){
 		if (this.props.onSetScale) {
 			var _scale = this._getXScale();
 			this.props.onSetScale(_scale);
 		}
-		this.refs.scroller.onscroll = this._onScroll;
-	},
+		this.scroller.onscroll = this._onScroll;
+	}
 
-	componentDidUpdate: function (prevProps, prevState) {
+	componentDidUpdate(prevProps, prevState) {
 		var didProteinUpdate = (prevProps.isProteinMode !== this.props.isProteinMode);
 		if (typeof this.props.onSetScale === "function" && didProteinUpdate) {
 			var scale = this._getXScale();
 			this.props.onSetScale(scale);
 		}
-	},
+	}
 
-	_onScroll: function (e) {
+	_onScroll(e) {
 		if (!this.props.onSetScale) return;
-		var _scrollLeft = this.refs.scroller.scrollLeft;
+		var _scrollLeft = this.scroller.scrollLeft;
 		var _xScale = this._getXScale();
 		var _oldRange = _xScale.range();
 		var _newRange = _oldRange.map( d => {
@@ -76,23 +63,23 @@ var MultiAlignmentViewer = React.createClass({
 			.copy()
 			.range(_newRange);
 		this.props.onSetScale(_newScale);
-	},
+	}
 
-	_onSegmentMouseOver: function (e, d, i, sequenceName) {
+	_onSegmentMouseOver(e, d, i, sequenceName) {
 		if (this.props.onHighlightSegment) {
 			var _start = d.domain[0] - 1;
 			var _end = d.domain[1] - 1;
 			this.props.onHighlightSegment(_start, _end);
 		}
 		this.setState({ activeSequenceName: sequenceName });
-	},
+	}
 
-	_clearMouseOver: function () {
+	_clearMouseOver() {
 		if (this.props.onHighlightSegment) this.props.onHighlightSegment(null);
 		this.setState({ activeSequenceName: null });
-	},
+	}
 
-	_getLabelsNode: function () {
+	_getLabelsNode() {
 		var yScale = this._getYScale();
 		var labelNodes = _.map(this.props.sequences, (s, i) => {
 			var _style = [style.sequenceLabel, { top: yScale(s.name) + 28 }];
@@ -102,9 +89,9 @@ var MultiAlignmentViewer = React.createClass({
 		return (<div style={[style.sequenceLabelContainer]}>
 			{labelNodes}
 		</div>);
-	},
+	}
 
-	_getSegmentNodes: function () {
+	_getSegmentNodes() {
 		var xScale = this._getXScale();
 		return _.map(this.props.segments, (s, i) => {
 			var offset = s.visible ? PX_PER_CHAR / 2 : 0;
@@ -119,9 +106,9 @@ var MultiAlignmentViewer = React.createClass({
 			};
 			return <rect onMouseOver={_onMouseOver} key={"segRect" + i} x={_x} y={_y} width={_width} height={_height} fill={"none"} stroke="none" opacity={_opacity} style={{ pointerEvents: "all" }} />;
 		});
-	},
+	}
 
-	_getVisibleSequenceNodes: function (seg, i) {
+	_getVisibleSequenceNodes(seg, i) {
 		var xScale = this._getXScale();
 		var yScale = this._getYScale();
 		return _.map(this.props.sequences, (seq, _i) => {
@@ -132,30 +119,43 @@ var MultiAlignmentViewer = React.createClass({
 			};
 			return <text onMouseOver={_onMouseOver} key={"variantSeqNode" + i + "_" + _i} transform={_transform} fontSize={FONT_SIZE} fontFamily="Courier" >{_seqText}</text>;
 		});
-	},
+	}
 
-	_getVisibleSegmentNodes: function () {
+	_getVisibleSegmentNodes() {
 		return _.reduce(this.props.segments, (memo, seg, i) => {
 			if (seg.visible) {
 				memo = memo.concat(this._getVisibleSequenceNodes(seg, i));
 			}
 			return memo;
 		}, []);
-	},
+	}
 
 	// returns a d3 scale which has multiple linear scale segments corresponding to segments prop
-	_getXScale: function () {
+	_getXScale() {
 		return getJaggedScale(this.props.segments);
-	},
+	}
 
-	_getYScale: function () {
+	_getYScale() {
 		var height = (this.props.sequences.length + 1) * (PX_PER_CHAR + 3);
 		var names = _.map(this.props.sequences, s => { return s.name; });
 		return d3.scale.ordinal()
 			.domain(names)
 			.rangePoints([PX_PER_CHAR + 3, height + PX_PER_CHAR]);
 	}
-});
+}
+
+MultiAlignmentViewer.propTypes = {
+	// highlightedSegmentDomain: null or [start, end]
+	onHighlightSegment: PropTypes.func, // (start, end) =>
+	onSetScale: PropTypes.func, // scale =>
+	segments: PropTypes.array.isRequired,
+	sequences: PropTypes.array.isRequired,
+	isProteinMode: PropTypes.bool
+}
+
+MultiAlignmentViewer.defaultProps = {
+	highlightedSegmentDomain: null
+}
 
 var FONT_SIZE = 14;
 var LABEL_WIDTH = 150;
@@ -182,4 +182,5 @@ var style = {
 	}
 };
 
-module.exports = Radium(MultiAlignmentViewer);
+
+export default Radium(MultiAlignmentViewer);

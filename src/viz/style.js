@@ -1,4 +1,4 @@
-var style = {
+export default  {
 	button: {
 	    display: "inline-block",
 	    padding: "6px 12px",
@@ -23,5 +23,3 @@ var style = {
 	    }
 	},
 };
-
-module.exports = style;
