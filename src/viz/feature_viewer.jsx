@@ -721,7 +721,7 @@ var SYNONYMOUS_COLOR = "#7b3294" // purply
 var NON_SYNONYMOUS_COLOR = "#d7191c";  // red
 var INTRON_COLOR = "#2c7bb6"; // dark blue
 var UNTRANSLATEABLE_COLOR = "gray";
-var INTERGENIC_COLOR = "#0ab94c";
+# var INTERGENIC_COLOR = "#0ab94c";
 
 var TOOLTIP_DELAY = 200;
 
