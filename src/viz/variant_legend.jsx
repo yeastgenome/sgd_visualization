@@ -64,9 +64,6 @@ class VariantLegend extends Component{
 	componentWillMount(){
 		this.setState({isMounted:true});
 	}
-	componentWillUnmount(){
-		this.setState({isMounted:false});
-	}
 
 	componentDidUpdate(prevProps, prevState) {
 		if (this.state.isActive) this._drawLegend();
