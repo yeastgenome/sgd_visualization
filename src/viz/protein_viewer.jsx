@@ -105,8 +105,10 @@ var ProteinViewer = React.createClass({
 
 		var transform, length, strokeColor, text, textCanFit, textNode, y;
 		var trackedDomains = this._getTrackedDomains();
-		var startY = this.props.locusData ? LOCUS_HEIGHT : 0;
-		var domainNodes = trackedDomains.map( (d, i) => {
+	        var startY = this.props.locusData ? LOCUS_HEIGHT : 0;
+	        var size = trackedDomains.length;
+	        if (size > 0) {
+		    var domainNodes = trackedDomains.map( (d, i) => {
 			y = startY + d._track * PX_PER_DOMAIN;
 			transform = `translate(${xScale(d.start)}, ${y})`;
 			length = Math.round(Math.abs(xScale(d.start) - xScale(d.end)));
@@ -129,14 +131,15 @@ var ProteinViewer = React.createClass({
 					<line strokeWidth="2" stroke={strokeColor} x1={length} x2={length} y1={domainNodeY} y2={PX_PER_DOMAIN}/>
 				</g>
 			);
-		});
-
-		return (
+		   });
+	     
+                   return (
 			<svg width={this.state.DOMWidth} height={this._getHeight()}>
 				{this._getLocusNode()}
 				{domainNodes}
 			</svg>
-		);
+		   );
+		}
 	},
 
 	_getLocusNode: function () {
