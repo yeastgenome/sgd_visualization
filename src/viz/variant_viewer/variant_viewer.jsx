@@ -36,7 +36,11 @@ class VariantViewer extends Component {
 		);
 	}
 
-	_renderFeatureViewer() {
+        _renderFeatureViewer() {
+
+		if (this.props.domains && this.props.domains.length == 0) {
+		    return (<div></div>);
+		}
 		var featureData = this.state.store.getFeatureTrackData("variantViewer");
 		var _features = featureData.features;
 		var _focusFeature = _features[0];
@@ -63,6 +67,7 @@ class VariantViewer extends Component {
 		var _onForceUpdate = () => {
 			this.forceUpdate();
 		}
+
 	        var _domains = (this.props.isProteinMode && this.props.domains) ? this.props.domains: null;
 
 	        var _chromStart;
