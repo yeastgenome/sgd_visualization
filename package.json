@@ -1,6 +1,6 @@
 {
-  "name": "sgd_visualization_new",
-  "version": "2.0.0",
+  "name": "sgd_visualization5",
+  "version": "2.0.2",
   "main": "./lib/index.js",
   "repository": {
     "type": "git",
@@ -19,27 +19,27 @@
   },
   "dependencies": {
     "d3": "^3.5.6",
-    "prop-types": "^15.7.2",
+    "prop-types": "^15.8.1",
     "radium": "^0.25.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "reactify": "~1.1.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.13.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
     "babel-jest": "^24.8.0",
-    "babel-loader": "^8.0.6",
-    "browserify": "^16.3.0",
+    "babel-loader": "^8.3.0",
+    "browserify": "^16.5.2",
     "jest": "^24.8.0",
-    "mkdirp": "^0.5.0",
+    "mkdirp": "^0.5.6",
     "node-jsx": "~0.12.4",
-    "react-test-renderer": "^16.8.6",
+    "react-test-renderer": "^16.14.0",
     "watchify": "^3.11.1",
-    "webpack": "^4.38.0",
-    "webpack-cli": "^3.3.6"
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12"
   },
   "babel": {
     "presets": [
@@ -54,7 +54,7 @@
     "watch": "watchify -r ./:sgd_visualization -v -o build/sgd_visualization.js",
     "w": "prunner \"npm run sniper\" \"npm run watch\"",
     "sniper": "sniper .",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "sniper": {
     "js": [
